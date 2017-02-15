@@ -1,0 +1,48 @@
+version: '2'
+services:
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456 
+    image: mysql:5.7.17
+    container_name: mysql-time-${DEV_USER}
+    volumes:
+      - ../../mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - default
+  fpm:
+    # environment:
+    #   - DEBUG=true
+    image: php:7.1.1-fpm
+    container_name: fpm-time-${DEV_USER}
+    volumes:
+      # 挂载项目代码目录
+      - ../web:/var/www/html/www
+    # links:
+    #   # 关联容器, 在该容器中可以通过 `fpm.localhost` 域名访问另一个容器的端口
+    #   - mysql:mysql.localhost
+    expose:
+      - "9000"
+    networks:
+      - default
+  nginx:
+    image: nginx:1.11
+    container_name: nginx-time-${DEV_USER}
+    volumes:
+      # 加载项目nginx配置
+      - ./nginx.conf:/etc/nginx/conf.d/php.conf:ro
+      # 挂载项目代码目录
+      - ../web:/var/www/html/www:ro
+    links:
+      # 关联容器, 在该容器中可以通过 `fpm.localhost` 域名访问另一个容器的端口
+      - fpm:fpm.localhost
+    ports:
+      - "${DEV_PORT}:8000"
+    networks:
+      - default
+networks:
+  default:
+    external:
+      name: ${DEV_USER}
+
