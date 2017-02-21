@@ -2,11 +2,13 @@ version: '2'
 services:
   mysql:
     environment:
-      - MYSQL_ROOT_PASSWORD=123456 
+      - MYSQL_ROOT_PASSWORD=z20138502@wzy-360 
     image: mysql:5.7.17
     container_name: mysql-time-${DEV_USER}
     volumes:
       - ../../mysql:/var/lib/mysql
+    expose:
+      - "9000"
     ports:
       - "3306:3306"
     networks:
