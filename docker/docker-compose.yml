@@ -21,9 +21,9 @@ services:
     volumes:
       # 挂载项目代码目录
       - ../web:/var/www/html/www
-    # links:
-    #   # 关联容器, 在该容器中可以通过 `fpm.localhost` 域名访问另一个容器的端口
-    #   - mysql:mysql.localhost
+    links:
+      # 关联容器, 在该容器中可以通过 `fpm.localhost` 域名访问另一个容器的端口
+      - mysql:mysql.localhost
     expose:
       - "9000"
     networks:
