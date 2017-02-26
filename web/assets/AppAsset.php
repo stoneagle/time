@@ -17,13 +17,19 @@ class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
+
+    //全局css
     public $css = [
         'css/site.css',
-        'css/lib/dhtmlxgantt.css'
+        'css/lib/sweetalert.css'
     ];
+
+    // 全局js
     public $js = [
-        'js/lib/dhtmlxgantt.js'
+        'js/lib/sweetalert-dev.js',
+        'js/utils/ajax.js'
     ];
+
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',

@@ -10,6 +10,12 @@ body {
     padding: 0 0 60px;
 }
 
+.container {
+    width: auto;
+    margin-left: 20px;
+    margin-right: 20px;;
+}
+
 .wrap > .container {
     padding: 70px 15px 20px;
 }
