@@ -68,6 +68,22 @@ class BaseController extends Controller
         ]);
     }
 
+    public function directXml($content)
+    {
+        return \Yii::createObject([ 
+            'class' => 'yii\web\Response', 
+            'format' => \yii\web\Response::FORMAT_XML, 
+            'formatters' => [ 
+                \yii\web\Response::FORMAT_XML => [ 
+                    'class' => 'yii\web\XmlResponseFormatter', 
+                    'rootTag' => 'data', //根节点 
+                    'itemTag' => 'event', //单元 
+                ], 
+            ], 
+            'data' => $content 
+        ]);
+    }
+
     /*
      * 根据配置数组读取相关参数
      * @param $conf_arr参数配置数组，index是参数名，数组中0项是默认值，1项为空值校验

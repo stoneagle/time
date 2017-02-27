@@ -1,6 +1,8 @@
 <?php
 use yii\helpers\Html;
+use app\models\GanttTasks;
 use app\assets\AppAsset;
+use yii\helpers\ArrayHelper;
 
 $this->title                   = '计划管理';
 $this->params['breadcrumbs'][] = $this->title;
@@ -142,7 +144,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
         var task = gantt.getTask(id);
         if (task.$level == 1) {
             if (field_opt) {
-                var default_v = field_opt[0]['label'];
+                var default_v = field_opt[0]['key'];
             } else {
                 var default_v = "";
             }
@@ -150,7 +152,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             currentSections.push(field_section);
         } else if (task.$level == 2) {
             if (action_opt) {
-                var default_v = action_opt[0]['label'];
+                var default_v = action_opt[0]['key'];
             } else {
                 var default_v = "";
             }
@@ -164,13 +166,19 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
     gantt.attachEvent("onLightbox", function(id) {
     });
 
+    gantt.attachEvent("onBeforeTaskAdd", function(id,item){
+        //console.log(item);
+        return true;
+    });
+
     // 树状三层结构
-    //gantt.config.types.root = "plan-task";
-    gantt.config.types.plan = "plan";
-    gantt.config.types.task = "task";
-    gantt.config.types.project  = "project";
+    //gantt.config.types.root  = "plan-task";
+    gantt.config.types.plan    = "<?php echo GanttTasks::LEVEL_PLAN; ?>";
+    gantt.config.types.project = "<?php echo GanttTasks::LEVEL_PROJECT; ?>";
+    gantt.config.types.task    = "<?php echo  GanttTasks::LEVEL_TASK; ?>";
+
     gantt.config.lightbox.project_sections = gantt.config.lightbox.sections;
-    gantt.config.lightbox.plan_sections = [
+    gantt.config.lightbox.plan_sections    = [
         {name: "description", height: 70, map_to: "text", type: "textarea", focus: true},
         {name: "time", type: "duration", map_to: "auto", readonly: true}
     ];

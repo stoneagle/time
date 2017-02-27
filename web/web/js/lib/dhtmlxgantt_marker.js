@@ -6,8 +6,116 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 (c) Dinamenta, UAB.
 */
-gantt._markers||(gantt._markers={}),gantt.config.show_markers=!0,gantt.attachEvent("onClear",function(){gantt._markers={}}),gantt.attachEvent("onGanttReady",function(){function t(t){if(!gantt.config.show_markers)return!1;if(!t.start_date)return!1;var e=gantt.getState();if(!(+t.start_date>+e.max_date||+t.end_date&&+t.end_date<+e.min_date||+t.start_date<+e.min_date)){var n=document.createElement("div");n.setAttribute("marker_id",t.id);var a="gantt_marker";gantt.templates.marker_class&&(a+=" "+gantt.templates.marker_class(t)),
-t.css&&(a+=" "+t.css),t.title&&(n.title=t.title),n.className=a;var i=gantt.posFromDate(t.start_date);if(n.style.left=i+"px",n.style.height=Math.max(gantt._y_from_ind(gantt._order.length),0)+"px",t.end_date){var s=gantt.posFromDate(t.end_date);n.style.width=Math.max(s-i,0)+"px"}return t.text&&(n.innerHTML="<div class='gantt_marker_content' >"+t.text+"</div>"),n}}var e=document.createElement("div");e.className="gantt_marker_area",gantt.$task_data.appendChild(e),gantt.$marker_area=e,gantt._markerRenderer=gantt._task_renderer("markers",t,gantt.$marker_area,null);
-}),gantt.attachEvent("onDataRender",function(){gantt.renderMarkers()}),gantt.getMarker=function(t){return this._markers?this._markers[t]:null},gantt.addMarker=function(t){return t.id=t.id||gantt.uid(),this._markers[t.id]=t,t.id},gantt.deleteMarker=function(t){return this._markers&&this._markers[t]?(delete this._markers[t],!0):!1},gantt.updateMarker=function(t){this._markerRenderer&&this._markerRenderer.render_item(this.getMarker(t))},gantt._getMarkers=function(){var t=[];for(var e in this._markers)t.push(this._markers[e]);
-return t},gantt.renderMarkers=function(){if(!this._markers)return!1;if(!this._markerRenderer)return!1;var t=this._getMarkers();return this._markerRenderer.render_items(t),!0};
-//# sourceMappingURL=../sources/ext/dhtmlxgantt_marker.js.map
+
+if(!gantt._markers)
+	gantt._markers = {};
+
+gantt.config.show_markers = true;
+
+gantt.attachEvent("onClear", function(){
+	gantt._markers = {};
+});
+
+gantt.attachEvent("onGanttReady", function(){
+	var markerArea = document.createElement("div");
+	markerArea.className = "gantt_marker_area";
+	gantt.$task_data.appendChild(markerArea);
+	gantt.$marker_area = markerArea;
+
+	gantt._markerRenderer = gantt._task_renderer("markers", render_marker, gantt.$marker_area, null);
+
+	function render_marker(marker){
+		if(!gantt.config.show_markers)
+			return false;
+
+		if(!marker.start_date)
+			return false;
+
+		var state = gantt.getState();
+		if(+marker.start_date > +state.max_date)
+			return;
+		if(+marker.end_date && +marker.end_date < +state.min_date || +marker.start_date < +state.min_date)
+			return;
+
+		var div = document.createElement("div");
+
+		div.setAttribute("marker_id", marker.id);
+
+		var css = "gantt_marker";
+		if(gantt.templates.marker_class)
+			css += " " + gantt.templates.marker_class(marker);
+
+		if(marker.css){
+			css += " " + marker.css;
+		}
+
+		if(marker.title){
+			div.title = marker.title;
+		}
+		div.className = css;
+
+		var start = gantt.posFromDate(marker.start_date);
+		div.style.left = start + "px";
+		div.style.height = Math.max(gantt._y_from_ind(gantt._order.length), 0) + "px";
+		if(marker.end_date){
+			var end = gantt.posFromDate(marker.end_date);
+			div.style.width = Math.max((end - start), 0) + "px";
+
+		}
+
+		if(marker.text){
+			div.innerHTML = "<div class='gantt_marker_content' >" + marker.text + "</div>";
+		}
+
+		return div;
+	}
+});
+
+
+gantt.attachEvent("onDataRender", function(){
+	gantt.renderMarkers();
+});
+
+gantt.getMarker = function(id){
+	if(!this._markers) return null;
+
+	return this._markers[id];
+};
+
+gantt.addMarker = function(marker){
+	marker.id = marker.id || gantt.uid();
+
+	this._markers[marker.id] = marker;
+
+	return marker.id;
+};
+
+gantt.deleteMarker = function(id){
+	if(!this._markers || !this._markers[id])
+		return false;
+
+	delete this._markers[id];
+	return true;
+};
+gantt.updateMarker = function(id){
+	if(this._markerRenderer)
+		this._markerRenderer.render_item(this.getMarker(id));
+};
+
+gantt._getMarkers = function(){
+	var markers = [];
+	for(var i in this._markers)
+		markers.push(this._markers[i]);
+	return markers;
+};
+
+gantt.renderMarkers = function () {
+	if (!this._markers)
+		return false;
+	if (!this._markerRenderer)
+		return false;
+	var to_render = this._getMarkers();
+
+	this._markerRenderer.render_items(to_render);
+	return true;
+};

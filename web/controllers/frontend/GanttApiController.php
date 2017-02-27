@@ -26,11 +26,12 @@ class GanttApiController extends BaseController
     public function actionData()
     {
         $model          = new GanttTasks;
+        $model->user_id = $this->user_obj->id;
         $query          = $model->getQuery();
         $data           = $query->asArray()->all();
         foreach ($data as &$one) {
             // 控制项目波动
-            if (empty($one['f_parent'])) {
+            if ($one['type'] != GanttTasks::LEVEL_TASK) {
                 $one['duration'] = "";
             }
         }
@@ -216,5 +217,17 @@ class GanttApiController extends BaseController
             $result['tid'] = $tid;
         }
         return json_encode($result);
+    }
+
+    public function actionTaskTree()
+    {
+        $model          = new GanttTasks;
+        $model->user_id = $this->user_obj->id;
+        $data           = $model->getTree();
+        $result = [
+            'id'   => 0,
+            'item' => $data
+        ];
+        return $this->directJson(json_encode($result));
     }
 }

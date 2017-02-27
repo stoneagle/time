@@ -72,6 +72,10 @@ $config = [
                 "POST frontend/gantt-api/link" => "frontend/gantt-api/link-add",
                 "PUT frontend/gantt-api/link/<linkid:\d+>" => "frontend/gantt-api/link-update",
                 "DELETE frontend/gantt-api/link/<linkid:\d+>" => "frontend/gantt-api/link-del",
+
+                "POST frontend/scheduler-api/<sid:\d+>"  => "frontend/scheduler-api/add",
+                "PUT frontend/scheduler-api/<id:\d+>"    => "frontend/scheduler-api/update",
+                "DELETE frontend/scheduler-api/<id:\d+>" => "frontend/scheduler-api/del",
             ],
         ],
     ],
