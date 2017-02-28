@@ -9,9 +9,11 @@ use yii\helpers\ArrayHelper;
 
 class GanttTasks extends BaseActiveRecord
 {
-    const LEVEL_PROJECT = 0;
-    const LEVEL_PLAN    = 1;
-    const LEVEL_TASK    = 2;
+    const PROGRESS_START = 0;
+    const PROGRESS_END   = 1;
+    const LEVEL_PROJECT  = 0;
+    const LEVEL_PLAN     = 1;
+    const LEVEL_TASK     = 2;
 
     const TABLE_NAME    = "gantt_tasks";
 

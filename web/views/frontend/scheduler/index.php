@@ -185,9 +185,16 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     tree.attachEvent("onRightClick", function(id, ev){
         var level = tree.getLevel(id);
         switch (level) {
+            case 2 :
+                var text_info = "是否完成该任务";
+                var hint = "已完成的任务将不再出现";
+                var href = "/frontend/gantt/finish?id=" + id;
+                var post_data = {};
+                checkPost(text_info, hint, href, post_data);
+                break;
             case 3 : 
-                var text_info = "是否真的要删除该任务";
-                var hint = "已经开始执行的任务不允许删除";
+                var text_info = "是否真的要删除该过程";
+                var hint = "已经开始执行的不允许删除";
                 var href = "/frontend/process/del?id=" + id;
                 var post_data = {};
                 checkPost(text_info, hint, href, post_data);
@@ -198,11 +205,48 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
         return false;
     });
 
-    //tree.setDataMode("json");
     tree.setXMLAutoLoading("/frontend/process/data");
     tree.setDataMode("json");
-    tree.load("/frontend/gantt-api/task-tree",'json');
+    tree.load("/frontend/gantt-api/task-tree", 'json');
 
+    // 实现已完成的过程标记横线
+    tree.attachEvent("onOpenEnd", function(id, state){
+        var level = tree.getLevel(id);
+        if (level == 2) {
+            var sub_list = tree.getAllSubItems(id);
+            var sub_arr = sub_list.split(',');
+            var ids_obj = new Object();
+            var ids_list = new Array();
+            for (var i = 0 ;i < sub_arr.length; i++)
+            {
+                var raw_id = sub_arr[i].split('_');
+                ids_obj[raw_id[0]] = sub_arr[i];
+                ids_list.push(raw_id[0]);
+            }
+            if (ids_list.length > 0) {
+                var post_data = {
+                    'ids' : ids_list
+                };
+                var href = "/frontend/process/finish-check";
+                $.post(
+                    href, 
+                    post_data,
+                    function(data){
+                        if (data.error === 0) {
+                            var finish_list = data.data['list'];
+                            for (var i = 0 ; i < finish_list.length; i++) {
+                                var origin_id = ids_obj[finish_list[i]];
+                                tree.setItemStyle(origin_id, "color:red;text-decoration:line-through;");
+                            }
+                        } else {
+                            swal("操作失败!", data.message, "error");
+                        }
+                    }, 
+                "json");
+            }
+        }
+        return true;
+    });
 
     // 时间表
     scheduler.config.first_hour = 3;

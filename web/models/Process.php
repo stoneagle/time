@@ -17,6 +17,9 @@ use Yii;
  */
 class Process extends BaseActiveRecord
 {
+    CONST FINISH_NO   = 0;
+    CONST FINISH_TRUE = 1;
+
     /**
      * @inheritdoc
      */

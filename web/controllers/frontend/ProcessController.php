@@ -8,6 +8,7 @@ use app\models\Constants;
 use app\models\Error;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 class ProcessController extends BaseController
 {
@@ -94,5 +95,28 @@ class ProcessController extends BaseController
         } catch (\exception $e) {
             return $this->returnException($e);
         }
+    }
+
+    public function actionFinishCheck()
+    {
+        try {
+            $params_conf = [
+                "ids" => [null, true],
+            ];
+            $params = $this->getParamsByConf($params_conf, 'post');
+
+            $list = Process::find()
+                ->select("id")
+                ->andWhere(["id" => $params['ids']])
+                ->andWhere(["finish" => Process::FINISH_TRUE])
+                ->asArray()->all();
+            $list = ArrayHelper::getColumn($list, 'id');
+
+            $code = Error::ERR_OK;
+            return $this->packageJson(['list' => $list], $code, Error::msg($code));
+        } catch (\exception $e) {
+            return $this->returnException($e);
+        }
+        
     }
 }
