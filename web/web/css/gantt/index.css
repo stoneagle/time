@@ -49,3 +49,37 @@
 .dhtmlxcalendar_dhx_skyblue, .dhtmlxcalendar_dhx_web, .dhtmlxcalendar_dhx_terrace {
     z-index: 999999 !important;
 }
+
+// 待定按钮
+.unscheduler_button_set{
+    border: 1px solid #cac8bd;
+}
+.unscheduler_button{
+    margin-top: 1px;
+    background-image:url("/css/lib/dhxtree_skyblue/lock.gif");
+    width: 20px;
+}
+
+// 进度百分比
+/* .gantt_task_progress{ */
+/*     text-align:left; */
+/*     padding-left:10px; */
+/*     box-sizing: border-box; */
+/*     color:white; */
+/*     font-weight: bold; */
+/* } */
+
+.dhx_calendar_cont input {
+    width: 96px;
+    padding: 0;
+    margin: 3px 10px 10px 10px;
+    font-size: 11px;
+    height: 17px;
+    text-align: center;
+    border: 1px solid #ccc;
+    color: #646464;
+}
+
+.dhtmlxcalendar_dhx_skyblue, .dhtmlxcalendar_dhx_web, .dhtmlxcalendar_dhx_terrace {
+    z-index: 999999 !important;
+}

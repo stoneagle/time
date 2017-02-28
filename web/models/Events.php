@@ -32,9 +32,9 @@ class Events extends BaseActiveRecord
     public function rules()
     {
         return [
-            [['start_date', 'end_date'], 'required'],
+            [['start_date', 'end_date', 'process_id', 'user_id'], 'required'],
             [['start_date', 'end_date', 'ctime', 'utime'], 'safe'],
-            [['user_id'], 'integer'],
+            [['user_id', 'process_id', 'user_id'], 'integer'],
             [['text'], 'string', 'max' => 255],
         ];
     }
@@ -50,6 +50,7 @@ class Events extends BaseActiveRecord
             'end_date'   => '结束时间',
             'text'       => '内容',
             'user_id'    => '所属用户',
+            'process_id' => '所属过程',
             'ctime'      => '创建时间',
             'utime'      => '更新时间',
         ];

@@ -33,6 +33,8 @@ class GanttApiController extends BaseController
             // 控制项目波动
             if ($one['type'] != GanttTasks::LEVEL_TASK) {
                 $one['duration'] = "";
+            } else if ($one['duration'] == 0) {
+                $one['unscheduled'] = true;
             }
         }
         $result['data'] = $data;
@@ -49,20 +51,25 @@ class GanttApiController extends BaseController
             $model = new GanttTasks;
             $action_type = "inserted";
             $params_conf = [
-                "text"       => [null, true],
-                "type"       => [null, true],
-                "start_date" => [null, true],
-                "end_date"   => [null, true],
-                "duration"   => [null, true],
-                "progress"   => [0, false],
-                "action"     => [0, false],
-                "field"      => [0, false],
-                "parent"     => [null, true],
+                "text"             => [null, true],
+                "type"             => [null, true],
+                "start_date"       => [null, true],
+                "end_date"         => [null, true],
+                "duration"         => [null, true],
+                "progress"         => [0, false],
+                "action"           => [0, false],
+                "field"            => [0, false],
+                "parent"           => [null, true],
+                "unscheduled_flag" => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model->text       = $params['text'];
             $model->start_date = $params['start_date'];
-            $model->duration   = $params['duration'];
+            if ($params['unscheduled_flag']) {
+                $model->duration   = 0;
+            } else {
+                $model->duration   = $params['duration'];
+            }
             $model->progress   = $params['progress'];
             $model->parent     = (int)$params['parent'];
             $model->type       = $params['type'];
@@ -85,18 +92,23 @@ class GanttApiController extends BaseController
             $model = $this->findModel($taskid, GanttTasks::class);
             $action_type = "updated";
             $params_conf = [
-                "text"       => [null, true],
-                "start_date" => [null, true],
-                "duration"   => [null, true],
-                "progress"   => [0, false],
-                "action"     => [0, false],
-                "field"      => [0, false],
-                "parent"     => [null, true],
+                "text"             => [null, true],
+                "start_date"       => [null, true],
+                "duration"         => [null, true],
+                "progress"         => [0, false],
+                "action"           => [0, false],
+                "field"            => [0, false],
+                "parent"           => [null, true],
+                "unscheduled_flag" => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model->text       = $params['text'];
             $model->start_date = $params['start_date'];
-            $model->duration   = $params['duration'];
+            if ($params['unscheduled_flag']) {
+                $model->duration   = 0;
+            } else {
+                $model->duration   = $params['duration'];
+            }
             $model->progress   = $params['progress'];
             $model->action_id  = $params['action'];
             $model->field_id   = $params['field'];
@@ -223,7 +235,7 @@ class GanttApiController extends BaseController
     {
         $model          = new GanttTasks;
         $model->user_id = $this->user_obj->id;
-        $data           = $model->getTree();
+        $data           = $model->getInitTree();
         $result = [
             'id'   => 0,
             'item' => $data

@@ -27,7 +27,8 @@ class AppAsset extends AssetBundle
     // 全局js
     public $js = [
         'js/lib/sweetalert-dev.js',
-        'js/utils/ajax.js'
+        'js/utils/ajax.js',
+        'js/utils/form.js'
     ];
 
     public $depends = [

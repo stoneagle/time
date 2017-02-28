@@ -3,6 +3,7 @@
 namespace app\controllers\frontend;
 
 use app\models\Events;
+use app\models\GanttTasks;
 use app\models\Constants;
 use Yii;
 use yii\filters\VerbFilter;
@@ -34,21 +35,32 @@ class SchedulerApiController extends BaseController
     {
         try {
             $model = new Events;
+            $transaction   = Yii::$app->db->beginTransaction();
+
             $action_type = "inserted";
             $params_conf = [
                 "text"       => [null, true],
+                "process_id" => [null, true],
                 "start_date" => [null, true],
                 "end_date"   => [null, true],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model->text       = $params['text'];
+            $model->process_id = $params['process_id'];
             $model->start_date = $params['start_date'];
             $model->end_date   = $params['end_date'];
             $model->user_id    = $this->user_obj->id;
             $model->modelValidSave();
+
+            $process_model = $this->findModel($model->process_id, GanttTasks::class);
+            $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+            $task_model->checkAndChangeDuration();
+
+            $transaction->commit(); 
             $ret = $this->prepareResponse($action_type, $sid, $model->id);
             return $this->directJson($ret);
         } catch (\exception $e) {
+            $transaction->rollBack(); 
             $action_type = "error";
             $ret         = $this->prepareResponse($action_type, null, null);
             return $this->directJson($ret);
@@ -59,21 +71,31 @@ class SchedulerApiController extends BaseController
     {
         try {
             $model = $this->findModel($id, Events::class);
+            $transaction   = Yii::$app->db->beginTransaction();
+
             $action_type = "updated";
             $params_conf = [
                 "text"       => [null, true],
+                "process_id" => [null, true],
                 "start_date" => [null, true],
                 "end_date"   => [null, true],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model->text       = $params['text'];
+            $model->process_id = $params['process_id'];
             $model->start_date = $params['start_date'];
             $model->end_date   = $params['end_date'];
             $model->modelValidSave();
 
+            $process_model = $this->findModel($model->process_id, GanttTasks::class);
+            $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+            $task_model->checkAndChangeDuration();
+
+            $transaction->commit(); 
             $ret = $this->prepareResponse($action_type, $id, $id);
             return $this->directJson($ret);
         } catch (\exception $e) {
+            $transaction->rollBack(); 
             $action_type = "error";
             $ret         = $this->prepareResponse($action_type, $id, $id);
             return $this->directJson($ret);

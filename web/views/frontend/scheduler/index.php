@@ -10,6 +10,7 @@ AppAsset::register($this);
 $this->registerCssFile('@web/css/lib/dhtmlxscheduler.css',['depends'=>['app\assets\AppAsset']]);
 $this->registerCssFile('@web/css/lib/dhtmlxtree_dhx_skyblue.css',['depends'=>['app\assets\AppAsset']]);
 
+$this->registerJsFile('@web/js/lib/dhtmlx.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlxscheduler.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlxscheduler_outerdrag.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlxscheduler_quick_info.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
@@ -52,7 +53,34 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
 </style>
 <div class="container-fluid">
     <h1><?= Html::encode($this->title); ?></h1>
-    <div class="col-md-2 panel" id="treebox" style="height:1000px;">
+    <div class="col-md-2 panel" id="treebox" style="height:1000px;" ></div>
+    <div class="modal fade" id="tree_save" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="tree_form" method="post" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="tree_save_title"></h4>
+                    </div>
+                    <div class="modal-body">
+                            <div class="form-group">
+                                <label for="recipient-name" class="control-label">过程:</label>
+                                <input type="text" class="form-control" id="tree_text" name="text" >
+                            </div>
+                            <div class="form-group">
+                                <label for="message-text" class="control-label">预计时间颗粒(30min/颗):</label>
+                                <input type="number" class="form-control" name="plan_num" min=0 value=0 >
+                            </div>
+                            <input type="hidden" class="form-control" id="tree_task_id" name="task_id">
+                            <input type="hidden" class="form-control" id="tree_id" name="id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="tree_save_submit" >提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div id="scheduler_here" class="dhx_cal_container col-md-10 panel " style=' height:1000px; '>
@@ -76,12 +104,110 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     var tree = new dhtmlXTreeObject("treebox", "100%", "100%", 0);
     tree.setImagesPath("/css/lib/dhxtree_skyblue/");
     tree.enableDragAndDrop(true);
+
+    // 设置双击父节点添加，双击子节点修改
+    tree.attachEvent("onDblClick", function(id){
+        var level = tree.getLevel(id);
+        switch (level) {
+            case 2 : 
+                $('#tree_save_title').html("过程新增");
+                $('#tree_task_id').val(id);
+                $('#tree_save').modal('show')
+                break;
+            case 3 : 
+                $('#tree_save_title').html("过程修改");
+                $('#tree_id').val(id);
+                $('#tree_save').modal('show')
+                break;
+            default :
+                break;
+        }
+        return false;
+    });
+
+    // 浮层表单提交
+    $('#tree_form').on('submit', function(e){
+        e.preventDefault();
+        var post_data = $(this).serializeArray();
+        var href = "";
+        var new_flag = null;
+        var tree_id = $('#tree_id').val();
+        if (tree_id) {
+            new_flag = false;
+            href = "/frontend/process/update";
+        } else {
+            // tree的id后面加了时间戳
+            // todo,用其它字段记录新建的数值，要不然版本更新后，会出现错误
+            var raw_id = tree_id.split("_")[0];
+            new_flag = true;
+            href = "/frontend/process/add";
+        }
+        $.ajax({
+            url: href,
+            data: post_data,
+            dataType: 'text',
+            type: 'POST',
+            success: function(result) {
+                var data = eval('(' + result + ')');  
+                if (data.error != 0) {
+                    swal("操作失败!", data.message, "error");
+                } else {
+                    $('#tree_save').modal('hide')
+                    var obj_id       = data.data['id'];
+                    var obj_text     = $('#tree_text').val();
+                    if (new_flag) {
+                        var fid          = $('#tree_task_id').val();
+                        tree.insertNewItem(fid, obj_id, obj_text, 0, 0, 0, 0, 'SELECT');
+                    } else {
+                        tree.setItemText(tree_id, obj_text);
+                    }
+                    resetForm("tree_form");
+                }
+            },
+            error: function(data) {
+                swal("操作失败!", data.message, "error");
+            }
+        })
+    });
+
+    // 禁止树状图下，右键弹出情况
+    $('body').on('contextmenu','#treebox',function(){
+        return false;
+    });
+    $('body').on('contextmenu','.sweet-alert',function(){
+        return false;
+    });
+    $('body').on('contextmenu','.sweet-overlay',function(){
+        return false;
+    });
+
+    // 设置右键单击子节点删除(包括鼠标右键和弹出框与层)
+    tree.attachEvent("onRightClick", function(id, ev){
+        var level = tree.getLevel(id);
+        switch (level) {
+            case 3 : 
+                var text_info = "是否真的要删除该任务";
+                var hint = "已经开始执行的任务不允许删除";
+                var href = "/frontend/process/del?id=" + id;
+                var post_data = {};
+                checkPost(text_info, hint, href, post_data);
+                break;
+            default :
+                break;
+        }
+        return false;
+    });
+
+    //tree.setDataMode("json");
+    tree.setXMLAutoLoading("/frontend/process/data");
+    tree.setDataMode("json");
     tree.load("/frontend/gantt-api/task-tree",'json');
+
 
     // 时间表
     scheduler.config.first_hour = 3;
     scheduler.config.time_step = 15;
-    //scheduler.config.touch = "force";
+    scheduler.config.touch = "force";
     scheduler.config.multi_day = true;
     scheduler.config.xml_date="%Y-%m-%d %H:%i:%s";
 
@@ -91,7 +217,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     scheduler.config.lightbox.sections = [  
         {name:"description", height:200, map_to:"text", type:"textarea" , focus:true},
         {name:"task", height:21, map_to:"task", type:"select", options:task_opt},
-        {name:"time", height:72, type:"time", map_to:"auto"}    
+        {name:"time", height:72, type:"calendar_time", map_to:"auto"}    
     ];
 
     // 悬浮高亮
@@ -114,7 +240,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
 
     // 拖拽
     scheduler.attachEvent("onExternalDragIn", function(id, source, event){
-        scheduler.getEvent(id).task = tree._dragged[0].id;
+        scheduler.getEvent(id).task_id = tree._dragged[0].id;
         return true;
     });
 
@@ -172,6 +298,12 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
         }
     });
 
+    // 快捷信息标题显示
+    scheduler.templates.quick_info_title = function(start, end, ev){ 
+        return task_opt[ev.task_id]['label'];
+    };
+
+    // 初始化
     scheduler.init('scheduler_here', new Date(),"week");
     scheduler.load("/frontend/scheduler-api/data");
 

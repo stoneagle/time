@@ -23,7 +23,7 @@ class m170226_024509_create_events_table extends Migration
             'end_date'   => Schema::TYPE_DATETIME.' NOT NULL COMMENT "结束时间" ',
             'text'       => Schema::TYPE_STRING.' NOT NULL DEFAULT "" COMMENT "内容" ',
             'user_id'    => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属用户" ',
-            'task_id'    => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属任务" ',
+            'process_id' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属过程" ',
             'ctime'      => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "创建时间"',
             'utime'      => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "更新时间"',
         ]);

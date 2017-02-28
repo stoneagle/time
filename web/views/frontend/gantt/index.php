@@ -33,75 +33,75 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
     });
 
     // 时间范围选择
-    /* var duration = function (a, b, c) { */
-    /*     var res = gantt.calculateDuration(a.getDate(false), b.getDate(false)); */
-    /*     c.innerHTML = res + ' days'; */
-    /* }; */
+    var duration = function (a, b, c) {
+        var res = gantt.calculateDuration(a.getDate(false), b.getDate(false));
+        c.innerHTML = res + ' days';
+    };
 
-    /* var calendar_init = function (id, data, date) { */
-    /*     var obj = new dhtmlXCalendarObject(id); */
-    /*     obj.setDateFormat(data.date_format ? data.date_format : ''); */
-    /*     obj.setDate(date ? date : (new Date())); */
-    /*     obj.hideTime(); */
-    /*     if (data.skin) */
-    /*         obj.setSkin(data.skin); */
-    /*     return obj; */
-    /* }; */
+    var calendar_init = function (id, data, date) {
+        var obj = new dhtmlXCalendarObject(id);
+        obj.setDateFormat(data.date_format ? data.date_format : '');
+        obj.setDate(date ? date : (new Date()));
+        obj.hideTime();
+        if (data.skin)
+            obj.setSkin(data.skin);
+        return obj;
+    };
 
-    /* gantt.form_blocks["dhx_calendar"] = { */
-    /*     render: function (sns) { */
-    /*         return "<div class='dhx_calendar_cont'><input type='text' readonly='true' id='calendar1'/> &#8211; " */
-    /*                 + "<input type='text' readonly='true' id='calendar2'/><label id='duration'></label></div>"; */
-    /*     }, */
-    /*     set_value: function (node, value, task, data) { */
-    /*         var a = node._cal_start = calendar_init('calendar1', data, task.start_date); */
-    /*         var b = node._cal_end = calendar_init('calendar2', data, task.end_date); */
-    /*         var c = node.lastChild; */
+    gantt.form_blocks["dhx_calendar"] = {
+        render: function (sns) {
+            return "<div class='dhx_calendar_cont'><input type='text' readonly='true' id='calendar1'/> &#8211; "
+                    + "<input type='text' readonly='true' id='calendar2'/><label id='duration'></label></div>";
+        },
+        set_value: function (node, value, task, data) {
+            var a = node._cal_start = calendar_init('calendar1', data, task.start_date);
+            var b = node._cal_end = calendar_init('calendar2', data, task.end_date);
+            var c = node.lastChild;
 
-    /*         b.setInsensitiveRange(null, new Date(a.getDate(false) - 86400000)); */
+            b.setInsensitiveRange(null, new Date(a.getDate(false) - 86400000));
 
-    /*         var a_click = a.attachEvent("onClick", function (date) { */
-    /*             b.setInsensitiveRange(null, new Date(date.getTime() - 86400000)); */
-    /*             duration(a, b, c); */
-    /*         }); */
+            var a_click = a.attachEvent("onClick", function (date) {
+                b.setInsensitiveRange(null, new Date(date.getTime() - 86400000));
+                duration(a, b, c);
+            });
 
-    /*         var b_click = b.attachEvent("onClick", function (date) { */
-    /*             duration(a, b, c); */
-    /*         }); */
+            var b_click = b.attachEvent("onClick", function (date) {
+                duration(a, b, c);
+            });
 
-    /*         var a_time_click = a.attachEvent("onChange", function (d) { */
-    /*             b.setInsensitiveRange(null, new Date(d.getTime() - 86400000)); */
-    /*             duration(a, b, c); */
-    /*         }); */
+            var a_time_click = a.attachEvent("onChange", function (d) {
+                b.setInsensitiveRange(null, new Date(d.getTime() - 86400000));
+                duration(a, b, c);
+            });
 
-    /*         var b_time_click = b.attachEvent("onChange", function (d) { */
-    /*             duration(a, b, c); */
-    /*         }); */
+            var b_time_click = b.attachEvent("onChange", function (d) {
+                duration(a, b, c);
+            });
 
 
-    /*         var id = gantt.attachEvent("onAfterLightbox", function () { */
-    /*             a.detachEvent(a_click); */
-    /*             a.detachEvent(a_time_click); */
-    /*             a.unload(); */
-    /*             b.detachEvent(b_click); */
-    /*             b.detachEvent(b_time_click); */
-    /*             b.unload(); */
-    /*             a = b = null; */
-    /*             this.detachEvent(id); */
-    /*         }); */
+            var id = gantt.attachEvent("onAfterLightbox", function () {
+                a.detachEvent(a_click);
+                a.detachEvent(a_time_click);
+                a.unload();
+                b.detachEvent(b_click);
+                b.detachEvent(b_time_click);
+                b.unload();
+                a = b = null;
+                this.detachEvent(id);
+            });
 
-    /*         document.getElementById('calendar1').value = a.getDate(true); */
-    /*         document.getElementById('calendar2').value = b.getDate(true); */
-    /*         duration(a, b, c); */
-    /*     }, */
-    /*     get_value: function (node, task) { */
-    /*         task.start_date = node._cal_start.getDate(false); */
-    /*         task.end_date = node._cal_end.getDate(false); */
-    /*         return task; */
-    /*     }, */
-    /*     focus: function (node) { */
-    /*     } */
-    /* }; */
+            document.getElementById('calendar1').value = a.getDate(true);
+            document.getElementById('calendar2').value = b.getDate(true);
+            duration(a, b, c);
+        },
+        get_value: function (node, task) {
+            task.start_date = node._cal_start.getDate(false);
+            task.end_date = node._cal_end.getDate(false);
+            return task;
+        },
+        focus: function (node) {
+        }
+    };
 
     // 日期格式
     gantt.config.open_tree_initially = true;
@@ -136,13 +136,14 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
     var custom_sections                = [
         {name: "description", height: 70, map_to: "text", type: "textarea", focus: true},
         {name: "time", type: "duration", map_to: "auto"}
+        //{name: "time", type: "dhx_calendar", map_to: "auto", skin: '', date_format: '%d %M %Y'}
     ];
 
     gantt.attachEvent("onBeforeLightbox", function(id){
         gantt.resetLightbox();
         var currentSections = custom_sections.slice();
         var task = gantt.getTask(id);
-        if (task.$level == 1) {
+        if (task.$level == <?php echo GanttTasks::LEVEL_PROJECT;?>) {
             if (field_opt) {
                 var default_v = field_opt[0]['key'];
             } else {
@@ -150,7 +151,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             }
             var field_section = {name:"field", height:30, type:"select", map_to:"field", options:field_opt, default_value:default_v};
             currentSections.push(field_section);
-        } else if (task.$level == 2) {
+        } else if (task.$level == <?php echo GanttTasks::LEVEL_TASK;?>) {
             if (action_opt) {
                 var default_v = action_opt[0]['key'];
             } else {
@@ -163,22 +164,46 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
         return true;
     });
 
-    gantt.attachEvent("onLightbox", function(id) {
+    // 自定义按键+待定
+    gantt.config.buttons_left=["dhx_save_btn","dhx_cancel_btn","unscheduler_button"];
+    gantt.locale.labels["unscheduler_button"] = "待定";
+    gantt.attachEvent("onLightboxButton", function(button_id, node, e){
+        if(button_id == "unscheduler_button"){
+            var id = gantt.getState().lightbox;
+            gantt.getTask(id).unscheduled_flag = 1;
+            gantt.getTask(id).unscheduled = true;
+
+            $(".gantt_duration_dec").attr("disabled","disabled");
+            $(".gantt_duration_inc").attr("disabled","disabled");
+            $(".gantt_duration_value").val(0);
+            $(".gantt_duration_value").attr("readonly", "readonly");
+        }
     });
 
     gantt.attachEvent("onBeforeTaskAdd", function(id,item){
-        //console.log(item);
+        if (item.unscheduled) {
+            item.duration = 0;
+        }
+        return true;
+    });
+    gantt.attachEvent("onAfterTaskUpdate", function(id,item){
+        if (item.unscheduled) {
+            item.duration = 0;
+            // before事件中，item的duration无法修改，估计跟生命周期有关
+            // 修改table_row中，duration的持续时间
+            gantt.getTaskRowNode(id).childNodes[2].childNodes[0].innerHTML = 0;
+        }
         return true;
     });
 
     // 树状三层结构
     //gantt.config.types.root  = "plan-task";
-    gantt.config.types.plan    = "<?php echo GanttTasks::LEVEL_PLAN; ?>";
     gantt.config.types.project = "<?php echo GanttTasks::LEVEL_PROJECT; ?>";
+    gantt.config.types.plan    = "<?php echo GanttTasks::LEVEL_PLAN; ?>";
     gantt.config.types.task    = "<?php echo  GanttTasks::LEVEL_TASK; ?>";
 
-    gantt.config.lightbox.project_sections = gantt.config.lightbox.sections;
-    gantt.config.lightbox.plan_sections    = [
+    gantt.config.lightbox.plan_sections = gantt.config.lightbox.sections;
+    gantt.config.lightbox.project_sections    = [
         {name: "description", height: 70, map_to: "text", type: "textarea", focus: true},
         {name: "time", type: "duration", map_to: "auto", readonly: true}
     ];
@@ -189,11 +214,11 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
                 types = gantt.config.types;
 
         switch (task.type) {
-            case types.plan:
-                text = "计划";
-                break;
             case types.project:
                 text = '项目';
+                break;
+            case types.plan:
+                text = "计划";
                 break;
             default:
                 text = '任务';
@@ -214,11 +239,11 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             level = gantt.getTask(task.parent).$level + 1;
         }
         switch (level) {
-            case 0:
-                task.type = types.plan;
-                break;
-            case 1:
+            case <?php echo GanttTasks::LEVEL_PROJECT;?>:
                 task.type = types.project;
+                break;
+            case <?php echo GanttTasks::LEVEL_PLAN;?>:
+                task.type = types.plan;
                 break;
             default:
                 task.type = types.task;
@@ -239,11 +264,11 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             level = gantt.getTask(task.parent).$level + 1;
         }
         switch (level) {
-            case 0:
-                task.type = types.plan;
-                break;
-            case 1:
+            case <?php echo GanttTasks::LEVEL_PROJECT;?>:
                 task.type = types.project;
+                break;
+            case <?php echo GanttTasks::LEVEL_PLAN;?>:
+                task.type = types.plan;
                 break;
             default:
                 task.type = types.task;
@@ -253,8 +278,6 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
         defaultValues(task);
         return true;
     });
-
-    
 
     // 进度百分比
     /* gantt.templates.progress_text = function(start, end, task){ */
@@ -288,10 +311,10 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
 
         var css = [];
         switch (task.type) {
-            case gantt.config.types.plan:
+            case gantt.config.types.project:
                 css.push('project-task');
                 break;
-            case gantt.config.types.project:
+            case gantt.config.types.plan:
                 css.push('phase-task');
                 break;
             default:
@@ -352,6 +375,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
     // 初始化
     gantt.config.xml_date = "%Y-%m-%d %H:%i:%s";
     gantt.config.show_errors = true;
+    gantt.config.touch =  "force";
     gantt.init("gantt_here");
     gantt.load("/frontend/gantt-api/data");
 
