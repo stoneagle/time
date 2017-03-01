@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Process;
 use yii\base\Exception;
 
 /**
@@ -58,8 +59,15 @@ class Events extends BaseActiveRecord
 
     public function getQuery()
     {
+        $process_t = Process::tableName();
         $events_t = self::tableName();
-        $query = self::find();
+        $query = self::find()
+            ->select("
+                $events_t.*, 
+                $process_t.text as process_name,
+                $process_t.finish
+                ")
+            ->leftJoin($process_t, "$process_t.id = $events_t.process_id");
         return $query;
     }
 }

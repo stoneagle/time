@@ -4,6 +4,7 @@ namespace app\controllers\frontend;
 
 use app\models\Events;
 use app\models\GanttTasks;
+use app\models\Process;
 use app\models\Constants;
 use Yii;
 use yii\filters\VerbFilter;
@@ -43,6 +44,7 @@ class SchedulerApiController extends BaseController
                 "process_id" => [null, true],
                 "start_date" => [null, true],
                 "end_date"   => [null, true],
+                "finish"     => [null, true],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model->text       = $params['text'];
@@ -52,7 +54,13 @@ class SchedulerApiController extends BaseController
             $model->user_id    = $this->user_obj->id;
             $model->modelValidSave();
 
-            $process_model = $this->findModel($model->process_id, GanttTasks::class);
+            $process_model = $this->findModel($model->process_id, Process::class);
+            if ($params['finish'] == Process::FINISH_TRUE) {
+                $process_model->finish = Process::FINISH_TRUE;
+            } else {
+                $process_model->finish = Process::FINISH_NO;
+            }
+            $process_model->modelValidSave();
             $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
             $task_model->checkAndChangeDuration();
 
@@ -79,6 +87,7 @@ class SchedulerApiController extends BaseController
                 "process_id" => [null, true],
                 "start_date" => [null, true],
                 "end_date"   => [null, true],
+                "finish"     => [null, true],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model->text       = $params['text'];
@@ -87,7 +96,13 @@ class SchedulerApiController extends BaseController
             $model->end_date   = $params['end_date'];
             $model->modelValidSave();
 
-            $process_model = $this->findModel($model->process_id, GanttTasks::class);
+            $process_model = $this->findModel($model->process_id, Process::class);
+            if ($params['finish'] == Process::FINISH_TRUE) {
+                $process_model->finish = Process::FINISH_TRUE;
+            } else {
+                $process_model->finish = Process::FINISH_NO;
+            }
+            $process_model->modelValidSave();
             $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
             $task_model->checkAndChangeDuration();
 
