@@ -1,11 +1,15 @@
 <?php
 use yii\helpers\Html;
+use app\models\Process;
 use app\assets\AppAsset;
+use yii\helpers\ArrayHelper;
 
 $this->title                   = '时间管理';
 $this->params['breadcrumbs'][] = $this->title;
 
 AppAsset::register($this);
+$process_dict_index = ArrayHelper::index(json_decode($processDict, true), 'key');
+$process_dict_index = json_encode($process_dict_index);
 
 $this->registerCssFile('@web/css/lib/dhtmlxscheduler.css',['depends'=>['app\assets\AppAsset']]);
 $this->registerCssFile('@web/css/lib/dhtmlxtree_dhx_skyblue.css',['depends'=>['app\assets\AppAsset']]);
@@ -18,6 +22,7 @@ $this->registerJsFile('@web/js/lib/dhtmlxscheduler_minical.js',['depends'=>['app
 $this->registerJsFile('@web/js/lib/dhtmlxscheduler_key_nav.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlxscheduler_recurring.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlxscheduler_limit.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
+$this->registerJsFile('@web/js/lib/dhtmlxscheduler_editors.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 
 $this->registerJsFile('@web/js/lib/dhtmlxtree.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlxtree_json.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
@@ -101,6 +106,11 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
 
 <script type="text/javascript">
     // 树状图
+    var finish_color       = 'red';
+    var task_node_level    = 2;
+    var process_node_level = 3;
+    var process_name       = "过程";
+
     var tree = new dhtmlXTreeObject("treebox", "100%", "100%", 0);
     tree.setImagesPath("/css/lib/dhxtree_skyblue/");
     tree.enableDragAndDrop(true);
@@ -109,15 +119,18 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     tree.attachEvent("onDblClick", function(id){
         var level = tree.getLevel(id);
         switch (level) {
-            case 2 : 
-                $('#tree_save_title').html("过程新增");
+            case task_node_level : 
+                $('#tree_save_title').html(process_name + "新增");
                 $('#tree_task_id').val(id);
                 $('#tree_save').modal('show')
                 break;
-            case 3 : 
-                $('#tree_save_title').html("过程修改");
-                $('#tree_id').val(id);
-                $('#tree_save').modal('show')
+            case process_node_level : 
+                var color = tree.getItemColor(id).acolor;
+                if (color != finish_color) {
+                    $('#tree_save_title').html(process_name + "修改");
+                    $('#tree_id').val(id);
+                    $('#tree_save').modal('show')
+                }
                 break;
             default :
                 break;
@@ -185,24 +198,40 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     tree.attachEvent("onRightClick", function(id, ev){
         var level = tree.getLevel(id);
         switch (level) {
-            case 2 :
+            case task_node_level :
                 var text_info = "是否完成该任务";
                 var hint = "已完成的任务将不再出现";
                 var href = "/frontend/gantt/finish?id=" + id;
                 var post_data = {};
                 checkPost(text_info, hint, href, post_data);
                 break;
-            case 3 : 
-                var text_info = "是否真的要删除该过程";
-                var hint = "已经开始执行的不允许删除";
-                var href = "/frontend/process/del?id=" + id;
-                var post_data = {};
-                checkPost(text_info, hint, href, post_data);
+            case process_node_level : 
+                var color = tree.getItemColor(id).acolor;
+                if (color != finish_color) {
+                    var text_info = "是否真的要删除该" + process_name;
+                    var hint = "已经开始执行的不允许删除";
+                    var href = "/frontend/process/del?id=" + id;
+                    var post_data = {};
+                    checkPost(text_info, hint, href, post_data);
+                }
                 break;
             default :
                 break;
         }
         return false;
+    });
+
+    tree.attachEvent("onBeforeDrag", function(id){
+        var level = tree.getLevel(id);
+        if (level != process_node_level) {
+            return false;
+        }
+        var color = tree.getItemColor(id).acolor;
+        if (color === finish_color) {
+            swal("操作失败!", "该" + process_name + "已结束", "error");
+            return false;
+        }
+        return true;
     });
 
     tree.setXMLAutoLoading("/frontend/process/data");
@@ -212,7 +241,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     // 实现已完成的过程标记横线
     tree.attachEvent("onOpenEnd", function(id, state){
         var level = tree.getLevel(id);
-        if (level == 2) {
+        if (level == task_node_level) {
             var sub_list = tree.getAllSubItems(id);
             var sub_arr = sub_list.split(',');
             var ids_obj = new Object();
@@ -236,7 +265,8 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
                             var finish_list = data.data['list'];
                             for (var i = 0 ; i < finish_list.length; i++) {
                                 var origin_id = ids_obj[finish_list[i]];
-                                tree.setItemStyle(origin_id, "color:red;text-decoration:line-through;");
+                                tree.setItemStyle(origin_id, "text-decoration:line-through;");
+                                tree.setItemColor(origin_id, finish_color);
                             }
                         } else {
                             swal("操作失败!", data.message, "error");
@@ -256,13 +286,50 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     scheduler.config.xml_date="%Y-%m-%d %H:%i:%s";
 
     // 额外选项
-    var task_opt = <?php echo $taskDict; ?>;
-    scheduler.locale.labels.section_task = "所属任务";
+    var process_opt = <?php echo $processDict; ?>;
+    var process_map = <?php echo $process_dict_index; ?>;
+
+    scheduler.locale.labels.section_process_id = "所属" + process_name;
+    scheduler.locale.labels.section_finish     = process_name + "是否完成";
+
     scheduler.config.lightbox.sections = [  
         {name:"description", height:200, map_to:"text", type:"textarea" , focus:true},
-        {name:"task", height:21, map_to:"task", type:"select", options:task_opt},
-        {name:"time", height:72, type:"calendar_time", map_to:"auto"}    
+        {name:"process_id", height:21, map_to:"process_id", type:"select", options:process_opt},
+        {name:"time", height:72, type:"calendar_time", map_to:"auto"},
+        {name:"finish", map_to:"finish", type:"checkbox", checked_value: "<?php echo Process::FINISH_TRUE; ?>", unchecked_value: "no", height:40}
     ];
+
+    // 保存前校验
+    scheduler.attachEvent("onEventSave", function(id, ev, is_new){
+        if (!ev.process_id) {
+            swal("操作失败!", "请选择所属" + process_name, "error");
+            return false;
+        }
+        ev.process_name = process_map[ev.process_id]['label'];
+        return true;
+    });
+
+    // 保存后树状结构修改
+    scheduler.attachEvent("onEventAdded", function(id,ev){
+        if (ev.finish == "<?php echo Process::FINISH_TRUE;?>") {
+            tree.setItemColor(ev.process_id, finish_color);
+            tree.setItemStyle(ev.process_id, "text-decoration:line-through;");
+            swal("提示!", ev.process_name + "已完成", "success");
+        } else {
+            tree.setItemStyle(ev.process_id, "text-decoration:none;color:rgb(0,0,0);");
+            //swal("提示!", ev.process_name + "未完成", "error");
+        }
+    });
+    scheduler.attachEvent("onEventChanged", function(id,ev){
+        if (ev.finish == "<?php echo Process::FINISH_TRUE;?>") {
+            tree.setItemColor(ev.process_id, finish_color);
+            tree.setItemStyle(ev.process_id, "text-decoration:line-through;");
+            swal("提示!", ev.process_name + "已完成", "success");
+        } else {
+            tree.setItemStyle(ev.process_id, "text-decoration:none;color:rgb(0,0,0);");
+            //swal("提示!", ev.process_name + "未完成", "error");
+        }
+    });
 
     // 悬浮高亮
     scheduler.attachEvent("onTemplatesReady", function() {
@@ -284,7 +351,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
 
     // 拖拽
     scheduler.attachEvent("onExternalDragIn", function(id, source, event){
-        scheduler.getEvent(id).task_id = tree._dragged[0].id;
+        scheduler.getEvent(id).process_id = tree._dragged[0].id;
         return true;
     });
 
@@ -293,7 +360,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     scheduler.templates.event_class = function(start, end, event) {
         if (event.id == modified_event_id)
             return "copied_event";
-        return ""; // default
+        return ""; 
     };
 
     scheduler.attachEvent("onEventCopied", function(ev) {
@@ -344,7 +411,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
 
     // 快捷信息标题显示
     scheduler.templates.quick_info_title = function(start, end, ev){ 
-        return task_opt[ev.task_id]['label'];
+        return ev.process_name;
     };
 
     // 初始化

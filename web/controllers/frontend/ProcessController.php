@@ -117,6 +117,5 @@ class ProcessController extends BaseController
         } catch (\exception $e) {
             return $this->returnException($e);
         }
-        
     }
 }

@@ -17,8 +17,9 @@ use Yii;
  */
 class Process extends BaseActiveRecord
 {
-    CONST FINISH_NO   = 0;
-    CONST FINISH_TRUE = 1;
+    CONST FINISH_NO    = 0;
+    CONST FINISH_TRUE  = 1;
+    CONST FINISH_FLAG  = "finish";
 
     /**
      * @inheritdoc
@@ -57,14 +58,49 @@ class Process extends BaseActiveRecord
         ];
     }
 
+    private function getFinishDateRange()
+    {
+        $w = date("w", strtotime($date)); 
+        $d = $w ? $w - $first : 6;
+        $now_start = date("Y-m-d", strtotime("$date -".$d." days")); 
+        return $now_start;
+    }
+
     public function getTreeNodeList()
     {
         $process_t = self::tableName();
-        $process_query = self::find()
+        $query = self::find()
             ->select("id, text, plan_num")
             ->andFilterWhere(["$process_t.user_id" => $this->user_id])
-            ->andFilterWhere(["$process_t.task_id" => $this->task_id]);
-        $process_list = $process_query->asArray()->all();
-        return $process_list;
+            ->andFilterWhere(["$process_t.task_id" => $this->task_id])
+            ->andFilterWhere([
+                "or",
+                [
+                    "and", 
+                    ["$process_t.finish" => self::FINISH_TRUE], 
+                    [ '>=', "$process_t.ctime", $this->getFinishDateRange() ]
+                ],
+                ["$process_t.finish" => self::FINISH_NO]
+            ]);
+        $list = $query->asArray()->all();
+        return $list;
+    }
+
+    public function getQuery()
+    {
+        $process_t = self::tableName();
+        $query = self::find()
+            ->orderBy("$task_t.ctime");
+        $query->andFilterWhere(["$task_t.user_id" => $this->user_id]);
+        $query->andFilterWhere([
+            "or",
+            [
+                "and", 
+                ["$process_t.finish" => self::FINISH_TRUE], 
+                [ '>=', "$process_t.ctime", $this->getFinishDateRange() ]
+            ],
+            ["$process_t.finish" => self::FINISH_NO]
+        ]);
+        return $query;
     }
 }
