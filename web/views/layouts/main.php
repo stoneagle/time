@@ -1,8 +1,4 @@
 <?php
-
-/* @var $this \yii\web\View */
-/* @var $content string */
-
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -22,36 +18,54 @@ AppAsset::register($this);
     <?php $this->head() ?>
 </head>
 <body>
-<?php $this->beginBody() ?>
 
+<?php $this->beginBody() ?>
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'My Company',
+        'brandLabel' => '进化',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+    $nav_items = [
+        ['label' => '首页', 'url' => ['/frontend/site/index']],
+        [
+            'label' => '时间计划', 
+            'items' => [
+                ['label' => '计划管理', 'url' => ['/frontend/gantt/index']],
+                ['label' => '时间管理', 'url' => ['/frontend/scheduler/index']]
+            ]
+        ],
+        ['label' => '知识网络', 'url' => ['/site/contact']],
+        [
+            'label' => "后台管理",
+            'items' => [
+                ['label' => '配置管理', 'url' => ['/frontend/config/index']],
+            ]
+        ]
+    ];
+    if (Yii::$app->user->isGuest) {
+        array_push(
+            $nav_items,
+            ['label' => '登录', 'url' => ['/user/security/login']],
+            ['label' => '注册', 'url' => ['/user/registration/register']]
+        );
+    } else {
+        array_push(
+            $nav_items,
+            [
+                'label' => '退出('.Yii::$app->user->identity->username .')', 
+                'url' => ['/user/security/logout'],
+                ['class' => 'btn btn-link logout'],
+                'linkOptions' => ['data-method' => 'post']
+            ]
+        );
+    }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
+        'items' => $nav_items
     ]);
     NavBar::end();
     ?>
@@ -66,9 +80,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-left">&copy; 火种 <?= date('Y') ?></p>
     </div>
 </footer>
 

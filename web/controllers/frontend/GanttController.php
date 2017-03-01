@@ -3,26 +3,34 @@
 namespace app\controllers\frontend;
 
 use Yii;
+use app\models\Config;
+use app\models\Error;
+use app\models\GanttTasks;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
 
 class GanttController extends BaseController
 {
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     public function actionIndex()
     {
+        $config_model = new Config;
+        $config_model->type = Config::TYPE_FIELD;
+        $field_dict = $config_model->getQuery()->select("id as key, name as label")->asArray()->all();
+        $config_model->type = Config::TYPE_ACTION;
+        $action_dict = $config_model->getQuery()->select("id as key, name as label")->asArray()->all();
+
         return $this->render('index', [
+            "fieldDict" => json_encode($field_dict),
+            "actionDict" => json_encode($action_dict),
         ]);
+    }
+
+    public function actionFinish($id)
+    {
+        $model = $this->findModel($id, GanttTasks::class);
+        $model->progress = GanttTasks::PROGRESS_END;
+        $model->modelValidSave();
+        $code = Error::ERR_OK;
+        return $this->packageJson(['id' => $model->id], $code, Error::msg($code));
     }
 }
