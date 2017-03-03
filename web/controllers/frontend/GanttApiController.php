@@ -33,8 +33,14 @@ class GanttApiController extends BaseController
             // 控制项目波动
             if ($one['type'] != GanttTasks::LEVEL_TASK) {
                 $one['duration'] = "";
+                $one['sort_date'] = $one['start_date'];
+                $one['start_date'] = "";
             } else if ($one['duration'] == 0) {
                 $one['unscheduled'] = true;
+            }
+            // 控制项目展开
+            if ($one['type'] != GanttTasks::LEVEL_PROJECT) {
+                $one['open'] = false;
             }
         }
         $result['data'] = $data;
@@ -57,7 +63,7 @@ class GanttApiController extends BaseController
                 "end_date"         => [null, true],
                 "duration"         => [null, true],
                 "progress"         => [0, false],
-                "action"           => [0, false],
+                "priority_id"      => [0, false],
                 "field"            => [0, false],
                 "parent"           => [null, true],
                 "unscheduled_flag" => [null, false],
@@ -70,12 +76,12 @@ class GanttApiController extends BaseController
             } else {
                 $model->duration   = $params['duration'];
             }
-            $model->progress   = $params['progress'];
-            $model->parent     = (int)$params['parent'];
-            $model->type       = $params['type'];
-            $model->action_id  = $params['action'];
-            $model->field_id   = $params['field'];
-            $model->user_id    = $this->user_obj->id;
+            $model->progress    = $params['progress'];
+            $model->parent      = (int)$params['parent'];
+            $model->type        = $params['type'];
+            $model->priority_id = $params['priority_id'];
+            $model->field_id    = $params['field'];
+            $model->user_id     = $this->user_obj->id;
             $model->modelValidSave();
             $ret = $this->prepareResponse($action_type, $model->id);
             return $this->directJson($ret);
@@ -96,7 +102,7 @@ class GanttApiController extends BaseController
                 "start_date"       => [null, true],
                 "duration"         => [null, true],
                 "progress"         => [0, false],
-                "action"           => [0, false],
+                "priority_id"      => [0, false],
                 "field"            => [0, false],
                 "parent"           => [null, true],
                 "unscheduled_flag" => [null, false],
@@ -109,10 +115,10 @@ class GanttApiController extends BaseController
             } else {
                 $model->duration   = $params['duration'];
             }
-            $model->progress   = $params['progress'];
-            $model->action_id  = $params['action'];
-            $model->field_id   = $params['field'];
-            $model->parent     = (int)$params['parent'];
+            $model->progress    = $params['progress'];
+            $model->priority_id = $params['priority_id'];
+            $model->field_id    = $params['field'];
+            $model->parent      = (int)$params['parent'];
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type);
@@ -238,7 +244,7 @@ class GanttApiController extends BaseController
         $data           = $model->getInitTree();
         $result = [
             'id'   => 0,
-            'item' => $data
+            'item' => $data,
         ];
         return $this->directJson(json_encode($result));
     }

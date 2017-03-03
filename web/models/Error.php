@@ -4,13 +4,14 @@ namespace app\models;
 
 class Error
 {
-    const ERR_OK     = 0;
-    const ERR_PARAMS = 1;
-    const ERR_SERVER = 2;
-    const ERR_MODEL  = 3;
-    const ERR_VALID  = 100;
-    const ERR_SAVE   = 101;
-    const ERR_DEL    = 102;
+    const ERR_OK                          = 0;
+    const ERR_PARAMS                      = 1;
+    const ERR_SERVER                      = 2;
+    const ERR_MODEL                       = 3;
+    const ERR_VALID                       = 100;
+    const ERR_SAVE                        = 101;
+    const ERR_DEL                         = 102;
+    const ERR_GANTT_TASKS_DURATION_CHANGE = 1000;
 
     public static $err_msg = [
         self::ERR_OK     => "操作成功",

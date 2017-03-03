@@ -70,7 +70,7 @@ class Process extends BaseActiveRecord
     {
         $process_t = self::tableName();
         $query = self::find()
-            ->select("id, text, plan_num")
+            ->select("id, text, plan_num, action_id")
             ->andFilterWhere(["$process_t.user_id" => $this->user_id])
             ->andFilterWhere(["$process_t.task_id" => $this->task_id])
             ->andFilterWhere([

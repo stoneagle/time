@@ -16,12 +16,14 @@ use yii\helpers\ArrayHelper;
  */
 class Config extends BaseActiveRecord 
 {
-    CONST TYPE_FIELD  = 1;
-    CONST TYPE_ACTION = 2;
+    CONST TYPE_FIELD    = 1;
+    CONST TYPE_ACTION   = 2;
+    CONST TYPE_PRIORITY = 3;
 
     public static $type_arr = [
-        self::TYPE_FIELD  => "领域",
-        self::TYPE_ACTION => "行为",
+        self::TYPE_FIELD    => "领域",
+        self::TYPE_ACTION   => "行为",
+        self::TYPE_PRIORITY => "优先级",
     ];
 
     /**
@@ -68,10 +70,15 @@ class Config extends BaseActiveRecord
         return $query;
     }
 
-    public function getTypeDict()
+    public function getTypeDict($dxl_style = false)
     {
         $query = $this->getQuery();
-        $result = $query->select("id, name")->all();
-        return ArrayHelper::map($result, 'id', 'name');
+        if ($dxl_style) {
+            $ret = $query->select("id as key, name as label")->asArray()->all();
+        } else {
+            $result = $query->select("id, name")->asArray()->all();
+            $ret = ArrayHelper::map($result, 'id', 'name');
+        }
+        return $ret;
     }
 }

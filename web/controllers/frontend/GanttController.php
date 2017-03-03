@@ -13,15 +13,15 @@ class GanttController extends BaseController
 
     public function actionIndex()
     {
-        $config_model = new Config;
+        $config_model       = new Config;
         $config_model->type = Config::TYPE_FIELD;
-        $field_dict = $config_model->getQuery()->select("id as key, name as label")->asArray()->all();
-        $config_model->type = Config::TYPE_ACTION;
-        $action_dict = $config_model->getQuery()->select("id as key, name as label")->asArray()->all();
+        $field_dict         = $config_model->getTypeDict(true);
+        $config_model->type = Config::TYPE_PRIORITY;
+        $priority_dict      = $config_model->getTypeDict(true);
 
         return $this->render('index', [
             "fieldDict" => json_encode($field_dict),
-            "actionDict" => json_encode($action_dict),
+            "priorityDict" => json_encode($priority_dict),
         ]);
     }
 

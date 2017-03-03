@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use app\models\Process;
 use app\assets\AppAsset;
 use yii\helpers\ArrayHelper;
+use kartik\select2\Select2;
 
 $this->title                   = '时间管理';
 $this->params['breadcrumbs'][] = $this->title;
@@ -55,6 +56,43 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     #treebox {
         border-radius: 4px;
     }
+
+    /* background color for whole container and it's border*/
+    .my_event {
+        background-color: #add8e6;
+        border: 1px solid #778899;
+        overflow: hidden;
+    }
+    /* disabling default color for select menu */
+    .dhx_cal_select_menu.my_event div {
+        border: 0;
+        background-color: transparent;
+        color: black;
+    }
+    /* styles for event content */
+    .dhx_cal_event.my_event .my_event_body {
+
+        padding-top: 3px;
+        padding-left: 5px;
+    }
+    /* event's date information */
+    .my_event .event_date {
+        font-weight: bold;
+        padding-right: 5px;
+    }
+    /* event's resizing section */
+    .my_event_resize {
+        height: 3px;
+        position: absolute;
+        bottom: -1px;
+    }
+    /* event's move section */
+    .my_event_move {
+        position: absolute;
+        top: 0;
+        height: 10px;
+        cursor: pointer;
+    }
 </style>
 <div class="container-fluid">
     <h1><?= Html::encode($this->title); ?></h1>
@@ -69,12 +107,27 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
                     </div>
                     <div class="modal-body">
                             <div class="form-group">
-                                <label for="recipient-name" class="control-label">过程:</label>
+                                <label for="text" class="control-label">行为名称:</label>
                                 <input type="text" class="form-control" id="tree_text" name="text" >
                             </div>
                             <div class="form-group">
-                                <label for="message-text" class="control-label">预计时间颗粒(30min/颗):</label>
+                                <label for="plan_num" class="control-label">预计时间颗粒(30min/颗):</label>
                                 <input type="number" class="form-control" name="plan_num" min=0 value=0 >
+                            </div>
+                            <div class="form-group">
+                                <label for="action_id" class="control-label">行动类别:</label>
+                                <?php
+                                echo Select2::widget([
+                                    'id'             => 'tree_action_id',
+                                    'name'           => 'action_id',
+                                    'data'           => $actionDict,
+                                    'size'           => Select2::SMALL,
+                                    'options'        => ['placeholder' => '请选择类别'],
+                                    'pluginOptions'  => [
+                                        'allowClear' => true
+                                    ],
+                                ]);
+                                ?>
                             </div>
                             <input type="hidden" class="form-control" id="tree_task_id" name="task_id">
                             <input type="hidden" class="form-control" id="tree_id" name="id">
@@ -109,7 +162,17 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     var finish_color       = 'red';
     var task_node_level    = 2;
     var process_node_level = 3;
-    var process_name       = "过程";
+    var process_name       = "行动";
+
+    var process_opt = <?php echo $processDict; ?>;
+    var process_map = <?php echo $process_dict_index; ?>;
+
+    var init_sections = [  
+        {name:"description", height:200, map_to:"text", type:"textarea" , focus:true},
+        {name:"process_id", height:21, map_to:"process_id", type:"select", options:process_opt},
+        {name:"time", height:72, type:"calendar_time", map_to:"auto"},
+        {name:"finish", map_to:"finish", type:"checkbox", checked_value: "<?php echo Process::FINISH_TRUE; ?>", unchecked_value: "no", height:40}
+    ];
 
     var tree = new dhtmlXTreeObject("treebox", "100%", "100%", 0);
     tree.setImagesPath("/css/lib/dhxtree_skyblue/");
@@ -151,7 +214,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
         } else {
             // tree的id后面加了时间戳
             // todo,用其它字段记录新建的数值，要不然版本更新后，会出现错误
-            var raw_id = tree_id.split("_")[0];
+            // var raw_id = tree_id.split("_")[0];
             new_flag = true;
             href = "/frontend/process/add";
         }
@@ -166,11 +229,24 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
                     swal("操作失败!", data.message, "error");
                 } else {
                     $('#tree_save').modal('hide')
-                    var obj_id       = data.data['id'];
-                    var obj_text     = $('#tree_text').val();
+                    var obj_id          = data.data['id'];
+                    var obj_text        = $('#tree_text').val();
+                    var obj_action_type = $('#tree_action_id').find("option:selected").text();
+                    obj_text = "[" + obj_action_type + "]" + obj_text;
                     if (new_flag) {
                         var fid          = $('#tree_task_id').val();
                         tree.insertNewItem(fid, obj_id, obj_text, 0, 0, 0, 0, 'SELECT');
+                        tree.refreshItem(fid);
+                        // 无法更新scheduler选项
+                        var new_process_opt = data.data['process_dict'];
+                        process_map = data.data['process_map'];
+                        scheduler.resetLightbox();
+                        scheduler.config.lightbox.sections = [  
+                            {name:"description", height:200, map_to:"text", type:"textarea" , focus:true},
+                            {name:"process_id", height:21, map_to:"process_id", type:"select", options:new_process_opt},
+                            {name:"time", height:72, type:"calendar_time", map_to:"auto"},
+                            {name:"finish", map_to:"finish", type:"checkbox", checked_value: "<?php echo Process::FINISH_TRUE; ?>", unchecked_value: "no", height:40}
+                        ];
                     } else {
                         tree.setItemText(tree_id, obj_text);
                     }
@@ -238,7 +314,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     tree.setDataMode("json");
     tree.load("/frontend/gantt-api/task-tree", 'json');
 
-    // 实现已完成的过程标记横线
+    // 实现已完成的行为标记横线
     tree.attachEvent("onOpenEnd", function(id, state){
         var level = tree.getLevel(id);
         if (level == task_node_level) {
@@ -286,18 +362,9 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     scheduler.config.xml_date="%Y-%m-%d %H:%i:%s";
 
     // 额外选项
-    var process_opt = <?php echo $processDict; ?>;
-    var process_map = <?php echo $process_dict_index; ?>;
-
     scheduler.locale.labels.section_process_id = "所属" + process_name;
     scheduler.locale.labels.section_finish     = process_name + "是否完成";
-
-    scheduler.config.lightbox.sections = [  
-        {name:"description", height:200, map_to:"text", type:"textarea" , focus:true},
-        {name:"process_id", height:21, map_to:"process_id", type:"select", options:process_opt},
-        {name:"time", height:72, type:"calendar_time", map_to:"auto"},
-        {name:"finish", map_to:"finish", type:"checkbox", checked_value: "<?php echo Process::FINISH_TRUE; ?>", unchecked_value: "no", height:40}
-    ];
+    scheduler.config.lightbox.sections         = init_sections;
 
     // 保存前校验
     scheduler.attachEvent("onEventSave", function(id, ev, is_new){
@@ -332,35 +399,45 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
     });
 
     // 悬浮高亮
-    scheduler.attachEvent("onTemplatesReady", function() {
-        var highlight_step = 60; // we are going to highlight 30 minutes timespan
+    /* scheduler.attachEvent("onTemplatesReady", function() { */
+    /*     var highlight_step = 60; // we are going to highlight 30 minutes timespan */
 
-        var highlight_html = "";
-        var hours = scheduler.config.last_hour - scheduler.config.first_hour; // e.g. 24-8=16
-        var times = hours*60/highlight_step; // number of highlighted section we should add
-        var height = scheduler.config.hour_size_px*(highlight_step/60);
-        for (var i=0; i<times; i++) {
-            highlight_html += "<div class='highlighted_timespan' style='height: "+height+"px;'></div>"
+    /*     var highlight_html = ""; */
+    /*     var hours = scheduler.config.last_hour - scheduler.config.first_hour; // e.g. 24-8=16 */
+    /*     var times = hours*60/highlight_step; // number of highlighted section we should add */
+    /*     var height = scheduler.config.hour_size_px*(highlight_step/60); */
+    /*     for (var i=0; i<times; i++) { */
+    /*         highlight_html += "<div class='highlighted_timespan' style='height: "+height+"px;'></div>" */
+    /*     } */
+    /*     scheduler.addMarkedTimespan({ */
+    /*         days: "fullweek", */
+    /*         zones: "fullday", */
+    /*         html: highlight_html */
+    /*     }); */
+    /* }); */
+
+    // 自定义event内容
+    scheduler.attachEvent("onTemplatesReady", function(){
+        scheduler.templates.event_text=function(start,end,event){
+            return "<b>" + event.info+ "</b>";
         }
-        scheduler.addMarkedTimespan({
-            days: "fullweek",
-            zones: "fullday",
-            html: highlight_html
-        });
-    });
+    }); 
 
     // 拖拽
     scheduler.attachEvent("onExternalDragIn", function(id, source, event){
-        scheduler.getEvent(id).process_id = tree._dragged[0].id;
+        var tree_id = tree._dragged[0].id;
+        var tree_arr = tree_id.split('_');
+        scheduler.getEvent(id).process_id = tree_arr[0];
         return true;
     });
 
     // 复制，剪切，粘贴
     var modified_event_id = null;
     scheduler.templates.event_class = function(start, end, event) {
+        // my_event是自定义event的class
         if (event.id == modified_event_id)
-            return "copied_event";
-        return ""; 
+            return "copied_event my_event";
+        return "my_event"; 
     };
 
     scheduler.attachEvent("onEventCopied", function(ev) {
@@ -437,4 +514,32 @@ $this->registerJsFile('@web/js/lib/locale_cn_scheduler.js',['depends'=>['app\ass
             }
         });
     }
+
+    // 自定义event盒子
+    scheduler.renderEvent = function(container, ev, width, height, header_content, body_content) {
+        var container_width = container.style.width; // e.g. "105px"
+
+        // move section
+        var html = "<div class='dhx_event_move my_event_move' style='width: " + container_width + "'></div>";
+
+        // container for event contents
+        html+= "<div class='my_event_body'>";
+            html += "<span class='event_date'>";
+            // two options here: show only start date for short events or start+end for long
+            if ((ev.end_date - ev.start_date) / 60000 > 40) { // if event is longer than 40 minutes
+                html += scheduler.templates.event_header(ev.start_date, ev.end_date, ev);
+                html += "</span><br/>";
+            } else {
+                html += scheduler.templates.event_date(ev.start_date) + "</span>";
+            }
+            // displaying event text
+            html += "<span>" + scheduler.templates.event_text(ev.start_date, ev.end_date, ev) + "</span>";
+        html += "</div>";
+
+        // resize section
+        html += "<div class='dhx_event_resize my_event_resize' style='width: " + container_width + "'></div>";
+
+        container.innerHTML = html;
+        return true; // required, true - we've created custom form; false - display default one instead
+    };
 </script>

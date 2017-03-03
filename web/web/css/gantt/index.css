@@ -34,6 +34,11 @@
     display: none;
 }
 
+.regular-task .gantt_task_content {
+    background-color: #FFCC33;
+    border: 1px solid #FF3333
+}
+
 // 日期选择
 .dhx_calendar_cont input {
     width: 96px;

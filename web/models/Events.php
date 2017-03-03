@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Process;
+use app\models\GanttTasks;
 use yii\base\Exception;
 
 /**
@@ -52,6 +53,7 @@ class Events extends BaseActiveRecord
             'text'       => '内容',
             'user_id'    => '所属用户',
             'process_id' => '所属过程',
+            'action_id'  => '过程类别',
             'ctime'      => '创建时间',
             'utime'      => '更新时间',
         ];
@@ -60,14 +62,17 @@ class Events extends BaseActiveRecord
     public function getQuery()
     {
         $process_t = Process::tableName();
+        $task_t = GanttTasks::tableName();
         $events_t = self::tableName();
         $query = self::find()
             ->select("
                 $events_t.*, 
                 $process_t.text as process_name,
+                $task_t.text as task_name,
                 $process_t.finish
                 ")
-            ->leftJoin($process_t, "$process_t.id = $events_t.process_id");
+            ->leftJoin($process_t, "$process_t.id = $events_t.process_id")
+            ->leftJoin($task_t, "$task_t.id = $process_t.task_id");
         return $query;
     }
 }

@@ -3,6 +3,7 @@
 namespace app\controllers\frontend;
 
 use app\models\Process;
+use app\models\Config;
 use app\models\GanttTasks;
 use app\models\Constants;
 use app\models\Error;
@@ -30,6 +31,15 @@ class ProcessController extends BaseController
         $model->user_id = $this->user_obj->id;
         $model->task_id = $id;
         $data = $model->getTreeNodeList();
+
+        $config_model       = new Config;
+        $config_model->type = Config::TYPE_ACTION;
+        $action_dict        = $config_model->getTypeDict();
+        foreach ($data as &$one) {
+            $config_name = ArrayHelper::getValue($action_dict, $one['action_id']);
+            $one['text'] = "[{$config_name}]".$one['text'];
+        }
+
         $result = [
             'id'   => $id,
             'item' => $data
@@ -42,19 +52,29 @@ class ProcessController extends BaseController
         try {
             $model = new Process;
             $params_conf = [
-                "text"       => [null, true],
-                "plan_num"   => [null, true],
-                "task_id"    => [null, true],
+                "text"      => [null, true],
+                "plan_num"  => [null, true],
+                "task_id"   => [null, true],
+                "action_id" => [null, true],
             ];
-            $params          = $this->getParamsByConf($params_conf, 'post');
-            $model->text     = $params['text'];
-            $model->plan_num = $params['plan_num'];
-            $model->task_id  = $params['task_id'];
-            $model->user_id  = $this->user_obj->id;
+            $params           = $this->getParamsByConf($params_conf, 'post');
+            $model->text      = $params['text'];
+            $model->plan_num  = $params['plan_num'];
+            $model->task_id   = $params['task_id'];
+            $model->action_id = $params['action_id'];
+            $model->user_id   = $this->user_obj->id;
             $model->modelValidSave();
 
+            $model          = new Process;
+            $model->user_id = $this->user_obj->id;
+            $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+
             $code = Error::ERR_OK;
-            return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+            return $this->packageJson([
+                'id'           => $model->attributes['id'],
+                "process_dict" => $process_dict,
+                "process_map" => ArrayHelper::index($process_dict, 'key'),
+            ], $code, Error::msg($code));
         } catch (\exception $e) {
             return $this->returnException($e);
         }
@@ -64,14 +84,16 @@ class ProcessController extends BaseController
     {
         try {
             $params_conf = [
-                "id"       => [null, true],
-                "text"     => [null, true],
-                "plan_num" => [null, true],
+                "id"        => [null, true],
+                "text"      => [null, true],
+                "plan_num"  => [null, true],
+                "action_id" => [null, true],
             ];
-            $params          = $this->getParamsByConf($params_conf, 'post');
-            $model           = $this->findModel($params['id'], Process::class);
-            $model->text     = $params['text'];
-            $model->plan_num = $params['plan_num'];
+            $params           = $this->getParamsByConf($params_conf, 'post');
+            $model            = $this->findModel($params['id'], Process::class);
+            $model->text      = $params['text'];
+            $model->plan_num  = $params['plan_num'];
+            $model->action_id = $params['action_id'];
             $model->modelValidSave();
 
             $code = Error::ERR_OK;

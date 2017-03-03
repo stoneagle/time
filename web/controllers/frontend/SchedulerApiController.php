@@ -29,6 +29,9 @@ class SchedulerApiController extends BaseController
         $model  = new Events;
         $query  = $model->getQuery();
         $result = $query->asArray()->all();
+        foreach ($result as &$one) {
+            $one['info'] = "[".$one['task_name']."]".$one['process_name'];
+        }
         return $this->directXml($result);
     }
 
@@ -62,6 +65,7 @@ class SchedulerApiController extends BaseController
             }
             $process_model->modelValidSave();
             $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+            $task_model->process_id = $process_model->id;
             $task_model->checkAndChangeDuration();
 
             $transaction->commit(); 
@@ -104,6 +108,7 @@ class SchedulerApiController extends BaseController
             }
             $process_model->modelValidSave();
             $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+            $task_model->process_id = $process_model->id;
             $task_model->checkAndChangeDuration();
 
             $transaction->commit(); 
