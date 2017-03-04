@@ -1,21 +1,21 @@
 <?php
 use yii\helpers\Html;
-use app\models\GanttTasks;
+use app\models\Project;
 use app\assets\AppAsset;
 use yii\helpers\ArrayHelper;
 
-$this->title                   = '计划管理';
+$this->title                   = '项目管理';
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->registerCssFile('@web/css/lib/dhtmlx.css',['depends'=>['app\assets\AppAsset']]);
-$this->registerCssFile('@web/css/lib/dhtmlxgantt.css',['depends'=>['app\assets\AppAsset']]);
-$this->registerCssFile('@web/css/lib/dhtmlxgantt_meadow.css',['depends'=>['app\assets\AppAsset']]);
+$this->registerCssFile('@web/css/lib/dhtmlx/dhtmlx.css',['depends'=>['app\assets\AppAsset']]);
+$this->registerCssFile('@web/css/lib/dhtmlx/dhtmlxgantt.css',['depends'=>['app\assets\AppAsset']]);
+$this->registerCssFile('@web/css/lib/dhtmlx/dhtmlxgantt_meadow.css',['depends'=>['app\assets\AppAsset']]);
 $this->registerCssFile('@web/css/gantt/index.css',['depends'=>['app\assets\AppAsset']]);
 
-$this->registerJsFile('@web/js/lib/dhtmlx.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
-$this->registerJsFile('@web/js/lib/dhtmlxgantt.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
-$this->registerJsFile('@web/js/lib/dhtmlxgantt_marker.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
-$this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
+$this->registerJsFile('@web/js/lib/dhtmlx/dhtmlx.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
+$this->registerJsFile('@web/js/lib/dhtmlx/dhtmlxgantt.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
+$this->registerJsFile('@web/js/lib/dhtmlx/dhtmlxgantt_marker.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
+$this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 ?>
 <div>
     <h1><?= Html::encode($this->title); ?></h1>
@@ -32,77 +32,6 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
         text: "Today",
         title:"Today: "+ date_to_str(today)
     });
-
-    // 时间范围选择
-    /* var duration = function (a, b, c) { */
-    /*     var res = gantt.calculateDuration(a.getDate(false), b.getDate(false)); */
-    /*     c.innerHTML = res + ' days'; */
-    /* }; */
-
-    /* var calendar_init = function (id, data, date) { */
-    /*     var obj = new dhtmlXCalendarObject(id); */
-    /*     obj.setDateFormat(data.date_format ? data.date_format : ''); */
-    /*     obj.setDate(date ? date : (new Date())); */
-    /*     obj.hideTime(); */
-    /*     if (data.skin) */
-    /*         obj.setSkin(data.skin); */
-    /*     return obj; */
-    /* }; */
-
-    /* gantt.form_blocks["dhx_calendar"] = { */
-    /*     render: function (sns) { */
-    /*         return "<div class='dhx_calendar_cont'><input type='text' readonly='true' id='calendar1'/> &#8211; " */
-    /*                 + "<input type='text' readonly='true' id='calendar2'/><label id='duration'></label></div>"; */
-    /*     }, */
-    /*     set_value: function (node, value, task, data) { */
-    /*         var a = node._cal_start = calendar_init('calendar1', data, task.start_date); */
-    /*         var b = node._cal_end = calendar_init('calendar2', data, task.end_date); */
-    /*         var c = node.lastChild; */
-
-    /*         b.setInsensitiveRange(null, new Date(a.getDate(false) - 86400000)); */
-
-    /*         var a_click = a.attachEvent("onClick", function (date) { */
-    /*             b.setInsensitiveRange(null, new Date(date.getTime() - 86400000)); */
-    /*             duration(a, b, c); */
-    /*         }); */
-
-    /*         var b_click = b.attachEvent("onClick", function (date) { */
-    /*             duration(a, b, c); */
-    /*         }); */
-
-    /*         var a_time_click = a.attachEvent("onChange", function (d) { */
-    /*             b.setInsensitiveRange(null, new Date(d.getTime() - 86400000)); */
-    /*             duration(a, b, c); */
-    /*         }); */
-
-    /*         var b_time_click = b.attachEvent("onChange", function (d) { */
-    /*             duration(a, b, c); */
-    /*         }); */
-
-
-    /*         var id = gantt.attachEvent("onAfterLightbox", function () { */
-    /*             a.detachEvent(a_click); */
-    /*             a.detachEvent(a_time_click); */
-    /*             a.unload(); */
-    /*             b.detachEvent(b_click); */
-    /*             b.detachEvent(b_time_click); */
-    /*             b.unload(); */
-    /*             a = b = null; */
-    /*             this.detachEvent(id); */
-    /*         }); */
-
-    /*         document.getElementById('calendar1').value = a.getDate(true); */
-    /*         document.getElementById('calendar2').value = b.getDate(true); */
-    /*         duration(a, b, c); */
-    /*     }, */
-    /*     get_value: function (node, task) { */
-    /*         task.start_date = node._cal_start.getDate(false); */
-    /*         task.end_date = node._cal_end.getDate(false); */
-    /*         return task; */
-    /*     }, */
-    /*     focus: function (node) { */
-    /*     } */
-    /* }; */
 
     // 日期格式
     gantt.config.open_tree_initially = true;
@@ -133,19 +62,17 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
     var priority_opt                        = <?php echo $priorityDict;?>;
     gantt.locale.labels.section_field_id    = "领域";
     gantt.locale.labels.section_priority_id = "重要性";
-    //gantt.locale.labels.section_level     = "层级";
 
     var custom_sections                = [
         {name: "description", height: 70, map_to: "text", type: "textarea", focus: true},
         {name: "time", type: "duration", map_to: "auto"}
-        //{name: "time", type: "dhx_calendar", map_to: "auto", skin: '', date_format: '%d %M %Y'}
     ];
 
     gantt.attachEvent("onBeforeLightbox", function(id){
         gantt.resetLightbox();
         var currentSections = custom_sections.slice();
         var task = gantt.getTask(id);
-        if (task.$level == <?php echo GanttTasks::LEVEL_PROJECT;?>) {
+        if (task.$level == <?php echo Project::LEVEL_PROJECT;?>) {
             if (field_opt) {
                 var default_v = field_opt[0]['key'];
             } else {
@@ -161,8 +88,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             }
             var priority_section = {name:"priority_id", height:30, type:"select", map_to:"priority_id", options:priority_opt, default_value:default_v};
             currentSections.push(priority_section);
-        } else if (task.$level == <?php echo GanttTasks::LEVEL_PLAN;?>) {
-        }
+        } 
         gantt.config.lightbox.sections = currentSections;
         return true;
     });
@@ -200,16 +126,10 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
     });
 
     // 树状三层结构
-    //gantt.config.types.root  = "plan-task";
-    gantt.config.types.project = "<?php echo GanttTasks::LEVEL_PROJECT; ?>";
-    gantt.config.types.plan    = "<?php echo GanttTasks::LEVEL_PLAN; ?>";
-    gantt.config.types.task    = "<?php echo  GanttTasks::LEVEL_TASK; ?>";
-
-    gantt.config.lightbox.plan_sections = gantt.config.lightbox.sections;
-    gantt.config.lightbox.project_sections    = [
-        {name: "description", height: 70, map_to: "text", type: "textarea", focus: true},
-        {name: "time", type: "duration", map_to: "auto", readonly: true}
-    ];
+    gantt.config.types.project = "<?php echo Project::LEVEL_PROJECT; ?>";
+    gantt.config.types.task    = "<?php echo Project::LEVEL_TASK; ?>";
+    gantt.config.types.action    = "<?php echo  Project::LEVEL_ACTION; ?>";
+    gantt.config.lightbox.project_sections = gantt.config.lightbox.sections;
 
     function defaultValues(task) {
         var text = "",
@@ -220,8 +140,8 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             case types.project:
                 text = '项目';
                 break;
-            case types.plan:
-                text = "计划";
+            case types.task:
+                text = "任务";
                 break;
             default:
                 text = '任务';
@@ -242,14 +162,14 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             level = gantt.getTask(task.parent).$level + 1;
         }
         switch (level) {
-            case <?php echo GanttTasks::LEVEL_PROJECT;?>:
+            case <?php echo Project::LEVEL_PROJECT;?>:
                 task.type = types.project;
                 break;
-            case <?php echo GanttTasks::LEVEL_PLAN;?>:
-                task.type = types.plan;
+            case <?php echo Project::LEVEL_TASK;?>:
+                task.type = types.task;
                 break;
             default:
-                task.type = types.task;
+                task.type = types.action;
                 break;
         }
 
@@ -267,11 +187,11 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             level = gantt.getTask(task.parent).$level + 1;
         }
         switch (level) {
-            case <?php echo GanttTasks::LEVEL_PROJECT;?>:
+            case <?php echo Project::LEVEL_PROJECT;?>:
                 task.type = types.project;
                 break;
-            case <?php echo GanttTasks::LEVEL_PLAN;?>:
-                task.type = types.plan;
+            case <?php echo Project::LEVEL_TASK;?>:
+                task.type = types.task
                 break;
             default:
                 task.type = types.task;
@@ -281,11 +201,6 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
         defaultValues(task);
         return true;
     });
-
-    // 进度百分比
-    /* gantt.templates.progress_text = function(start, end, task){ */
-    /*     return "<span style='text-align:left;'>" + Math.round(task.progress*100)+ "% </span>"; */
-    /* }; */
 
     // 子项目与父项目合并
     /* gantt.templates.rightside_text = function(start, end, task){ */
@@ -317,7 +232,7 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
             case gantt.config.types.project:
                 css.push('project-task');
                 break;
-            case gantt.config.types.plan:
+            case gantt.config.types.task:
                 css.push('phase-task');
                 break;
             default:
@@ -390,9 +305,9 @@ $this->registerJsFile('@web/js/lib/locale_cn_gantt.js',['depends'=>['app\assets\
 
     // 初始化
     gantt.init("gantt_here");
-    gantt.load("/frontend/gantt-api/data");
+    gantt.load("/frontend/project-api/data");
 
-    var dp = new gantt.dataProcessor("/frontend/gantt-api");
+    var dp = new gantt.dataProcessor("/frontend/project-api");
     dp.init(gantt);
     dp.setTransactionMode("REST");
 </script>

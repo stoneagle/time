@@ -12,6 +12,7 @@ class Error
     const ERR_SAVE                        = 101;
     const ERR_DEL                         = 102;
     const ERR_GANTT_TASKS_DURATION_CHANGE = 1000;
+    const ERR_GANTT_TYPE                  = 1001;
 
     public static $err_msg = [
         self::ERR_OK     => "操作成功",

@@ -4,9 +4,9 @@ use yii\db\Schema;
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `process`.
+ * Handles the creation of table `count_record`.
  */
-class m170228_062550_create_process_table extends Migration
+class m170304_114629_create_count_record_table extends Migration
 {
     /**
      * @inheritdoc
@@ -17,14 +17,11 @@ class m170228_062550_create_process_table extends Migration
         if ($this->db->driverName === 'mysql') {
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
-        $this->createTable('{{%process}}', [
+        $this->createTable('{{%count_record}}', [
             'id'        => Schema::TYPE_PK,
-            'plan_num'  => Schema::TYPE_SMALLINT.' NOT NULL DEFAULT 0 COMMENT "计划时间颗粒" ',
-            'text'      => Schema::TYPE_STRING.' NOT NULL DEFAULT "" COMMENT "内容" ',
-            'user_id'   => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属用户" ',
             'task_id'   => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属任务" ',
-            'action_id' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "行为类别" ',
-            'finish'    => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT 0 COMMENT "完成情况" ',
+            'status'    => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "状态" ',
+            'init_time' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "起始时间" ',
             'ctime'     => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "创建时间"',
             'utime'     => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "更新时间"',
         ]);
@@ -35,6 +32,6 @@ class m170228_062550_create_process_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('{{%process}}');
+        $this->dropTable('{{%count_record}}');
     }
 }

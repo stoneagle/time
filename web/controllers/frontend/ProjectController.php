@@ -8,7 +8,7 @@ use app\models\Error;
 use app\models\GanttTasks;
 use yii\filters\VerbFilter;
 
-class GanttController extends BaseController
+class ProjectController extends BaseController
 {
 
     public function actionIndex()
@@ -28,7 +28,7 @@ class GanttController extends BaseController
     public function actionFinish($id)
     {
         $model = $this->findModel($id, GanttTasks::class);
-        $model->progress = GanttTasks::PROGRESS_END;
+        $model->progress = Project::PROGRESS_END;
         $model->modelValidSave();
         $code = Error::ERR_OK;
         return $this->packageJson(['id' => $model->id], $code, Error::msg($code));

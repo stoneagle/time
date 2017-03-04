@@ -64,14 +64,14 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 // gantt
-                "GET frontend/gantt-api/data" => "frontend/gantt-api/data",
-                "POST frontend/gantt-api/task" => "frontend/gantt-api/task-add",
-                "PUT frontend/gantt-api/task/<taskid:\d+>" => "frontend/gantt-api/task-update",
-                "DELETE frontend/gantt-api/task/<taskid:\d+>" => "frontend/gantt-api/task-del",
+                "GET frontend/project-api/data" => "frontend/project-api/data",
+                "POST frontend/project-api/task" => "frontend/project-api/task-add",
+                "PUT frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-update",
+                "DELETE frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-del",
 
-                "POST frontend/gantt-api/link" => "frontend/gantt-api/link-add",
-                "PUT frontend/gantt-api/link/<linkid:\d+>" => "frontend/gantt-api/link-update",
-                "DELETE frontend/gantt-api/link/<linkid:\d+>" => "frontend/gantt-api/link-del",
+                "POST frontend/project-api/link" => "frontend/project-api/link-add",
+                "PUT frontend/project-api/link/<linkid:\d+>" => "frontend/project-api/link-update",
+                "DELETE frontend/project-api/link/<linkid:\d+>" => "frontend/project-api/link-del",
 
                 "POST frontend/scheduler-api/<sid:\d+>"  => "frontend/scheduler-api/add",
                 "PUT frontend/scheduler-api/<id:\d+>"    => "frontend/scheduler-api/update",

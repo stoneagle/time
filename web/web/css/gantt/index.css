@@ -30,6 +30,9 @@
 }
 
 /* hide 'plus' buttons for tasks */
+.phase-task .gantt_add {
+    display: none;
+}
 .regular-task .gantt_add {
     display: none;
 }

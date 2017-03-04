@@ -3,8 +3,7 @@
 namespace app\models;
 
 use Yii;
-use app\models\Process;
-use app\models\GanttTasks;
+use app\models\Task;
 use yii\base\Exception;
 
 /**
@@ -18,14 +17,14 @@ use yii\base\Exception;
  * @property string $ctime
  * @property string $utime
  */
-class Events extends BaseActiveRecord
+class Action extends BaseActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'events';
+        return 'action';
     }
 
     /**
@@ -52,8 +51,7 @@ class Events extends BaseActiveRecord
             'end_date'   => '结束时间',
             'text'       => '内容',
             'user_id'    => '所属用户',
-            'process_id' => '所属过程',
-            'action_id'  => '过程类别',
+            'type_id'    => '过程类别',
             'ctime'      => '创建时间',
             'utime'      => '更新时间',
         ];
@@ -61,18 +59,15 @@ class Events extends BaseActiveRecord
 
     public function getQuery()
     {
-        $process_t = Process::tableName();
-        $task_t = GanttTasks::tableName();
-        $events_t = self::tableName();
+        $task_t = Task::tableName();
+        $action_t = self::tableName();
         $query = self::find()
             ->select("
-                $events_t.*, 
-                $process_t.text as process_name,
+                $action_t.*, 
                 $task_t.text as task_name,
-                $process_t.finish
+                $task_t.progress
                 ")
-            ->leftJoin($process_t, "$process_t.id = $events_t.process_id")
-            ->leftJoin($task_t, "$task_t.id = $process_t.task_id");
+            ->leftJoin($task_t, "$task_t.id = $action_t.task_id");
         return $query;
     }
 }

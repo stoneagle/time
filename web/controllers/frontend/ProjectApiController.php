@@ -2,13 +2,15 @@
 
 namespace app\controllers\frontend;
 
-use app\models\GanttTasks;
+use app\models\Project;
+use app\models\Task;
+use app\models\Action;
 use app\models\GanttLinks;
 use app\models\Constants;
 use Yii;
 use yii\filters\VerbFilter;
 
-class GanttApiController extends BaseController
+class ProjectApiController extends BaseController
 {
     public function behaviors()
     {
@@ -25,13 +27,38 @@ class GanttApiController extends BaseController
     // REST接口，获取基础数据
     public function actionData()
     {
-        $model          = new GanttTasks;
+        $result = [];
+
+        $model          = new Project;
         $model->user_id = $this->user_obj->id;
         $query          = $model->getQuery();
         $data           = $query->asArray()->all();
-        foreach ($data as &$one) {
+        foreach ($data as $one) {
+            $one['type'] = Project::LEVEL_PROJECT;
+            $result[] = $one;
+        }
+
+        $task_model          = new Task;
+        $task_model->user_id = $this->user_obj->id;
+        $query               = $task_model->getQuery();
+        $task_data           = $query->asArray()->all();
+        foreach ($task_data as $one) {
+            $one['type'] = Project::LEVEL_TASK;
+            $result[] = $one;
+        }
+
+        /* $action_model          = new Action; */
+        /* $action_model->user_id = $this->user_obj->id; */
+        /* $query                 = $action_model->getQuery(); */
+        /* $action_data           = $query->asArray()->all(); */
+        /* foreach ($action_data as $one) { */
+        /*     $one['type'] = Project::LEVEL_ACTION; */
+        /*     $result[] = $one; */
+        /* } */
+
+        foreach ($result as &$one) {
             // 控制项目波动
-            if ($one['type'] != GanttTasks::LEVEL_TASK) {
+            if ($one['type'] != Project::LEVEL_TASK) {
                 $one['duration'] = "";
                 $one['sort_date'] = $one['start_date'];
                 $one['start_date'] = "";
@@ -39,22 +66,21 @@ class GanttApiController extends BaseController
                 $one['unscheduled'] = true;
             }
             // 控制项目展开
-            if ($one['type'] != GanttTasks::LEVEL_PROJECT) {
+            if ($one['type'] != Project::LEVEL_PROJECT) {
                 $one['open'] = false;
             }
         }
-        $result['data'] = $data;
+        $ret['data'] = $result;
 
         $links           = GanttLinks::find()->asArray()->all();
-        $result['links'] = $links;
+        $ret['links'] = $links;
 
-        return $this->directJson(json_encode($result));
+        return $this->directJson(json_encode($ret));
     }
 
     public function actionTaskAdd()
     {
         try {
-            $model = new GanttTasks;
             $action_type = "inserted";
             $params_conf = [
                 "text"             => [null, true],
@@ -64,11 +90,28 @@ class GanttApiController extends BaseController
                 "duration"         => [null, true],
                 "progress"         => [0, false],
                 "priority_id"      => [0, false],
-                "field"            => [0, false],
+                "field_id"            => [0, false],
                 "parent"           => [null, true],
                 "unscheduled_flag" => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
+            switch ($params['type']) {
+                case Project::LEVEL_PROJECT :
+                    $model              = new Project;
+                    $model->id          = Project::getMaxId();
+                    $model->priority_id = $params['priority_id'];
+                    $model->field_id    = $params['field_id'];
+                    break;
+                case Project::LEVEL_TASK :
+                    // task与action的id不能跟project重复
+                    $model         = new Task;
+                    $model->id     = Project::getMaxId();
+                    $model->parent = (int)$params['parent'];
+                    break;
+                default :
+                    throw new \Exception("gantt类型出错", Error::ERR_GANTT_TYPE);
+                    break;
+            }
             $model->text       = $params['text'];
             $model->start_date = $params['start_date'];
             if ($params['unscheduled_flag']) {
@@ -77,10 +120,6 @@ class GanttApiController extends BaseController
                 $model->duration   = $params['duration'];
             }
             $model->progress    = $params['progress'];
-            $model->parent      = (int)$params['parent'];
-            $model->type        = $params['type'];
-            $model->priority_id = $params['priority_id'];
-            $model->field_id    = $params['field'];
             $model->user_id     = $this->user_obj->id;
             $model->modelValidSave();
             $ret = $this->prepareResponse($action_type, $model->id);
@@ -92,10 +131,10 @@ class GanttApiController extends BaseController
         }
     }
 
-    public function actionTaskUpdate($taskid)
+    public function actionTaskUpdate($id)
     {
         try {
-            $model = $this->findModel($taskid, GanttTasks::class);
+            $model = $this->findModel($id, Project::class);
             $action_type = "updated";
             $params_conf = [
                 "text"             => [null, true],
@@ -103,11 +142,25 @@ class GanttApiController extends BaseController
                 "duration"         => [null, true],
                 "progress"         => [0, false],
                 "priority_id"      => [0, false],
-                "field"            => [0, false],
+                "field_id"            => [0, false],
                 "parent"           => [null, true],
                 "unscheduled_flag" => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
+            switch ($params['type']) {
+                case Project::LEVEL_PROJECT :
+                    $model = new Project;
+                    $model->priority_id = $params['priority_id'];
+                    $model->field_id    = $params['field_id'];
+                    break;
+                case Project::LEVEL_TASK :
+                    $model = new Task;
+                    $model->parent      = (int)$params['parent'];
+                    break;
+                default :
+                    throw new \Exception("gantt类型出错", Error::ERR_GANTT_TYPE);
+                    break;
+            }
             $model->text       = $params['text'];
             $model->start_date = $params['start_date'];
             if ($params['unscheduled_flag']) {
@@ -116,9 +169,6 @@ class GanttApiController extends BaseController
                 $model->duration   = $params['duration'];
             }
             $model->progress    = $params['progress'];
-            $model->priority_id = $params['priority_id'];
-            $model->field_id    = $params['field'];
-            $model->parent      = (int)$params['parent'];
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type);
@@ -131,11 +181,12 @@ class GanttApiController extends BaseController
         
     }
 
-    public function actionTaskDel($taskid)
+    public function actionTaskDel($id)
     {
         try {
             $action_type = "deleted";
-            $model = $this->findModel($taskid, GanttTasks::class);
+
+            list($model, $type) = $this->findModelList($id);
             $params_conf = [
                 "hard_flag" => [false, false],
             ];
@@ -186,7 +237,7 @@ class GanttApiController extends BaseController
     public function actionLinkUpdate($linkid)
     {
         try {
-            $model = $this->findModel($taskid, GanttLinks::class);
+            $model = $this->findModel($linkid, GanttLinks::class);
             $action_type = "updated";
             $params_conf = [
                 "source" => [null, true],
@@ -212,7 +263,7 @@ class GanttApiController extends BaseController
     {
         try {
             $action_type = "deleted";
-            $model = $this->findModel($taskid, GanttLinks::class);
+            $model = $this->findModel($linkid, GanttLinks::class);
             $result = $model->delete(); 
             if (!$result) {
                 throw new \Exception(Error::msg(Error::ERR_DEL), Error::ERR_DEL);
@@ -224,28 +275,5 @@ class GanttApiController extends BaseController
             $ret         = $this->prepareResponse($action_type);
             return $this->directJson($ret);
         }
-    }
-
-    private function prepareResponse($action, $tid = null)
-    {
-        $result = array(
-            'action' => $action
-        );
-        if(isset($tid) && !is_null($tid)){
-            $result['tid'] = $tid;
-        }
-        return json_encode($result);
-    }
-
-    public function actionTaskTree()
-    {
-        $model          = new GanttTasks;
-        $model->user_id = $this->user_obj->id;
-        $data           = $model->getInitTree();
-        $result = [
-            'id'   => 0,
-            'item' => $data,
-        ];
-        return $this->directJson(json_encode($result));
     }
 }
