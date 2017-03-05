@@ -19,6 +19,31 @@ use yii\base\Exception;
  */
 class Action extends BaseActiveRecord
 {
+    CONST STATUS_INIT = 0;
+    CONST STATUS_WAIT = 1;
+    CONST STATUS_EXEC = 2;
+    CONST STATUS_END  = 3;
+
+    CONST LIST_EXEC = 1;
+    CONST LIST_END  = 2;
+
+    public static $status_arr = [
+        self::STATUS_INIT => "计划中",
+        self::STATUS_WAIT => "等待中",
+        self::STATUS_EXEC => "执行中",
+        self::STATUS_END  => "已结束",
+    ];
+
+    public static $list_arr = [
+        self::LIST_EXEC => [
+            self::STATUS_WAIT,
+            self::STATUS_EXEC
+        ], 
+        self::LIST_END => [
+            self::STATUS_END
+        ],
+    ];
+
     /**
      * @inheritdoc
      */
@@ -33,10 +58,6 @@ class Action extends BaseActiveRecord
     public function rules()
     {
         return [
-            [['start_date', 'end_date', 'process_id', 'user_id'], 'required'],
-            [['start_date', 'end_date', 'ctime', 'utime'], 'safe'],
-            [['user_id', 'process_id', 'user_id'], 'integer'],
-            [['text'], 'string', 'max' => 255],
         ];
     }
 
@@ -46,28 +67,23 @@ class Action extends BaseActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'         => 'ID',
-            'start_date' => '开始时间',
-            'end_date'   => '结束时间',
-            'text'       => '内容',
-            'user_id'    => '所属用户',
-            'type_id'    => '过程类别',
-            'ctime'      => '创建时间',
-            'utime'      => '更新时间',
         ];
     }
 
+    /* public function getTask() */
+    /* { */
+    /*     return $this->hasOne(Task::className(), ['id' => 'task_id']); */ 
+    /* } */
+
+
     public function getQuery()
     {
-        $task_t = Task::tableName();
         $action_t = self::tableName();
-        $query = self::find()
-            ->select("
-                $action_t.*, 
-                $task_t.text as task_name,
-                $task_t.progress
-                ")
-            ->leftJoin($task_t, "$task_t.id = $action_t.task_id");
+        $query = self::find();
+        $query->andFilterWhere(["$action_t.status"     => $this->status]);
+        $query->andFilterWhere(["$action_t.user_id" => $this->user_id]);
+        $query->andFilterWhere(["$action_t.task_id" => $this->task_id]);
+        $query->andFilterWhere([">=", "$action_t.start_date" , $this->start_date]);
         return $query;
     }
 }

@@ -41,6 +41,20 @@
             echo $form->field($model, 'type')->dropdownList($typeArr, ['disabled' => true]); 
         }
     ?>
+    <?php 
+        if($model->isNewRecord) { 
+            echo $form->field($model, 'parent')->widget(
+                Select2::className(), [
+                'data' => $parentArr,
+                'options' => ['placeholder' => '所属类别默认为空'],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                ],
+            ])->hint('请选择配置类别'); 
+        } else {
+            echo $form->field($model, 'parent')->dropdownList($parentArr, ['disabled' => true]); 
+        }
+    ?>
     <div class="form-group">
         <?= Html::submitButton('提交', ['class' => 'btn btn-primary']) ?>
     </div>

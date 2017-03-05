@@ -41,7 +41,7 @@ class Config extends BaseActiveRecord
     {
         return [
             [['name', 'type'], 'required'],
-            [['type'], 'integer'],
+            [['type', 'parent'], 'integer'],
             [['ctime', 'utime'], 'safe'],
             [['name'], 'string', 'max' => 255],
         ];
@@ -53,11 +53,12 @@ class Config extends BaseActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'    => 'ID',
-            'name'  => '名称',
-            'type'  => '类别',
-            'ctime' => '创建时间',
-            'utime' => '更新时间',
+            'id'     => 'ID',
+            'name'   => '名称',
+            'type'   => '类别',
+            'parent' => '所属类别',
+            'ctime'  => '创建时间',
+            'utime'  => '更新时间',
         ];
     }
 
@@ -65,9 +66,23 @@ class Config extends BaseActiveRecord
     {
         $config_t = self::tableName();
         $query = self::find();
-        $query->andFilterWhere(["$config_t.id"   => $this->id]);
-        $query->andFilterWhere(["$config_t.type" => $this->type]);
+        $query->andFilterWhere(["$config_t.id"     => $this->id]);
+        $query->andFilterWhere(["$config_t.type"   => $this->type]);
+        $query->andFilterWhere(["$config_t.parent" => $this->parent]);
         return $query;
+    }
+
+    public static function getParentList()
+    {
+        $query = self::find()
+            ->andWhere(["parent" => 0]);
+        $result = $query->asArray()->all();
+        $ret = [];
+        foreach ($result as $one) {
+            $type_name = self::$type_arr[$one['type']];
+            $ret[$type_name][$one['id']] = $one['name'];
+        }
+        return $ret;
     }
 
     public function getTypeDict($dxl_style = false)
@@ -78,6 +93,30 @@ class Config extends BaseActiveRecord
         } else {
             $result = $query->select("id, name")->asArray()->all();
             $ret = ArrayHelper::map($result, 'id', 'name');
+        }
+        return $ret;
+    }
+
+    public static function getTypeWithParentDict($type, $lib = false)
+    {
+        $query = self::find() 
+            ->andWhere(["Not", ["parent" => 0]])
+            ->andWhere(["type" => $type]);
+        $result = $query->asArray()->all();
+        $ret = [];
+        foreach ($result as $one) {
+            switch ($lib) {
+            case "select2" :
+                $ret[$one['parent']]['data'][] = [
+                    'id'   => $one['id'],
+                    'text' => $one['name'],
+
+                ];
+                break;
+            default :
+                $ret[$one['parent']][$one['id']] = $one['name'];
+                break;
+            }
         }
         return $ret;
     }

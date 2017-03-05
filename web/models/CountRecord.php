@@ -46,4 +46,25 @@ class CountRecord extends BaseActiveRecord
             ->andFilterWhere(["$task_t.user_id" => $this->user_id]);
         return $query;
     }
+
+    // 获取每个用户执行或暂停的最新一项记录
+    public function getOne()
+    {
+        $cr_t  = self::tableName();
+        $t_t   = Task::tableName();
+        $model = self::find()
+            ->select("$cr_t.*, $t_t.text")
+            ->leftJoin($t_t, "$cr_t.task_id = $t_t.id")
+            ->andWhere([
+                "$cr_t.status" => [
+                    self::STATUS_EXEC,
+                    self::STATUS_PAUSE,
+                ]
+            ])
+            ->andWhere(["$cr_t.user_id" => $this->user_id])
+            ->andFilterWhere(["$cr_t.id" => $this->id])
+            ->orderBy("$cr_t.id desc")
+            ->asArray()->one();
+        return $model;
+    }
 }

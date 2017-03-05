@@ -26,7 +26,6 @@ class m170304_114638_create_task_table extends Migration
             'progress'   => Schema::TYPE_FLOAT . ' NOT NULL DEFAULT 0 COMMENT "进度" ',
             'parent'     => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "父id" ',
             'user_id'    => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属用户" ',
-            'plan_time'  => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "计划时间颗粒" ',
             'del'        => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT 0 COMMENT "软删除"',
             'ctime'      => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "创建时间"',
             'utime'      => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "更新时间"',

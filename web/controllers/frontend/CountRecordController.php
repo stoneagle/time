@@ -23,6 +23,23 @@ class CountRecordController extends BaseController
         ];
     }
 
+    public function actionOne()
+    {
+        try {
+            $params_conf = [
+                "id" => [null, true],
+            ];
+            $params = $this->getParamsByConf($params_conf, 'post');
+            $model = new CountRecord;
+            $model->user_id = $this->user_obj->id;
+            $model->id = $params['id'];
+            $result = $model->getOne();
+            return $this->packageJson(['info' => $result], Error::ERR_OK, Error::msg(Error::ERR_OK));
+        } catch (\exception $e) {
+            return $this->returnException($e);
+        }
+    }
+
     public function actionAdd()
     {
         try {

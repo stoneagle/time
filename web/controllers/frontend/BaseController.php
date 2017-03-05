@@ -71,7 +71,7 @@ class BaseController extends Controller
         ]);
     }
 
-    public function directXml($content)
+    public function directXml($content, $root, $item)
     {
         return \Yii::createObject([ 
             'class' => 'yii\web\Response', 
@@ -79,8 +79,8 @@ class BaseController extends Controller
             'formatters' => [ 
                 \yii\web\Response::FORMAT_XML => [ 
                     'class' => 'yii\web\XmlResponseFormatter', 
-                    'rootTag' => 'data', //根节点 
-                    'itemTag' => 'event', //单元 
+                    'rootTag' => $root, //根节点 
+                    'itemTag' => $item, //单元 
                 ], 
             ], 
             'data' => $content 
@@ -238,13 +238,16 @@ class BaseController extends Controller
         exit ();
     }
 
-    protected function prepareResponse($action, $tid = null)
+    protected function prepareResponse($action, $tid = null, $msg = null)
     {
         $result = array(
             'action' => $action
         );
         if(isset($tid) && !is_null($tid)){
             $result['tid'] = $tid;
+        }
+        if(isset($msg) && !is_null($msg)){
+            $result['msg'] = $msg;
         }
         return json_encode($result);
     }
