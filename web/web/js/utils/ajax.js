@@ -62,6 +62,7 @@ function checkPost(text_info, hint, href, post_data)
 function directPost(href, post_data) 
 {
     var finish_flag = arguments[2] ? false : true;
+    var reload_flag = arguments[3] ? false : true;
     $.ajax({
         url: href,
         data: post_data,
@@ -78,17 +79,17 @@ function directPost(href, post_data)
                         confirmButtonColor: "#DD6B55",
                         confirmButtonText: "确定",
                     },function(){
-                        location.reload();
+                        if (reload_flag) location.reload();
                     });
                 } else {
-                    location.reload();
+                    if (reload_flag) location.reload();
                 }
             } else {
                 swal("操作失败!", data.message, "error");
             }
         },
         error: function(data) {
-            swal("操作失败!", data.responseText, "error");
+            swal("操作失败!", data.message, "error");
         }
     })
 }
