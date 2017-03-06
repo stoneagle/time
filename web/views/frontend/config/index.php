@@ -34,6 +34,25 @@ $this->registerJsFile('@web/js/frontend/config/index.js',['depends'=>['app\asset
                     },
                 ],
                 [
+                    "attribute" => "parent",
+                    "label" => "所属类别",
+                    'contentOptions' => ['width' => '10%'],
+                    //'filter' => Html::activeDropDownList($searchModel, 'type', $typeArr, ['class' => 'form-control']),
+                    'value' => function ($model) use($parentArr) {
+                        if ($model->parent) {
+                            foreach ($parentArr as $list) {
+                                $ret = ArrayHelper::getValue($list, $model->parent);
+                                if (!is_null($ret)) {
+                                    break;
+                                }
+                            }
+                        } else {
+                            $ret = "";
+                        }
+                        return $ret;
+                    },
+                ],
+                [
                     'attribute' => 'ctime',
                     'contentOptions' => ['width' => '10%'],
                     'filter'    => DatePicker::widget([

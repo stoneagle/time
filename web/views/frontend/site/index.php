@@ -8,7 +8,7 @@ $this->title = '进化';
     <div class="jumbotron">
         <h1>进化!</h1>
         <p class="lead">突破极限.</p>
-        <p><a class="btn btn-lg btn-success" href="/frontend/gantt/index">开始计划</a></p>
+        <p><a class="btn btn-lg btn-success" href="/frontend/task/index">开始计划</a></p>
     </div>
     <div class="body-content">
 

@@ -23,7 +23,7 @@ class m170225_083031_create_gantt_links_table extends Migration
             'target'  => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "目标" ',
             'type'    => 'varchar(1) NOT NULL DEFAULT 0 COMMENT "类别" ',
             'user_id' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属用户" ',
-            'del'        => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT 0 COMMENT "乱删除"',
+            'del'     => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT 0 COMMENT "乱删除"',
             'ctime'   => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "创建时间"',
             'utime'   => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "更新时间"',
         ]);

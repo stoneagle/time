@@ -34,8 +34,9 @@ AppAsset::register($this);
         [
             'label' => '时间计划', 
             'items' => [
-                ['label' => '计划管理', 'url' => ['/frontend/gantt/index']],
-                ['label' => '时间管理', 'url' => ['/frontend/scheduler/index']]
+                ['label' => '项目管理', 'url' => ['/frontend/project/index']],
+                ['label' => '任务管理', 'url' => ['/frontend/task/index']],
+                ['label' => '行为管理', 'url' => ['/frontend/action/index']]
             ]
         ],
         ['label' => '知识网络', 'url' => ['/site/contact']],

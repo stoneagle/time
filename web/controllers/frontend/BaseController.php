@@ -5,6 +5,9 @@ namespace app\controllers\frontend;
 use Yii;
 use app\models\Error;
 use app\models\Constants;
+use app\models\Project;
+use app\models\Task;
+use app\models\Action;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\Response;
@@ -68,7 +71,7 @@ class BaseController extends Controller
         ]);
     }
 
-    public function directXml($content)
+    public function directXml($content, $root, $item)
     {
         return \Yii::createObject([ 
             'class' => 'yii\web\Response', 
@@ -76,8 +79,8 @@ class BaseController extends Controller
             'formatters' => [ 
                 \yii\web\Response::FORMAT_XML => [ 
                     'class' => 'yii\web\XmlResponseFormatter', 
-                    'rootTag' => 'data', //根节点 
-                    'itemTag' => 'event', //单元 
+                    'rootTag' => $root, //根节点 
+                    'itemTag' => $item, //单元 
                 ], 
             ], 
             'data' => $content 
@@ -160,6 +163,31 @@ class BaseController extends Controller
         }
     }
 
+    // 查找project，task，action的对象
+    protected function findModelList($id)
+    {
+        $model = Project::findOne($id);
+        if (is_null($model)) {
+            $model = Task::findOne($id);
+            if (is_null($model)) {
+                $model = Action::findOne($id);
+                $type = Project::LEVEL_ACTION;
+                if (is_null($model)) {
+                    throw new \Exception("无法找到对象", Error::ERR_MODEL);
+                }
+            } else {
+                $type = Project::LEVEL_TASK;
+            }
+        } else {
+            $type = Project::LEVEL_PROJECT;
+        }
+        $ret = [
+            $model,
+            $type
+        ];
+        return $ret; 
+    }
+
 
     /**
      * 输出大体积的csv类别文件
@@ -208,5 +236,19 @@ class BaseController extends Controller
             unset($list);
         }
         exit ();
+    }
+
+    protected function prepareResponse($action, $tid = null, $msg = null)
+    {
+        $result = array(
+            'action' => $action
+        );
+        if(isset($tid) && !is_null($tid)){
+            $result['tid'] = $tid;
+        }
+        if(isset($msg) && !is_null($msg)){
+            $result['msg'] = $msg;
+        }
+        return json_encode($result);
     }
 }

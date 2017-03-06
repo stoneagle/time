@@ -30,8 +30,16 @@
 }
 
 /* hide 'plus' buttons for tasks */
+.phase-task .gantt_add {
+    display: none;
+}
 .regular-task .gantt_add {
     display: none;
+}
+
+.regular-task .gantt_task_content {
+    background-color: #FFCC33;
+    border: 1px solid #FF3333
 }
 
 // 日期选择

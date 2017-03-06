@@ -35,6 +35,7 @@ class ConfigController extends BaseController
             'searchModel'  => $model,
             'dataProvider' => $data_provider,
             'typeArr'      => Config::$type_arr,
+            'parentArr'    => Config::getParentList(),
         ]);
     }
 
@@ -54,6 +55,9 @@ class ConfigController extends BaseController
         try {
             if (Yii::$app->request->post()) {
                 $model->load(Yii::$app->request->post());
+                if (empty($model->parent)) {
+                    $model->parent = 0;
+                }
                 $model->modelValidSave();
                 $code = Error::ERR_OK;
                 return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
@@ -61,6 +65,7 @@ class ConfigController extends BaseController
                 return $this->render('save', [
                     'model'   => $model,
                     'typeArr' => Config::$type_arr,
+                    'parentArr' => Config::getParentList(),
                 ]);
             }
         } catch (\Exception $e) {
