@@ -3,6 +3,7 @@
 namespace app\controllers\frontend;
 
 use app\models\Project;
+use app\models\Error;
 use app\models\Task;
 use app\models\Action;
 use app\models\Constants;
@@ -39,16 +40,17 @@ class ActionApiController extends BaseController
             ->leftJoin($project_t, "$project_t.id = $task_t.parent")
             ->asArray()->all();
         $ret = [];
-        $type_dict = Config::getTypeWithParentDict(Config::TYPE_ACTION);
         foreach ($result as $one) {
             $ret["rows"][] = [
                 "id" => $one['id'],
                 "data" => [
+                    $one['id'],
                     $one['text'],
                     $one['plan_time'],
-                    ArrayHelper::getValue($type_dict[$one['field_id']], $one['type_id']),
-                    ArrayHelper::getValue(Action::$status_arr, $one['status']),
-                    "ceshi"
+                    $one["type_id"],
+                    $one['status'],
+                    $one['desc'],
+                    ($one['status'] == Action::STATUS_INIT) ? 0 : 1,
                 ]
             ];
         }
@@ -109,22 +111,27 @@ class ActionApiController extends BaseController
         try {
             $action_type = "updated";
             $params_conf = [
-                "text"       => [null, true],
-                "task_id"    => [null, true],
-                "type_id"    => [null, true],
-                "exec_time"  => [null, true],
-                "status"     => [null, true],
-                "start_date" => [null, true],
-                "end_date"   => [null, true],
+                "text"      => [null, false],
+                "type_id"   => [null, false],
+                "plan_time" => [null, false],
+                "exec_time" => [0, false],
+                "status"    => [0, true],
+                "end_date"  => [date("Y-m-d H:i:s", time()), false],
+                //"check"     => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model             = $this->findModel($id, Action::class);
-            $model->text       = $params['text'];
-            $model->task_id    = $params['task_id'];
-            $model->type_id    = $params['type_id'];
-            $model->exec_time  = $params['exec_time'];
+            if (!is_null($params['text'])) {
+                $model->text       = $params['text'];
+            }
+            if (!is_null($params['type_id'])) {
+                $model->type_id    = $params['type_id'];
+            }
+            if (!is_null($params['plan_time'])) {
+                $model->plan_time    = $params['plan_time'];
+            }
             $model->status     = $params['status'];
-            $model->start_date = $params['start_date'];
+            $model->exec_time  = $params['exec_time'];
             $model->end_date   = $params['end_date'];
             $model->modelValidSave();
 
@@ -132,7 +139,7 @@ class ActionApiController extends BaseController
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type, $id);
+            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
             return $this->directJson($ret);
         }
         
@@ -145,7 +152,7 @@ class ActionApiController extends BaseController
             $model       = $this->findModel($id, Action::class);
             if ($model->status == Action::STATUS_EXEC) {
                 throw new \Exception("该行动正在进行中，无法删除", Error::ERR_DEL);
-            } else if ($model->status == Action::STATUS_FINISH) {
+            } else if ($model->status == Action::STATUS_END) {
                 throw new \Exception("该行动已结束，无法删除", Error::ERR_DEL);
             }
 
@@ -157,7 +164,7 @@ class ActionApiController extends BaseController
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type, $id);
+            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
             return $this->directJson($ret);
         }
     }

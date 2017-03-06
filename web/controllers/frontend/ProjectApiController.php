@@ -126,7 +126,7 @@ class ProjectApiController extends BaseController
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type);
+            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
             return $this->directJson($ret);
         }
     }
@@ -134,27 +134,27 @@ class ProjectApiController extends BaseController
     public function actionTaskUpdate($id)
     {
         try {
-            $model = $this->findModel($id, Project::class);
             $action_type = "updated";
             $params_conf = [
                 "text"             => [null, true],
+                //"type"             => [null, true],
                 "start_date"       => [null, true],
                 "duration"         => [null, true],
                 "progress"         => [0, false],
                 "priority_id"      => [0, false],
-                "field_id"            => [0, false],
+                "field_id"         => [0, false],
                 "parent"           => [null, true],
                 "unscheduled_flag" => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             switch ($params['type']) {
                 case Project::LEVEL_PROJECT :
-                    $model = new Project;
+                    $model = $this->findModel($id, Project::class);
                     $model->priority_id = $params['priority_id'];
                     $model->field_id    = $params['field_id'];
                     break;
                 case Project::LEVEL_TASK :
-                    $model = new Task;
+                    $model = $this->findModel($id, Task::class);
                     $model->parent      = (int)$params['parent'];
                     break;
                 default :
@@ -171,11 +171,11 @@ class ProjectApiController extends BaseController
             $model->progress    = $params['progress'];
             $model->modelValidSave();
 
-            $ret = $this->prepareResponse($action_type);
+            $ret = $this->prepareResponse($action_type, $id);
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type);
+            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
             return $this->directJson($ret);
         }
         
@@ -200,11 +200,11 @@ class ProjectApiController extends BaseController
                 $model->del = Constants::SOFT_DEL_YES; 
                 $model->modelValidSave();
             }
-            $ret = $this->prepareResponse($action_type);
+            $ret = $this->prepareResponse($action_type, $id);
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type);
+            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
             return $this->directJson($ret);
         }
     }
@@ -229,7 +229,7 @@ class ProjectApiController extends BaseController
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type);
+            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
             return $this->directJson($ret);
         }
     }
@@ -250,11 +250,11 @@ class ProjectApiController extends BaseController
             $model->type   = $params['type'];
             $model->modelValidSave();
 
-            $ret = $this->prepareResponse($action_type);
+            $ret = $this->prepareResponse($action_type, $linkid);
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type);
+            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
             return $this->directJson($ret);
         }
     }
@@ -268,11 +268,11 @@ class ProjectApiController extends BaseController
             if (!$result) {
                 throw new \Exception(Error::msg(Error::ERR_DEL), Error::ERR_DEL);
             }
-            $ret = $this->prepareResponse($action_type);
+            $ret = $this->prepareResponse($action_type, $linkid);
             return $this->directJson($ret);
         } catch (\exception $e) {
             $action_type = "error";
-            $ret         = $this->prepareResponse($action_type);
+            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
             return $this->directJson($ret);
         }
     }

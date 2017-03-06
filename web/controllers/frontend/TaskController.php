@@ -4,6 +4,7 @@ namespace app\controllers\frontend;
 
 use Yii;
 use app\models\Config;
+use app\models\Action;
 use app\models\Error;
 use app\models\Task;
 use app\models\Project;
@@ -27,7 +28,8 @@ class TaskController extends BaseController
         $config_model       = new Config;
         $config_model->type = Config::TYPE_FIELD;
         $field_dict         = $config_model->getTypeDict();
-        $type_dict = Config::getTypeWithParentDict(Config::TYPE_ACTION, "select2");
+        $type_dict          = Config::getTypeWithParentDict(Config::TYPE_ACTION, "select2");
+        $type_raw           = Config::getTypeWithParentDict(Config::TYPE_ACTION);
         $config_model->type = Config::TYPE_PRIORITY;
         $priority_dict      = $config_model->getTypeDict();
 
@@ -57,12 +59,14 @@ class TaskController extends BaseController
             ];
         }
         return $this->render('index', [
-            "action_left" => $action_left,
-            "action_info" => json_encode($info),
-            "field_arr"   => json_encode(array_flip($field_dict)),
-            "type_arr"    => json_encode($type_dict),
-            "task_list"   => $task_list,
-            "task_id_arr" => json_encode(array_keys($task_list)),
+            "action_left"     => $action_left,
+            "action_info"     => json_encode($info),
+            "field_arr"       => json_encode(array_flip($field_dict)),
+            "type_arr"        => json_encode($type_dict),
+            "type_raw"        => json_encode($type_raw),
+            "task_list"       => $task_list,
+            "task_id_arr"     => json_encode(array_keys($task_list)),
+            "status_arr"      => json_encode(Action::$status_arr),
         ]);
     }
 

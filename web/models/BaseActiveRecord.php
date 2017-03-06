@@ -31,7 +31,8 @@ class BaseActiveRecord extends \yii\db\ActiveRecord
         if (!$validate_result) {
             $msg = "";
             foreach ($this->getErrors() as $field => $info) {
-                $msg .= $field . ":" . $info[0];
+                //$msg .= $field . ":" . $info[0];
+                $msg .= $info[0]. "\r\n";
             }
             throw new  \Exception($msg, Error::ERR_VALID);
         }

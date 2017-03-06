@@ -16,6 +16,7 @@ $this->registerCssFile('@web/css/lib/select2.css',['depends'=>['app\assets\AppAs
 
 $this->registerJsFile('@web/js/lib/dhtmlx/dhtmlx.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlx/dhtmlxgrid.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
+$this->registerJsFile('@web/js/lib/dhtmlx/dhtmlxgrid_drag.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/dhtmlx/dhtmlxlist.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/select2.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 
@@ -140,7 +141,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                                 </select>
                             </div>
                         </div>
-                        <input type="hidden" class="form-control" id="action_id" name="id">
                         <input type="hidden" class="form-control" id="action_task_id" name="task_id">
                 </div>
                 <div class="modal-footer">
@@ -166,11 +166,18 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
             template:"#text# : #plan_time#<br/>#task_id#",
         }
     });
-    execList.load("/frontend/action-api/list/" + <?php echo Action::LIST_EXEC;?>, "json");
-    endList.load("/frontend/action-api/list/" + <?php echo Action::LIST_END;?>, "json");
-    var dp = new dataProcessor("/frontend/action-api/"); 
-    dp.init(execList);
-    dp.init(endList);
+    var exec_load_path = "/frontend/action-api/list/" + <?php echo Action::LIST_EXEC;?>;
+    var end_load_path = "/frontend/action-api/list/" + <?php echo Action::LIST_END;?>;
+    execList.load(exec_load_path, "json");
+    endList.load(end_load_path, "json");
+    /* var dp = new dataProcessor("/frontend/action-api/"); */ 
+    /* dp.init(execList); */
+    /* dp.init(endList); */
+    /* dp.attachEvent("onAfterUpdate", function(id, action, tid, response){ */
+    /*     if (action == "error") { */
+    /*         swal("操作失败!", response.msg, "error"); */
+    /*     } */
+    /* }) */
 
     // 计时器
     var clock;
@@ -182,9 +189,11 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
     var action_update_href = "/frontend/action-api/update"
     var action_del_href    = "/frontend/action-api/del"
 
-    var field_dict = <?php echo $field_arr;?>;
-    var type_dict = <?php echo $type_arr;?>;
-    var task_id_arr = <?php echo $task_id_arr;?>;
+    var field_dict      = <?php echo $field_arr;?>;
+    var type_dict       = <?php echo $type_arr;?>;
+    var type_raw        = <?php echo $type_raw;?>;
+    var task_id_arr     = <?php echo $task_id_arr;?>;
+    var status_arr      = <?php echo $status_arr;?>;
 
     clock = $('#clockbox').FlipClock({
         clockFace: 'HourlyCounter',
@@ -293,45 +302,68 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
         }
     });
 
+    // 选择框
     // collapse与grid的初始化
-    for (var i = 0 ;i < task_id_arr.length; i++) {
-        initGrid(task_id_arr[i]);
-    }
+    var grid_prefix = "gridbox_";
+    var task_id = 0;
+    var grid_hash = {}
 
-    // grid初始化
-    function initGrid(task_id)
-    {
-        var grid_prefix = "gridbox_";
+    var text_index      = 1;
+    var plan_time_index = 2;
+    var type_index      = 3;
+    var status_index    = 4;
+    var check_index     = 6;
+
+    for (var i = 0 ;i < task_id_arr.length; i++) {
+        task_id = task_id_arr[i];
         // 右侧grid
         grid = new dhtmlXGridObject(grid_prefix + task_id);
-
         grid.setImagePath("/css/lib/imgs/dhxgrid_terrace/");                 
-        grid.setHeader("行动名称,计划时间,类别,状态,<div style='width:100%; text-align:left;'><button id = 'grid" + task_id + "_add' class='btn btn-success btn-xs' >新建</button></div>");
-        grid.setInitWidths("300,150,150,150,150");            
-        grid.setColAlign("left, left, left, left, left"); 
-        grid.setColTypes("ro,ro,ed,ed,ed");                  
-        grid.setColSorting("str,str,str,str,button");             
+        grid.setHeader("ID,行动名称,计划时间,类别,状态,描述,<div style='width:100%; text-align:left;'><button id = 'grid" + task_id + "_add' class='btn btn-success btn-xs' >新建</button></div>");
+        grid.setInitWidths("100,250,100,100,100,400");            
+        grid.setColAlign("left, left, left, left, left, left"); 
+        grid.setColTypes("ro,ed,ed,co,coro,ed,ch");                  
+        grid.setColSorting("str,str,int,str,str,txt");             
         grid.enableAutoHeight(true, 700);
-        grid.init();       
-        grid.load("/frontend/action-api/data/"+task_id,"json"); 
+        /* grid.enableDragAndDrop(true); */
+        /* grid.rowToDragElement=function(id){ */
+        /*     var text = this.cellById(this._dragged[i].idd,1).getValue(); */
+        /*     return text; */
+        /* } */
 
-        gridDataProcessor = new dataProcessor("/frontend/action-api/"); 
+        // 双击修改，其中field需要针对性的修改combo
+        var collapse_obj = $("#collapse_" + task_id);
+        var field_id   = collapse_obj.attr("field_id");
+        var type_combo = grid.getCombo(type_index);
+        for (key in type_raw[field_id]) {
+            type_combo.put(key, type_raw[field_id][key]);
+        }
+        var status_combo = grid.getCombo(status_index);
+        for (key in status_arr) {
+            status_combo.put(key, status_arr[key]);
+        }
+
+        grid.setColumnIds("id,text,plan_time,type_id,status,desc,check");
+        grid.init();       
+        grid.load("/frontend/action-api/data/" + task_id,"json"); 
+
+        gridDataProcessor = new dataProcessor("/frontend/action-api/");
         gridDataProcessor.init(grid); 
         gridDataProcessor.setTransactionMode("REST");
+        gridDataProcessor.attachEvent("onAfterUpdate", function(id, action, tid, response){
+            if (action == "error") {
+                swal("操作失败!", response.msg, "error");
+            }
+        })
 
 
-        // 右键删除行动
         // 禁止grid右键弹出情况
-        $('body').on('contextmenu',grid_prefix + task_id,function(){
+        $('body').on('contextmenu', grid_prefix + task_id ,function(){
             return false;
         });
-        $('body').on('contextmenu','#action_save',function(){
-            return false;
-        });
-        $('body').on('contextmenu','.modal-backdrop',function(){
-            return false;
-        });
+        // 右键删除行动
         grid.attachEvent("onRightClick", function(id,ind,obj){
+            var grid_obj = this;
             swal({
                 title: "是否删除该行动",           // 弹出框的title
                 text: "该行动的记录将会消除",             // 弹出框里面的提示文本
@@ -343,35 +375,71 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                 closeOnConfirm: true,
                 showLoaderOnConfirm: true,
             }, function () {
-                /* myGrid.deleteRow("row1") */
-                /* post_data = { */
-                /* }; */
-                /* directPost(action_del_href + id, post_data, true, true); */
-                /* clock.reset(); */
+                grid_obj.deleteRow(id);
             });
         });
 
-        // 双击将已初始化的任务，移入执行堆栈
         $("#action_type").select2({
             placeholder: '请选择类别'
         })
 
-        grid.attachEvent("onRowDblClicked", function(id,ind,obj){
-            console.log(this.cellById(id, 3));
-            // 如果CountRecord没有正在执行的任务，执行该任务
-
-            /* clock.start(); */
-            /* post_data = { */
-            /*     "task_id" : id, */
-            /* }; */
-            /* directPost(count_add_href, post_data, true, true); */
-            /* grid.setRowColor(id,"red"); */
-
-            // 如果有则移入等待队列
+        // checkbox的勾选，对已初始化的任务，进行移入移出堆栈操作
+        // onCheck时机在更新后出发，checkbox状态会修改
+        // 修改成onEditCell
+        grid.attachEvent("onEditCell", function(stage,rId,cInd,nValue,oValue){
+            if ((stage == 0) && (cInd == check_index)) {
+                var status_id = this.cellById(rId,status_index).getValue();
+                var state = this.cellById(rId,cInd).getValue();
+                
+                if (state == 0) {
+                    // 全部移入等待队列
+                    if (status_id != <?php echo Action::STATUS_INIT;?>) {
+                        swal("修改失败!", "状态异常", "error");
+                        return false;
+                    } else {
+                        var status_wait = <?php echo Action::STATUS_WAIT;?>;
+                        this.cellById(rId,status_index).setValue(status_wait);
+                        this.cellById(rId,status_index).cell.innerHTML = status_arr[status_wait];
+                    }
+                } else {
+                    if (status_id == <?php echo Action::STATUS_INIT;?>) {
+                        swal("修改失败!", "状态异常", "error");
+                        return false;
+                    } else if (status_id == <?php echo Action::STATUS_WAIT;?>){
+                        // todo 需要校验下当前行动是否存在已执行过的时间
+                        var status_init = "<?php echo Action::STATUS_INIT;?>";
+                        this.cellById(rId,status_index).setValue(status_init);
+                        this.cellById(rId,status_index).cell.innerHTML = status_arr[status_init];
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+            //this.setRowColor(rId,"red");
         });
 
+        grid.attachEvent("onCheck", function(rId,cInd,state){
+            if (state) {
+                execList.add(
+                    {
+                        id:rId,
+                        text:this.cellById(rId,text_index).getValue(),
+                        type_id:this.cellById(rId,type_index).getValue(),
+                        task_id:task_id,
+                        plan_time:this.cellById(rId,plan_time_index).getValue(),
+                    }
+                );
+            } else {
+                execList.remove(rId.toString());
+            }
+        });
+
+
         // 新建按钮操作
-        $("#grid"+task_id+"_add").on('click', function(e){
+        var add_button_name = "#grid" + task_id + "_add";
+        $(add_button_name).on('click', '', {tid:task_id}, function(e){
+            var task_id = e.data.tid;
             var collapse_obj = $("#collapse_" + task_id);
             var task_name  = collapse_obj.attr("task_name");
             var field_id   = collapse_obj.attr("field_id");
@@ -383,23 +451,30 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
             $('#action_task_name').val(task_name)
             $('#action_save').modal('show')
         });
-        return grid;
+        grid_hash[task_id] = grid;
     }
+
+    /* $('body').on('contextmenu','#action_save',function(){ */
+    /*     return false; */
+    /* }); */
+    /* $('body').on('contextmenu','.modal-backdrop',function(){ */
+    /*     return false; */
+    /* }); */
+    $('body').on('contextmenu','.sweet-alert',function(){
+        return false;
+    });
+    $('body').on('contextmenu','.sweet-overlay',function(){
+        return false;
+    });
     
     // 表单提交操作
     $('#action_form').on('submit', function(e){
         e.preventDefault();
         var post_data = $(this).serializeArray();
-        var href = "";
-        var new_flag = null;
-        var tree_id = $('#action_id').val();
-        if (tree_id) {
-            new_flag = false;
-            href = action_update_href;
-        } else {
-            new_flag = true;
-            href = action_add_href;
-        }
+        var href = action_add_href;
+        var task_id = $("#action_task_id").val();
+        var grid_obj = grid_hash[task_id];
+
         $.ajax({
             url: href,
             data: post_data,
@@ -413,13 +488,13 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                     $('#action_save').modal('hide')
                     resetForm("action_form");
                 }
+                grid_obj.clearAndLoad("/frontend/action-api/data/" + task_id,"json");
             },
             error: function(data) {
                 swal("操作失败!", data.message, "error");
             }
         })
     });
-
 
     // 如果加载后，存在执行中或暂停中的行动，提示后重新执行
     var left_action = <?php echo $action_left;?>;

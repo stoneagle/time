@@ -69,13 +69,14 @@ $config = [
                 "PUT frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-update",
                 "DELETE frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-del",
 
-                "POST frontend/project-api/link" => "frontend/project-api/link-add",
-                "PUT frontend/project-api/link/<linkid:\d+>" => "frontend/project-api/link-update",
+                "POST frontend/project-api/link"                => "frontend/project-api/link-add",
+                "PUT frontend/project-api/link/<linkid:\d+>"    => "frontend/project-api/link-update",
                 "DELETE frontend/project-api/link/<linkid:\d+>" => "frontend/project-api/link-del",
 
-                "GET frontend/action-api/list/<type:\d+>" => "frontend/action-api/list",
+                "GET frontend/action-api/list/<type:\d+>"    => "frontend/action-api/list",
                 "GET frontend/action-api/data/<task_id:\d+>" => "frontend/action-api/data",
-                "POST frontend/action-api/del/<id:\d+>"  => "frontend/action-api/del",
+                "PUT frontend/action-api/<id:\d+>"          => "frontend/action-api/update",
+                "DELETE frontend/action-api/<id:\d+>"        => "frontend/action-api/del",
 
                 "POST frontend/scheduler-api/<sid:\d+>"  => "frontend/scheduler-api/add",
                 "PUT frontend/scheduler-api/<id:\d+>"    => "frontend/scheduler-api/update",

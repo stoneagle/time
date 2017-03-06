@@ -58,6 +58,9 @@ class Action extends BaseActiveRecord
     public function rules()
     {
         return [
+            [['text', 'type_id', 'plan_time', 'status', 'task_id'], 'required'],
+            [['plan_time'], 'integer', 'min' => 1, 'max' => 5],
+            [['task_id', 'status'], 'integer'],
         ];
     }
 

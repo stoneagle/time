@@ -310,4 +310,9 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
     var dp = new gantt.dataProcessor("/frontend/project-api");
     dp.init(gantt);
     dp.setTransactionMode("REST");
+    dp.attachEvent("onAfterUpdate", function(id, action, tid, response){
+        if (action == "error") {
+            swal("操作失败!", response.msg, "error");
+        }
+    })
 </script>
