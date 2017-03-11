@@ -35,8 +35,9 @@ AppAsset::register($this);
             'label' => '时间计划', 
             'items' => [
                 ['label' => '项目管理', 'url' => ['/frontend/project/index']],
+                ['label' => '计划管理', 'url' => ['/frontend/plan/index']],
                 ['label' => '任务管理', 'url' => ['/frontend/task/index']],
-                ['label' => '行为管理', 'url' => ['/frontend/action/index']]
+                ['label' => '时间回顾', 'url' => ['/frontend/scheduler/index']]
             ]
         ],
         ['label' => '知识网络', 'url' => ['/site/contact']],

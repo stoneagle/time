@@ -63,6 +63,9 @@ class ActionApiController extends BaseController
     {
         $model          = new Action;
         $model->user_id = $this->user_obj->id;
+        if ($type == Action::LIST_END) {
+            $model->start_date = date("Y-m-d", time());
+        }
         $model->status  = Action::$list_arr[$type];
         $query          = $model->getQuery();
         $action_t       = Action::tableName();
@@ -73,6 +76,16 @@ class ActionApiController extends BaseController
             ->asArray()->all();
 
         return $this->directJson(json_encode($result));
+    }
+
+    public function actionScheduler()
+    {
+        $model = new Action;
+        $model->status = Action::STATUS_END;
+        $model->user_id = $this->user_obj->id;
+        $result = $model->getQuery()->asArray()->all();
+        $ret["data"] = $result;
+        return $this->directJson(json_encode($ret));
     }
 
     public function actionAdd()

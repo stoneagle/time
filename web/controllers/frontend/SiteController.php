@@ -34,6 +34,13 @@ class SiteController extends Controller
                     'logout' => ['post'],
                 ],
             ],
+            /* [ */
+            /*     'class' => 'yii\filters\HttpCache', */
+            /*     'only' => ['index'], */
+            /*     'lastModified' => function ($action, $params) { */
+            /*         return strtotime("2017-3-11 11:30:00"); */
+            /*     }, */
+            /* ], */
         ];
     }
 

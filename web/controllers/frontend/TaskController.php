@@ -14,14 +14,27 @@ use yii\helpers\ArrayHelper;
 
 class TaskController extends BaseController
 {
+    public function behaviors()
+    {
+        return [
+            /* [ */
+            /*     'class' => 'yii\filters\HttpCache', */
+            /*     'only' => ['index'], */
+            /*     'lastModified' => function ($action, $params) { */
+            /*         return time(); */
+            /*     }, */
+            /* ], */
+        ];
+    }
 
     public function actionIndex()
     {
         $model = new CountRecord;
         $model->user_id = $this->user_obj->id;
         $info = $model->getOne();
+
         $action_left = 1;
-        if (is_null($model)) {
+        if (is_null($info)) {
             $action_left = 0;
         }
 

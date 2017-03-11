@@ -54,7 +54,7 @@ class CountRecord extends BaseActiveRecord
         $a_t   = Action::tableName();
         $t_t   = Task::tableName();
         $model = self::find()
-            ->select("$cr_t.*, $t_t.text")
+            ->select("$cr_t.*, $a_t.text, $t_t.id as task_id")
             ->leftJoin($a_t, "$a_t.id = $cr_t.action_id")
             ->leftJoin($t_t, "$a_t.task_id = $t_t.id")
             ->andWhere([

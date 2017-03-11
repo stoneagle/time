@@ -3,6 +3,7 @@
 namespace app\controllers\frontend;
 
 use app\models\Constants;
+use app\models\Action;
 use app\models\CountRecord;
 use app\models\Error;
 use Yii;
@@ -66,6 +67,7 @@ class CountRecordController extends BaseController
     {
         try {
             // 每个用户只会保留一条最新的执行中记录
+            $transaction   = Yii::$app->db->beginTransaction();
             $model = CountRecord::find()
                 ->andWhere([
                     'status' => [
@@ -85,8 +87,25 @@ class CountRecordController extends BaseController
             $model->status    = $params['status'];
             $model->init_time = $params['init_time'];
             $model->modelValidSave();
+
+            $action_model = $this->findModel($model->action_id, Action::class);
+            switch ($model->status) {
+                case CountRecord::STATUS_FINISH :
+                    $action_model->status = Action::STATUS_END;
+                    $action_model->modelValidSave();
+                    break;
+                case CountRecord::STATUS_CANCEL :
+                    $action_model->status = Action::STATUS_WAIT;
+                    $action_model->modelValidSave();
+                    break;
+                default :
+                    break;
+            }
+
+            $transaction->commit(); 
             return $this->packageJson(['id' => $model->attributes['id']], Error::ERR_OK, Error::msg(Error::ERR_OK));
         } catch (\exception $e) {
+            $transaction->rollBack(); 
             return $this->returnException($e);
         }
     }

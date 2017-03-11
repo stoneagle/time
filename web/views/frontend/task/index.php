@@ -37,12 +37,16 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
         padding-left: 0px;
         padding-right: 0px;
     }
+    .collapse.in {
+          height: auto !important;
+    }
 </style>
 <div class="container-fluid">
     <h1><?= Html::encode($this->title); ?></h1>
-    <div id="actionbox" class="col-md-4 panel">
-        <div id="clockbox"></div>
-        <div class="col-md-4 col-md-offset-3"  >
+    <div id="actionbox" class="col-md-4 panel panel-default">
+        <div id="clockbox">
+        </div>
+        <div class="col-md-6 col-md-offset-4"  >
             <p>
               <button id="clock_finish" type="button" class="btn btn-success btn-sm">完成</button>
               <button id="clock_pause" type="button" class="btn btn-primary btn-sm">暂停</button>
@@ -54,56 +58,54 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
             <div id="end_list" class="col-md-6"></div>
         </div>
     </div>  
-    <div class="col-md-8" style="height:1000px;">
-
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    <?php 
-        $i = 0;
-        foreach ($task_list as $id => $one) {
-    ?>
-    <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse_head_<?php echo $id;?>"
-        >
-            <h4 class="panel-title">
-                <a 
-                    <?php if ($i == 0) { ?>
-                    role="button" 
-                    data-toggle="collapse" 
-                    data-parent="#accordion" 
-                    href="#collapse_<?php echo $id;?>" 
-                    aria-expanded="true" 
-                    aria-controls="collapse_<?php echo $id;?>"
-                    <?php } else { ?> 
-                    class="collapsed" 
-                    role="button" 
-                    data-toggle="collapse" 
-                    data-parent="#accordion" 
-                    href="#collapse_<?php echo $id;?>" 
-                    aria-expanded="false" 
-                    aria-controls="collapse_<?php echo $id;?>"
-                    <?php } ?>
+    <div class="col-md-8 panel panel-default" style="height:1000px;padding-right:0;padding-left:0">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <?php 
+                $i = 0;
+                foreach ($task_list as $id => $one) {
+            ?>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="collapse_head_<?php echo $id;?>"
                 >
-                    <?php echo $one['text'];?> 
-                </a>
-            </h4>
+                    <h4 class="panel-title">
+                        <a 
+                            <?php if ($i == 0) { ?>
+                            role="button" 
+                            data-toggle="collapse" 
+                            data-parent="#accordion" 
+                            href="#collapse_<?php echo $id;?>" 
+                            aria-expanded="true" 
+                            aria-controls="collapse_<?php echo $id;?>"
+                            <?php } else { ?> 
+                            class="collapsed" 
+                            role="button" 
+                            data-toggle="collapse" 
+                            data-parent="#accordion" 
+                            href="#collapse_<?php echo $id;?>" 
+                            aria-expanded="false" 
+                            aria-controls="collapse_<?php echo $id;?>"
+                            <?php } ?>
+                        >
+                            <?php echo $one['text'];?> 
+                        </a>
+                    </h4>
+                </div>
+                <div 
+                    id="collapse_<?php echo $id;?>" 
+                    class="panel-collapse collapse <?php if ($i == 0){?> in <?php }?>" 
+                    role="tabpanel" 
+                    aria-labelledby="headingOne"
+                    field_id = <?php echo $one['field_id'];?>
+                    task_name = "<?php echo $one['task_name'];?>"
+                >
+                    <div id="gridbox_<?php echo $id; ?>"></div>  
+                </div>
+            </div>
+            <?php
+                    $i++;
+                }
+            ?>
         </div>
-        <div 
-            id="collapse_<?php echo $id;?>" 
-            class="panel-collapse collapse <?php if ($i == 0){?> in <?php }?>" 
-            role="tabpanel" 
-            aria-labelledby="headingOne"
-            field_id = <?php echo $one['field_id'];?>
-            task_name = "<?php echo $one['task_name'];?>"
-        >
-            <div id="gridbox_<?php echo $id; ?>"></div>  
-        </div>
-    </div>
-    <?php
-            $i++;
-        }
-    ?>
-</div>
-
     </div>
 </div>
 
@@ -154,10 +156,12 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
 
 <script>
     // 通用变量
+    var clock_exec_aid = 0;
+    var clock_exec_tid = 0;
 
-    var action_add_href    = "/frontend/action-api/add"
-    var action_update_href = "/frontend/action-api/update"
-    var action_del_href    = "/frontend/action-api/del"
+    var action_add_href    = "/frontend/action-api/add";
+    var action_update_href = "/frontend/action-api/update";
+    var action_del_href    = "/frontend/action-api/del";
 
     var field_dict      = <?php echo $field_arr;?>;
     var type_dict       = <?php echo $type_arr;?>;
@@ -167,7 +171,7 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
 
     var grid_prefix = "gridbox_";
     var task_id = 0;
-    var grid_hash = {}
+    var grid_hash = {};
 
     var text_index      = 1;
     var plan_time_index = 2;
@@ -207,7 +211,9 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
     // execlist双击启动行动
     execList.attachEvent("onItemDblClick", function (id, ev, html){
         var obj = this.get(id);
-        if (obj.status != <?php echo Action::STATUS_WAIT;?>) {
+        var grid_obj = grid_hash[obj.task_id];
+        var check_status = grid_obj.cellById(obj.id,status_index).getValue();
+        if (check_status != <?php echo Action::STATUS_WAIT;?>) {
             return false;
         } else {
             swal({
@@ -221,11 +227,38 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                 closeOnConfirm: true,
                 showLoaderOnConfirm: true,
             }, function () {
+                // todo 一致性问题的解决
                 post_data = {
                     "action_id" : obj.id,
                 };
                 directPost(count_add_href, post_data, true, true);
-                clock.start();
+                post_data = {
+                    "status" : <?php echo Action::STATUS_EXEC;?>,
+                };
+                $.ajax({
+                    url: action_update_href + "/" + obj.id, 
+                    data: post_data,
+                    dataType: 'text',
+                    type: 'POST',
+                    success: function(result) {
+                        var data = eval('(' + result + ')');  
+                        if (data.action == "error") {
+                            swal("操作失败!", data.message, "error");
+                        } else {
+                            swal("操作成功!", data.message, "success");
+                            var status_exec = <?php echo Action::STATUS_EXEC;?>;
+                            grid_obj.cellById(obj.id,status_index).setValue(status_exec);
+                            grid_obj.cellById(obj.id,status_index).cell.innerHTML = status_arr[status_exec];
+                            // todo, reset后开始clock时，会提示时间已归0，不允许再次start
+                            clock.start();
+                            clock_exec_aid = obj.id; 
+                            clock_exec_tid = obj.task_id; 
+                        }
+                    },
+                    error: function(data) {
+                        swal("操作失败!", data.message, "error");
+                    }
+                })
                 return true;
             });
         }
@@ -341,7 +374,23 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                     "status" : <?php echo CountRecord::STATUS_FINISH;?>,
                 };
                 directPost(count_update_href, post_data, true, true);
-                clock.reset();
+                var status_end = <?php echo Action::STATUS_END;?>;
+                var grid_obj = grid_hash[clock_exec_tid];
+                grid_obj.cellById(clock_exec_aid,status_index).setValue(status_end);
+                grid_obj.cellById(clock_exec_aid,status_index).cell.innerHTML = status_arr[status_end];
+                var exec_obj = execList.get(clock_exec_aid);
+                execList.remove(clock_exec_aid);
+                endList.add(
+                    {
+                        id:clock_exec_aid,
+                        text:exec_obj['text'],
+                        task_name:exec_obj['task_name'],
+                        type_id:exec_obj['type_id'],
+                        task_id:exec_obj['task_id'],
+                        plan_time:exec_obj[ 'plan_time' ],
+                    }
+                );
+                clock.reset(); 
             });
         }
         return true;
@@ -367,6 +416,10 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                 };
                 directPost(count_update_href, post_data, true, true);
                 clock.reset();
+                var status_wait = <?php echo Action::STATUS_WAIT;?>;
+                var grid_obj = grid_hash[clock_exec_tid];
+                grid_obj.cellById(clock_exec_aid,status_index).setValue(status_wait);
+                grid_obj.cellById(clock_exec_aid,status_index).cell.innerHTML = status_arr[status_wait];
             });
         }
         return true;
@@ -407,11 +460,12 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
         grid = new dhtmlXGridObject(grid_prefix + task_id);
         grid.setImagePath("/css/lib/imgs/dhxgrid_terrace/");                 
         grid.setHeader("ID,行动名称,计划时间,类别,状态,描述,<div style='width:100%; text-align:left;'><button id = 'grid" + task_id + "_add' class='btn btn-success btn-xs' >新建</button></div>");
-        grid.setInitWidths("100,250,100,100,100,400");            
+        // grid.enableAutoWidth(true,600,100);
+        grid.setInitWidthsP("10,25,10,10,10,25,9");            
         grid.setColAlign("left, left, left, left, left, left"); 
         grid.setColTypes("ro,ed,ed,co,coro,ed,ch");                  
         grid.setColSorting("str,str,int,str,str,txt");             
-        grid.enableAutoHeight(true, 700);
+        grid.enableAutoHeight(true);
         /* grid.enableDragAndDrop(true); */
         /* grid.rowToDragElement=function(id){ */
         /*     var text = this.cellById(this._dragged[i].idd,1).getValue(); */
@@ -507,11 +561,14 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
         });
 
         grid.attachEvent("onCheck", function(rId,cInd,state){
+            var collapse_obj = $("#collapse_" + task_id);
+            var task_name  = collapse_obj.attr("task_name");
             if (state) {
                 execList.add(
                     {
                         id:rId,
                         text:this.cellById(rId,text_index).getValue(),
+                        task_name:task_name,
                         type_id:this.cellById(rId,type_index).getValue(),
                         task_id:task_id,
                         plan_time:this.cellById(rId,plan_time_index).getValue(),
@@ -585,7 +642,7 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
 
     // 如果加载后，存在执行中或暂停中的行动，提示后重新执行
     var left_action = <?php echo $action_left;?>;
-    if (left_action == 0) {
+    if (left_action == 1) {
         var action_info = <?php echo $action_info;?>;
         swal({
             title: "遗留行动["+ action_info.text +"]，是否继续",           // 弹出框的title
@@ -599,6 +656,8 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
             showLoaderOnConfirm: true,
         }, function (flag) {
             if (flag) {
+                clock_exec_aid = action_info.action_id; 
+                clock_exec_tid = action_info.task_id; 
                 post_data = {
                     "id" : action_info.id,
                 }
@@ -631,13 +690,11 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                 clock.setTime(parseInt(init_time));
                 clock.start();
             } else {
-                if (!check_flag) {
-                    post_data = {
-                        "init_time" : action_info.init_time,
-                        "status" : <?php echo CountRecord::STATUS_CANCEL;?>,
-                    };
-                    directPost(count_update_href, post_data, true, true);
-                }
+                post_data = {
+                    "init_time" : action_info.init_time,
+                    "status" : <?php echo CountRecord::STATUS_CANCEL;?>,
+                };
+                directPost(count_update_href, post_data, true, true);
             }
         });
     }
