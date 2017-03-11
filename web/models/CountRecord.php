@@ -51,10 +51,12 @@ class CountRecord extends BaseActiveRecord
     public function getOne()
     {
         $cr_t  = self::tableName();
+        $a_t   = Action::tableName();
         $t_t   = Task::tableName();
         $model = self::find()
             ->select("$cr_t.*, $t_t.text")
-            ->leftJoin($t_t, "$cr_t.task_id = $t_t.id")
+            ->leftJoin($a_t, "$a_t.id = $cr_t.action_id")
+            ->leftJoin($t_t, "$a_t.task_id = $t_t.id")
             ->andWhere([
                 "$cr_t.status" => [
                     self::STATUS_EXEC,

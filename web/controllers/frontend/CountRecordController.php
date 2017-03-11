@@ -46,11 +46,11 @@ class CountRecordController extends BaseController
             $model = new CountRecord;
 
             $params_conf = [
-                "task_id" => [null, true],
+                "action_id" => [null, true],
                 "status"  => [CountRecord::STATUS_EXEC, false],
             ];
             $params           = $this->getParamsByConf($params_conf, 'post');
-            $model->task_id   = $params['task_id'];
+            $model->action_id = $params['action_id'];
             $model->status    = $params['status'];
             $model->init_time = 0;
             $model->user_id   = $this->user_obj->id;

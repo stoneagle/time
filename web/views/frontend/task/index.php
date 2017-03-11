@@ -153,37 +153,7 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
 </div>
 
 <script>
-    // 左下方执行与完成的list列表
-    execList = new dhtmlXList({
-        container:"exec_list",
-        type:{
-            template:"#text# : #plan_time#<br/>#task_id#",
-        }
-    });
-    endList = new dhtmlXList({
-        container:"end_list",
-        type:{
-            template:"#text# : #plan_time#<br/>#task_id#",
-        }
-    });
-    var exec_load_path = "/frontend/action-api/list/" + <?php echo Action::LIST_EXEC;?>;
-    var end_load_path = "/frontend/action-api/list/" + <?php echo Action::LIST_END;?>;
-    execList.load(exec_load_path, "json");
-    endList.load(end_load_path, "json");
-    /* var dp = new dataProcessor("/frontend/action-api/"); */ 
-    /* dp.init(execList); */
-    /* dp.init(endList); */
-    /* dp.attachEvent("onAfterUpdate", function(id, action, tid, response){ */
-    /*     if (action == "error") { */
-    /*         swal("操作失败!", response.msg, "error"); */
-    /*     } */
-    /* }) */
-
-    // 计时器
-    var clock;
-    var count_add_href    = "/frontend/count-record/add";
-    var count_update_href = "/frontend/count-record/update";
-    var count_one_href    = "/frontend/count-record/one";
+    // 通用变量
 
     var action_add_href    = "/frontend/action-api/add"
     var action_update_href = "/frontend/action-api/update"
@@ -194,6 +164,133 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
     var type_raw        = <?php echo $type_raw;?>;
     var task_id_arr     = <?php echo $task_id_arr;?>;
     var status_arr      = <?php echo $status_arr;?>;
+
+    var grid_prefix = "gridbox_";
+    var task_id = 0;
+    var grid_hash = {}
+
+    var text_index      = 1;
+    var plan_time_index = 2;
+    var type_index      = 3;
+    var status_index    = 4;
+    var check_index     = 6;
+
+    // 左下方执行与完成的list列表
+    execList = new dhtmlXList({
+        container:"exec_list",
+        type:{
+            template:"所属项目:#task_name#<br/>行动名称:(#text#)<br/>计划时间:#plan_time#",
+            height:75,
+        },
+        drag:true
+    });
+    endList = new dhtmlXList({
+        container:"end_list",
+        type:{
+            template:"所属项目:#task_name#<br/>行动名称:(#text#)<br/>计划时间:#plan_time#",
+        }
+    });
+    var exec_load_path = "/frontend/action-api/list/" + <?php echo Action::LIST_EXEC;?>;
+    var end_load_path = "/frontend/action-api/list/" + <?php echo Action::LIST_END;?>;
+    execList.load(exec_load_path, "json");
+    endList.load(end_load_path, "json");
+    
+    /* var dp = new dataProcessor("/frontend/action-api/"); */ 
+    /* dp.init(execList); */
+    /* dp.init(endList); */
+    /* dp.attachEvent("onAfterUpdate", function(id, action, tid, response){ */
+    /*     if (action == "error") { */
+    /*         swal("操作失败!", response.msg, "error"); */
+    /*     } */
+    /* }) */
+
+    // execlist双击启动行动
+    execList.attachEvent("onItemDblClick", function (id, ev, html){
+        var obj = this.get(id);
+        if (obj.status != <?php echo Action::STATUS_WAIT;?>) {
+            return false;
+        } else {
+            swal({
+                title: "是否启动行动[" + obj.text + "]",           // 弹出框的title
+                text: "该行动将会开始计时",             // 弹出框里面的提示文本
+                type: "warning",               // 弹出框类型
+                showCancelButton: true,        // 是否显示取消按钮
+                confirmButtonColor: "#DD6B55", // 确定按钮颜色
+                cancelButtonText: "取消",        // 取消按钮文本
+                confirmButtonText: "是的，确定！",   // 确定按钮上面的文档
+                closeOnConfirm: true,
+                showLoaderOnConfirm: true,
+            }, function () {
+                post_data = {
+                    "action_id" : obj.id,
+                };
+                directPost(count_add_href, post_data, true, true);
+                clock.start();
+                return true;
+            });
+        }
+    });
+
+    execList.attachEvent("onBeforeDrag", function (context, ev){
+        var obj = this.get(context.start);
+        if (obj.status != <?php echo Action::STATUS_WAIT;?>) {
+            return false;
+        } else {
+            context.html = "<div style='background-color:white; padding:10px'>"+ obj.task_name +"</div>";
+            return true;
+        }
+    });
+
+    // execlist拖动删除行动
+    execList.attachEvent("onDragOut", function (context, ev){
+        var obj = this.get(context.start);
+        swal({
+            title: "是否取消行动[" + obj.text + "]",           // 弹出框的title
+            text: "该行动将会从列表中去除",             // 弹出框里面的提示文本
+            type: "warning",               // 弹出框类型
+            showCancelButton: true,        // 是否显示取消按钮
+            confirmButtonColor: "#DD6B55", // 确定按钮颜色
+            cancelButtonText: "取消",        // 取消按钮文本
+            confirmButtonText: "是的，确定！",   // 确定按钮上面的文档
+            closeOnConfirm: true,
+            showLoaderOnConfirm: true,
+        }, function () {
+            post_data = {
+                "status" : <?php echo Action::STATUS_INIT;?>,
+            };
+            $.ajax({
+                url: action_update_href + "/" + obj.id, 
+                data: post_data,
+                dataType: 'text',
+                type: 'POST',
+                success: function(result) {
+                    var data = eval('(' + result + ')');  
+                    if (data.action == "error") {
+                        swal("操作失败!", data.message, "error");
+                    } else {
+                        swal("操作成功!", data.message, "success");
+                        execList.remove(obj.id);
+                        // 修改grid选框状态
+                        var grid_obj = grid_hash[obj.task_id];
+                        grid_obj.cellById(obj.id, check_index).setValue(0);
+                        var status_init = <?php echo Action::STATUS_INIT;?>;
+                        grid_obj.cellById(obj.id,status_index).setValue(status_init);
+                        grid_obj.cellById(obj.id,status_index).cell.innerHTML = status_arr[status_init];
+                    }
+                },
+                error: function(data) {
+                    swal("操作失败!", data.message, "error");
+                }
+            })
+        });
+        return true;
+    });
+
+    // 计时器
+    var clock;
+    var count_add_href    = "/frontend/count-record/add";
+    var count_update_href = "/frontend/count-record/update";
+    var count_one_href    = "/frontend/count-record/one";
 
     clock = $('#clockbox').FlipClock({
         clockFace: 'HourlyCounter',
@@ -304,16 +401,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
 
     // 选择框
     // collapse与grid的初始化
-    var grid_prefix = "gridbox_";
-    var task_id = 0;
-    var grid_hash = {}
-
-    var text_index      = 1;
-    var plan_time_index = 2;
-    var type_index      = 3;
-    var status_index    = 4;
-    var check_index     = 6;
-
     for (var i = 0 ;i < task_id_arr.length; i++) {
         task_id = task_id_arr[i];
         // 右侧grid

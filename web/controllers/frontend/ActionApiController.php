@@ -61,11 +61,16 @@ class ActionApiController extends BaseController
     // REST接口，获取基础数据
     public function actionList($type)
     {
-        $model = new Action;
+        $model          = new Action;
         $model->user_id = $this->user_obj->id;
-        $model->status = Action::$list_arr[$type];
-        $query = $model->getQuery();
-        $result = $query->select("id, text, type_id, task_id, plan_time")->asArray()->all();
+        $model->status  = Action::$list_arr[$type];
+        $query          = $model->getQuery();
+        $action_t       = Action::tableName();
+        $task_t         = Task::tableName();
+        $result         = $query
+            ->select("$action_t.*, $task_t.text task_name")
+            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+            ->asArray()->all();
 
         return $this->directJson(json_encode($result));
     }
