@@ -137,7 +137,7 @@ class ProjectApiController extends BaseController
             $action_type = "updated";
             $params_conf = [
                 "text"             => [null, true],
-                //"type"             => [null, true],
+                "type"             => [null, true],
                 "start_date"       => [null, true],
                 "duration"         => [null, true],
                 "progress"         => [0, false],

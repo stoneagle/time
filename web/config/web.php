@@ -64,9 +64,9 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 // gantt
-                "GET frontend/project-api/data" => "frontend/project-api/data",
-                "POST frontend/project-api/task" => "frontend/project-api/task-add",
-                "PUT frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-update",
+                "GET frontend/project-api/data"             => "frontend/project-api/data",
+                "POST frontend/project-api/task"            => "frontend/project-api/task-add",
+                "PUT frontend/project-api/task/<id:\d+>"    => "frontend/project-api/task-update",
                 "DELETE frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-del",
 
                 "POST frontend/project-api/link"                => "frontend/project-api/link-add",
@@ -75,13 +75,17 @@ $config = [
 
                 "GET frontend/action-api/list/<type:\d+>"    => "frontend/action-api/list",
                 "GET frontend/action-api/data/<task_id:\d+>" => "frontend/action-api/data",
-                "POST frontend/action-api/update/<id:\d+>"          => "frontend/action-api/update",
-                "PUT frontend/action-api/<id:\d+>"          => "frontend/action-api/update",
+                "POST frontend/action-api/update/<id:\d+>"   => "frontend/action-api/update",
+                "PUT frontend/action-api/<id:\d+>"           => "frontend/action-api/update",
                 "DELETE frontend/action-api/<id:\d+>"        => "frontend/action-api/del",
 
-                "POST frontend/plan-api/<id:\d+>"          => "frontend/plan-api/add",
-                "PUT frontend/plan-api/<id:\d+>"          => "frontend/plan-api/update",
-                "DELETE frontend/plan-api/<id:\d+>"        => "frontend/plan-api/del",
+                "POST frontend/plan-api/<id:\d+>"   => "frontend/plan-api/add",
+                "PUT frontend/plan-api/<id:\d+>"    => "frontend/plan-api/update",
+                "DELETE frontend/plan-api/<id:\d+>" => "frontend/plan-api/del",
+
+                "GET frontend/task-api/plan/<year:\d+>/<week:\d+>"    => "frontend/task-api/plan",
+                "PUT frontend/plan-api/plan/<task_id:\d+>"    => "frontend/plan-api/task-oper",
+                "GET frontend/plan-api/chart/<year:\d+>/<week:\d+>"    => "frontend/plan-api/chart",
 
                 "POST frontend/scheduler-api/<sid:\d+>"  => "frontend/scheduler-api/add",
                 "PUT frontend/scheduler-api/<id:\d+>"    => "frontend/scheduler-api/update",

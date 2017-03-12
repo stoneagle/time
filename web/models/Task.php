@@ -41,4 +41,21 @@ class Task extends BaseActiveRecord
         $query->andFilterWhere(["$task_t.user_id" => $this->user_id]);
         return $query;
     }
+
+    public function getPlanTask()
+    {
+        $task_t         = self::tableName();
+        $project_t      = Project::tableName();
+        $action_t       = Action::tableName();
+        $plan_task_t    = PlanTask::tableName();
+        $query          = $this->getQuery();
+        $query->select("
+            $task_t.id, $task_t.text, $project_t.field_id, sum($action_t.plan_time) as sum_time, $task_t.progress, max($plan_task_t.week) as week
+            ")
+            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+            ->leftJoin($action_t, "$action_t.task_id = $task_t.id")
+            ->leftJoin($plan_task_t, "$plan_task_t.task_id = $task_t.id")
+            ->groupBy("$task_t.id");
+        return $query;
+    }
 }

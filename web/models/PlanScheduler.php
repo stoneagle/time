@@ -33,6 +33,7 @@ class PlanScheduler extends BaseActiveRecord
         $query = self::find()
             ->orderBy("$p_s_t.ctime");
         $query->andFilterWhere(["$p_s_t.user_id" => $this->user_id]);
+        $query->andFilterWhere(["$p_s_t.week" => $this->week]);
         return $query;
     }
 }

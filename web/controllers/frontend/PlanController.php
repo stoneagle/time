@@ -15,6 +15,7 @@ class PlanController extends BaseController
     public function actionIndex()
     {
         return $this->render('index', [
+            "init_date" => date("Y-W", time()),
         ]);
     }
 }
