@@ -75,6 +75,7 @@ $config = [
 
                 "GET frontend/action-api/list/<type:\d+>"    => "frontend/action-api/list",
                 "GET frontend/action-api/data/<task_id:\d+>" => "frontend/action-api/data",
+                "POST frontend/action-api/<id:\d+>"   => "frontend/action-api/add",
                 "POST frontend/action-api/update/<id:\d+>"   => "frontend/action-api/update",
                 "PUT frontend/action-api/<id:\d+>"           => "frontend/action-api/update",
                 "DELETE frontend/action-api/<id:\d+>"        => "frontend/action-api/del",

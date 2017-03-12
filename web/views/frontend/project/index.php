@@ -60,19 +60,28 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
     ];
     var field_opt                           = <?php echo $fieldDict;?>;
     var priority_opt                        = <?php echo $priorityDict;?>;
+    var type_dict                           = <?php echo $typeDict;?>;
+    gantt.locale.labels.section_description = "名称";
     gantt.locale.labels.section_field_id    = "领域";
     gantt.locale.labels.section_priority_id = "重要性";
+    gantt.locale.labels.section_plan_time   = "计划时间";
+    gantt.locale.labels.section_action_type = "行为类别";
 
     var custom_sections                = [
-        {name: "description", height: 70, map_to: "text", type: "textarea", focus: true},
+        {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
         {name: "time", type: "duration", map_to: "auto"}
+    ];
+    var action_sections                = [
+        {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
+        {name: "plan_time", height: 30, map_to: "plan_time", type: "textarea", focus: true},
     ];
 
     gantt.attachEvent("onBeforeLightbox", function(id){
         gantt.resetLightbox();
-        var currentSections = custom_sections.slice();
         var task = gantt.getTask(id);
+
         if (task.$level == <?php echo Project::LEVEL_PROJECT;?>) {
+            var currentSections = custom_sections.slice();
             if (field_opt) {
                 var default_v = field_opt[0]['key'];
             } else {
@@ -88,33 +97,59 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
             }
             var priority_section = {name:"priority_id", height:30, type:"select", map_to:"priority_id", options:priority_opt, default_value:default_v};
             currentSections.push(priority_section);
-        } 
-        gantt.config.lightbox.sections = currentSections;
+            gantt.config.lightbox.sections = currentSections;
+        } else if (task.$level == <?php echo Project::LEVEL_TASK;?>) {
+            var currentSections = custom_sections.slice();
+            gantt.config.lightbox.sections = currentSections;
+        } else if (task.$level == <?php echo Project::LEVEL_ACTION;?>) {
+            var currentSections = action_sections.slice();
+            var task_level_obj = gantt.getTask(task.parent); 
+            var project_level_obj = gantt.getTask(task_level_obj.parent); 
+            var action_type_arr = type_dict[project_level_obj.field_id];
+
+            if (action_type_arr) {
+                var default_v = action_type_arr[0]['key'];
+            } else {
+                var default_v = "";
+            }
+            var action_type_section = {name:"action_type", height:30, type:"select", map_to:"action_type", options:action_type_arr, default_value:default_v};
+            currentSections.push(action_type_section);
+            gantt.config.lightbox.sections = currentSections;
+        }
         return true;
     });
 
     // 自定义按键+待定
-    gantt.config.buttons_left=["dhx_save_btn","dhx_cancel_btn","unscheduler_button"];
-    gantt.locale.labels["unscheduler_button"] = "待定";
-    gantt.attachEvent("onLightboxButton", function(button_id, node, e){
-        if(button_id == "unscheduler_button"){
-            var id = gantt.getState().lightbox;
-            gantt.getTask(id).unscheduled_flag = 1;
-            gantt.getTask(id).unscheduled = true;
+    /* gantt.config.buttons_left=["dhx_save_btn","dhx_cancel_btn","unscheduler_button"]; */
+    /* gantt.locale.labels["unscheduler_button"] = "待定"; */
+    /* gantt.attachEvent("onLightboxButton", function(button_id, node, e){ */
+    /*     if(button_id == "unscheduler_button"){ */
+    /*         var id = gantt.getState().lightbox; */
+    /*         gantt.getTask(id).unscheduled_flag = 1; */
+    /*         gantt.getTask(id).unscheduled = true; */
 
-            $(".gantt_duration_dec").attr("disabled","disabled");
-            $(".gantt_duration_inc").attr("disabled","disabled");
-            $(".gantt_duration_value").val(0);
-            $(".gantt_duration_value").attr("readonly", "readonly");
-        }
-    });
+    /*         $(".gantt_duration_dec").attr("disabled","disabled"); */
+    /*         $(".gantt_duration_inc").attr("disabled","disabled"); */
+    /*         $(".gantt_duration_value").val(0); */
+    /*         $(".gantt_duration_value").attr("readonly", "readonly"); */
+    /*     } */
+    /* }); */
+    function isInt(value) {
+          return !isNaN(value) && (function(x) { return (x | 0) === x;  })(parseFloat(value))
+    }
 
-    gantt.attachEvent("onBeforeTaskAdd", function(id,item){
-        if (item.unscheduled) {
-            item.duration = 0;
+    gantt.attachEvent("onLightboxSave", function(id, task, is_new){
+        if (task.$level == <?php echo Project::LEVEL_ACTION;?>) {
+            task.unscheduled = true;
+            task.duration = 0;
+            if (!isInt(task.plan_time) || task.plan_time <= 0 || task.plan_time > 5) {
+                swal("操作失败!", "计划时间必须是数字，且范围在1-5以内", "error");
+                return false;
+            }
         }
         return true;
-    });
+    })
+
     gantt.attachEvent("onAfterTaskUpdate", function(id,item){
         if (item.unscheduled) {
             item.duration = 0;
@@ -143,8 +178,11 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
             case types.task:
                 text = "任务";
                 break;
+            case types.action:
+                text = "行动";
+                break;
             default:
-                text = '任务';
+                text = '';
                 break;
         }
         task.text = text + " #" + index;
@@ -194,7 +232,7 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
                 task.type = types.task
                 break;
             default:
-                task.type = types.task;
+                task.type = types.action;
                 break;
         }
 

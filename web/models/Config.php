@@ -113,6 +113,12 @@ class Config extends BaseActiveRecord
 
                 ];
                 break;
+            case "dhtml" : 
+                $ret[$one['parent']][] = [
+                    "key" => $one['id'],
+                    "label" => $one['name'],
+                ];
+                break;
             default :
                 $ret[$one['parent']][$one['id']] = $one['name'];
                 break;

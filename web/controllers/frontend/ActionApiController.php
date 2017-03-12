@@ -80,10 +80,17 @@ class ActionApiController extends BaseController
 
     public function actionScheduler()
     {
-        $model = new Action;
-        $model->status = Action::STATUS_END;
+        $model          = new Action;
+        $model->status  = Action::STATUS_END;
         $model->user_id = $this->user_obj->id;
-        $result = $model->getQuery()->asArray()->all();
+        $action_t       = Action::tableName();
+        $task_t         = Task::tableName();
+        $project_t      = Project::tableName();
+        $result         = $model->getQuery()
+            ->select("$action_t.*, $task_t.text task_name, $project_t.field_id")
+            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+            ->asArray()->all();
         $ret["data"] = $result;
         return $this->directJson(json_encode($ret));
     }
@@ -104,6 +111,7 @@ class ActionApiController extends BaseController
                 "end_date"   => [date("Y-m-d H:i:s", time()), false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
+            $model->id         = Project::getMaxId();
             $model->text       = $params['text'];
             $model->task_id    = $params['task_id'];
             $model->type_id    = $params['type_id'];
@@ -113,6 +121,9 @@ class ActionApiController extends BaseController
             $model->start_date = $params['start_date'];
             $model->end_date   = $params['end_date'];
             $model->user_id    = $this->user_obj->id;
+            if (isset($_POST["event_pid"])) {
+                $model->exec_time = \DateUtil::minuteBetween($params["start_date"], $params["end_date"]) * 60;
+            }
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type, $model->id);
@@ -129,13 +140,14 @@ class ActionApiController extends BaseController
         try {
             $action_type = "updated";
             $params_conf = [
-                "text"      => [null, false],
-                "type_id"   => [null, false],
-                "plan_time" => [null, false],
-                "exec_time" => [0, false],
-                "status"    => [0, true],
-                "end_date"  => [date("Y-m-d H:i:s", time()), false],
-                //"check"     => [null, false],
+                "text"       => [null, false],
+                "type_id"    => [null, false],
+                "plan_time"  => [null, false],
+                "exec_time"  => [0, false],
+                "status"     => [0, true],
+                "start_date" => [date("Y-m-d H:i:s", time()), false],
+                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+                "event_pid"  => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model             = $this->findModel($id, Action::class);
@@ -148,9 +160,18 @@ class ActionApiController extends BaseController
             if (!is_null($params['plan_time'])) {
                 $model->plan_time    = $params['plan_time'];
             }
+            if ($model->status == Action::STATUS_EXEC) {
+                $model->start_date == date("Y-m-d H:i:s", time());
+            } else if ($model->status == Action::STATUS_END) {
+                $model->end_date == date("Y-m-d H:i:s", time());
+            }
+
+            if (!is_null($params["event_pid"])) {
+                $model->exec_time = \DateUtil::minuteBetween($params["start_date"], $params["end_date"]) * 60;
+            } else {
+                $model->exec_time  = $params['exec_time'];
+            }
             $model->status     = $params['status'];
-            $model->exec_time  = $params['exec_time'];
-            $model->end_date   = $params['end_date'];
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type, $id);

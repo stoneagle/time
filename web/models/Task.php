@@ -58,4 +58,31 @@ class Task extends BaseActiveRecord
             ->groupBy("$task_t.id");
         return $query;
     }
+
+
+    public function getTaskWithFieldAndPriorityList($field_dict, $priority_dict)
+    {
+        $query     = $this->getQuery();
+        $task_t    = self::tableName();
+        $project_t = Project::tableName();
+        $query->leftJoin($project_t, "$task_t.parent = $project_t.id");
+        $query->select("
+            $task_t.id, $task_t.text, $project_t.priority_id,
+            $project_t.field_id,$project_t.text as project_text
+            ")->orderby("$project_t.priority_id, $task_t.ctime");
+        $result = $query->asArray()->all();
+
+        $task_list = [];
+        foreach ($result as $one) {
+            $priority_name = ArrayHelper::getValue($priority_dict, $one["priority_id"]); 
+            $field_name = ArrayHelper::getValue($field_dict, $one["field_id"]); 
+            $text = "[$priority_name]".$field_name."——".$one["project_text"]."——".$one["text"];
+            $task_list[$one['id']] = [
+                "text"      => $text,
+                "task_name" => $one['text'],
+                "field_id" => $one['field_id'],
+            ];
+        }
+        return $task_list;
+    }
 }

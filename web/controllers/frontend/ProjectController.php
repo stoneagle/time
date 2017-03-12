@@ -18,10 +18,12 @@ class ProjectController extends BaseController
         $field_dict         = $config_model->getTypeDict(true);
         $config_model->type = Config::TYPE_PRIORITY;
         $priority_dict      = $config_model->getTypeDict(true);
+        $type_raw           = Config::getTypeWithParentDict(Config::TYPE_ACTION, "dhtml");
 
         return $this->render('index', [
-            "fieldDict" => json_encode($field_dict),
+            "fieldDict"    => json_encode($field_dict),
             "priorityDict" => json_encode($priority_dict),
+            "typeDict"     => json_encode($type_raw),
         ]);
     }
 

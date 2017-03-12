@@ -49,28 +49,7 @@ class TaskController extends BaseController
 
         // 获取task任务列表
         $model     = new Task;
-        $query     = $model->getQuery();
-        $task_t    = Task::tableName();
-        $project_t = Project::tableName();
-
-        $query->leftJoin($project_t, "$task_t.parent = $project_t.id");
-        $query->select("
-            $task_t.id, $task_t.text, $project_t.priority_id,
-            $project_t.field_id,$project_t.text as project_text
-            ")->orderby("$project_t.priority_id, $task_t.ctime");
-        $result = $query->asArray()->all();
-
-        $task_list = [];
-        foreach ($result as $one) {
-            $priority_name = ArrayHelper::getValue($priority_dict, $one["priority_id"]); 
-            $field_name = ArrayHelper::getValue($field_dict, $one["field_id"]); 
-            $text = "[$priority_name]".$field_name."——".$one["project_text"]."——".$one["text"];
-            $task_list[$one['id']] = [
-                "text"      => $text,
-                "task_name" => $one['text'],
-                "field_id" => $one['field_id'],
-            ];
-        }
+        $task_list = $model->getTaskWithFieldAndPriorityList($field_dict, $priority_dict);
         return $this->render('index', [
             "action_left"     => $action_left,
             "action_info"     => json_encode($info),
