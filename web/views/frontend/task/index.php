@@ -20,6 +20,7 @@ $this->registerJsFile('@web/js/lib/dhtmlx/dhtmlxgrid_drag.js',['depends'=>['app\
 $this->registerJsFile('@web/js/lib/dhtmlx/dhtmlxlist.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/select2.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 
+
 // 计时器
 $this->registerCssFile('@web/css/lib/flipclock.css',['depends'=>['app\assets\AppAsset']]);
 $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);

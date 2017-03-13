@@ -40,6 +40,12 @@ AppAsset::register($this);
                 ['label' => '时间回顾', 'url' => ['/frontend/scheduler/index']]
             ]
         ],
+        [
+            'label' => '商业', 
+            'items' => [
+                ['label' => '资产管理', 'url' => ['/frontend/assets/index']],
+            ]
+        ],
         ['label' => '知识网络', 'url' => ['/site/contact']],
         [
             'label' => "后台管理",
