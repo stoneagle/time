@@ -3,7 +3,9 @@
 namespace app\controllers\frontend;
 
 use app\models\Error;
-use app\models\Assets;
+use app\models\BusinessAssets;
+use app\models\Project;
+use app\models\Action;
 use app\models\Constants;
 use app\models\Config;
 use Yii;
@@ -12,14 +14,20 @@ use yii\helpers\ArrayHelper;
 
 class AssetsApiController extends BaseController
 {
-    // REST接口，获取基础数据
-    public function actionData()
+    public function actionData($id)
     {
-        $model          = new PlanScheduler;
+        $model = new Project;
         $model->user_id = $this->user_obj->id;
-        $result = $model->getQuery()->asArray()->all();
-        $ret["data"] = $result;
-        return $this->directJson(json_encode($ret));
+        $model->obj_id = $id;
+        $model->field_id = Config::FIELD_ASSET;
+        $action_t  = Action::tableName();
+        $project_t = Project::tableName();
+        $query = $model->getQuery()
+            ->select("$project_t.*, sum($action_t.exec_time) as sum_time")
+            ->groupBy("$project_t.id");
+        $result = $query->asArray()->all();
+
+        return $this->packageJson($result, Error::ERR_OK, Error::msg(Error::ERR_OK));
     }
 
     public function actionChart($year, $week)
@@ -64,9 +72,7 @@ class AssetsApiController extends BaseController
         }
         
         // 处理该周已选任务的数量，以及消耗时间
-        $config_model       = new Config;
-        $config_model->type = Config::TYPE_FIELD;
-        $field_dict         = $config_model->getTypeDict();
+        $field_dict         = Config::$field_arr;
 
         $tmp_arr["field"] = [];
         foreach ($task_result as $one) {
@@ -90,69 +96,84 @@ class AssetsApiController extends BaseController
     public function actionAdd()
     {
         try {
-            $action_type = "inserted";
-            $model = new PlanScheduler;
-
+            $model = new BusinessAssets;
             $params_conf = [
-                "start_date" => [date("Y-m-d H:i:s", time()), false],
-                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+                "name"        => [null, true],
+                "type_id"     => [null, true],
+                "value"       => [null, true],
+                "time"        => [null, true],
+                "position"    => [null, true],
+                "access_unit" => [null, true],
             ];
-            $params            = $this->getParamsByConf($params_conf, 'post');
-            $model->week       = date("Y-W", strtotime($params["start_date"]));
-            $model->start_date = $params['start_date'];
-            $model->end_date   = $params['end_date'];
-            $model->user_id    = $this->user_obj->id;
+            $params             = $this->getParamsByConf($params_conf, 'post');
+            $model->name        = $params['name'];
+            $model->type_id     = $params['type_id'];
+            $model->value       = $params['value'];
+            $model->time        = $params['time'];
+            $model->position    = $params['position'];
+            $model->access_unit = $params['access_unit'];
+            $model->user_id     = $this->user_obj->id;
             $model->modelValidSave();
 
-            $ret = $this->prepareResponse($action_type, $model->id);
-            return $this->directJson($ret);
+            list($x, $y, $width, $height) = explode(",", $model->position);
+
+            return $this->packageJson([
+                'id'     => $model->id,
+                'x'      => $x,
+                'y'      => $y,
+                'width'  => $width,
+                'height' => $height,
+            ], Error::ERR_OK, Error::msg(Error::ERR_OK));
         } catch (\exception $e) {
-            $action_type = "error";
-            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
-            return $this->directJson($ret);
+            return $this->returnException($e);
         }
     }
 
     public function actionUpdate($id)
     {
         try {
-            $action_type = "updated";
             $params_conf = [
-                "start_date" => [date("Y-m-d H:i:s", time()), false],
-                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+                "name"        => [null, false],
+                "type_id"     => [null, false],
+                "value"       => [null, false],
+                "time"        => [null, false],
+                "position"    => [null, true],
+                "access_unit" => [null, false],
             ];
-            $params            = $this->getParamsByConf($params_conf, 'post');
-            $model             = $this->findModel($id, PlanScheduler::class);
-            $model->week       = date("Y-W", strtotime($params["start_date"]));
-            $model->start_date = $params['start_date'];
-            $model->end_date   = $params['end_date'];
+            $params          = $this->getParamsByConf($params_conf, 'post');
+            $model           = $this->findModel($id, BusinessAssets::class);
+            foreach ($params as $index => $one) {
+                if (!is_null($one)) {
+                    $model->$index = $one;
+                }
+            }
             $model->modelValidSave();
-
-            $ret = $this->prepareResponse($action_type, $id);
-            return $this->directJson($ret);
+            return $this->packageJson(['id' => $model->id], Error::ERR_OK, Error::msg(Error::ERR_OK));
         } catch (\exception $e) {
-            $action_type = "error";
-            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
-            return $this->directJson($ret);
+            return $this->returnException($e);
         }
     }
 
     public function actionDel($id)
     {
         try {
-            $action_type = "deleted";
-            $model       = $this->findModel($id, PlanScheduler::class);
-
-            $result      = $model->delete();
-            if (!$result) {
-                throw new \Exception(Error::msg(Error::ERR_DEL), Error::ERR_DEL);
+            $params_conf = [
+                "hard_flag" => [false, false],
+            ];
+            $params            = $this->getParamsByConf($params_conf, 'post');
+            $model       = $this->findModel($id, BusinessAssets::class);
+            if ($params['hard_flag']) {
+                $result = $model->delete(); 
+                if (!$result) {
+                    throw new \Exception(Error::msg(Error::ERR_DEL), Error::ERR_DEL);
+                }
+            } else {
+                $model->del = Constants::SOFT_DEL_YES; 
+                $model->modelValidSave();
             }
-            $ret = $this->prepareResponse($action_type, $id);
-            return $this->directJson($ret);
+            return $this->packageJson(['id' => $id], Error::ERR_OK, Error::msg(Error::ERR_OK));
         } catch (\exception $e) {
-            $action_type = "error";
-            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
-            return $this->directJson($ret);
+            return $this->returnException($e);
         }
     }
 }

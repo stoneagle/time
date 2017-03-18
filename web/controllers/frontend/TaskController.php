@@ -39,13 +39,10 @@ class TaskController extends BaseController
         }
 
         $config_model       = new Config;
-        $config_model->type = Config::TYPE_FIELD;
-        $field_dict         = $config_model->getTypeDict();
+        $field_dict         = Config::$field_arr;
         $type_dict          = Config::getTypeWithParentDict(Config::TYPE_ACTION, "select2");
         $type_raw           = Config::getTypeWithParentDict(Config::TYPE_ACTION);
-        $config_model->type = Config::TYPE_PRIORITY;
-        $priority_dict      = $config_model->getTypeDict();
-
+        $priority_dict      = Config::$priority_arr;
 
         // 获取task任务列表
         $model     = new Task;

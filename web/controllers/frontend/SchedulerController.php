@@ -18,10 +18,8 @@ class SchedulerController extends BaseController
 
         $config_model       = new Config;
         $type_raw           = Config::getTypeWithParentDict(Config::TYPE_ACTION, "dhtml");
-        $config_model->type = Config::TYPE_PRIORITY;
-        $priority_dict      = $config_model->getTypeDict();
-        $config_model->type = Config::TYPE_FIELD;
-        $field_dict         = $config_model->getTypeDict();
+        $priority_dict      = Config::$priority_arr;
+        $field_dict         = Config::$field_arr;
 
         $model     = new Task;
         $task_list = $model->getTaskWithFieldAndPriorityList($field_dict, $priority_dict);

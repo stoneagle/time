@@ -48,10 +48,16 @@ class Project extends BaseActiveRecord
     public function getQuery()
     {
         $project_t = self::tableName();
-        $query = self::find()
-            ->orderBy("$project_t.ctime");
-        $query->andFilterWhere(["$project_t.del"     => Constants::SOFT_DEL_NO]);
-        $query->andFilterWhere(["$project_t.user_id" => $this->user_id]);
+        $action_t  = Action::tableName();
+        $task_t    = Task::tableName();
+        $query     = self::find()
+            ->orderBy("$project_t.ctime")
+            ->leftJoin($task_t, "$project_t.id = $task_t.parent")
+            ->leftJoin($action_t, "$task_t.id = $action_t.task_id");
+        $query->andFilterWhere(["$project_t.del"      => Constants::SOFT_DEL_NO]);
+        $query->andFilterWhere(["$project_t.user_id"  => $this->user_id]);
+        $query->andFilterWhere(["$project_t.field_id" => $this->field_id]);
+        $query->andFilterWhere(["$project_t.obj_id"   => $this->obj_id]);
         return $query;
     }
 
@@ -65,39 +71,4 @@ class Project extends BaseActiveRecord
         $a_id = $a_id["max_id"];
         return max($p_id, $t_id, $a_id) + 1;
     }
-
-    /* public function checkAndChangeDuration() */
-    /* { */
-    /*     if (empty($this->process_id)) { */
-    /*         throw new \Exception("无法获取行动列表", Error::ERR_GANTT_TASKS_DURATION_CHANGE); */
-    /*     } */
-    /*     $events_list = Events::find() */
-    /*         ->andWhere(['process_id' => $this->process_id]) */
-    /*         ->select("start_date") */
-    /*         ->asArray()->all(); */
-    /*     $events_t = Events::tableName(); */
-    /*     $process_t = Process::tableName(); */
-    /*     $process_list = Process::find() */
-    /*         ->leftJoin($events_t, "$events_t.process_id = $process_t.id") */
-    /*         ->andWhere(["$process_t.task_id" => $this->id]) */
-    /*         ->select("max($events_t.end_date) as end_date") */
-    /*         ->asArray()->one(); */
-    /*     $max_end = $process_list['end_date']; */
-
-    /*     $min_start = ""; */
-    /*     foreach ($events_list as $one) { */
-    /*         $start = date("Y-m-d", strtotime($one['start_date'])); */
-    /*         $end   = date("Y-m-d", strtotime($one['end_date'])); */
-    /*         if (empty($min_start) || ($min_start > $start)) { */
-    /*             $min_start = $start; */
-    /*         } */
-    /*     } */
-
-    /*     $days = \DateUtil::daysBetween($min_start, $max_end); */
-    /*     $duration = $days + 1; */
-    /*     $this->duration = $duration; */
-    /*     $this->start_date = $min_start; */
-    /*     $result = $this->modelValidSave(); */
-    /*     return true; */
-    /* } */
 }

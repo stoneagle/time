@@ -67,9 +67,7 @@ class PlanApiController extends BaseController
         }
         
         // 处理该周已选任务的数量，以及消耗时间
-        $config_model       = new Config;
-        $config_model->type = Config::TYPE_FIELD;
-        $field_dict         = $config_model->getTypeDict();
+        $field_dict         = Config::$field_arr;
 
         $tmp_arr["field"] = [];
         foreach ($task_result as $one) {

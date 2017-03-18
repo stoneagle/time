@@ -107,11 +107,12 @@ class ProjectApiController extends BaseController
                 "text"        => [null, true],
                 "type"        => [null, true],
                 "start_date"  => [null, true],
-                "end_date"    => [null, true],
+                "end_date"    => [null, false],
                 "duration"    => [null, true],
                 "progress"    => [0, false],
                 "priority_id" => [0, false],
                 "field_id"    => [0, false],
+                "obj_id"      => [null, true],
                 "parent"      => [null, true],
                 "action_type" => [null, false],
                 "plan_time"   => [null, false],
@@ -149,6 +150,7 @@ class ProjectApiController extends BaseController
             $model->start_date = $params['start_date'];
             $model->duration   = $params['duration'];
             $model->user_id    = $this->user_obj->id;
+            $model->obj_id     = $params['obj_id'];
             $model->modelValidSave();
             $ret = $this->prepareResponse($action_type, $model->id);
             return $this->directJson($ret);
@@ -171,6 +173,7 @@ class ProjectApiController extends BaseController
                 "progress"    => [0, false],
                 "priority_id" => [0, false],
                 "field_id"    => [0, false],
+                "obj_id"      => [null, true],
                 "parent"      => [null, true],
                 "action_type" => [null, false],
                 "plan_time"   => [null, false],
@@ -200,6 +203,7 @@ class ProjectApiController extends BaseController
             $model->text       = $params['text'];
             $model->start_date = $params['start_date'];
             $model->duration   = $params['duration'];
+            $model->obj_id     = $params['obj_id'];
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type, $id);

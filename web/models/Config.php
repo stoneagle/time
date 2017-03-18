@@ -16,14 +16,55 @@ use yii\helpers\ArrayHelper;
  */
 class Config extends BaseActiveRecord 
 {
-    CONST TYPE_FIELD    = 1;
     CONST TYPE_ACTION   = 2;
-    CONST TYPE_PRIORITY = 3;
+
+    CONST FIELD_KNOWLEDGE = 1;
+    CONST FIELD_ASSET     = 2;
+    CONST FIELD_ART       = 3;
+    CONST FIELD_POLICY    = 4;
+    CONST FIELD_PHYSICAL  = 5;
+
+    CONST PRIORITY_IMPORTANT_URGENT = 1;
+    CONST PRIORITY_IMPORTANT_UNURG  = 2;
+    CONST PRIORITY_UNIM_URGENT      = 3;
+    CONST PRIORITY_UNIM_UNURG       = 4;
+
+    public static $field_arr = [
+        self::FIELD_KNOWLEDGE => "工",
+        self::FIELD_ASSET     => "商",
+        self::FIELD_ART       => "文",
+        self::FIELD_POLICY    => "政",
+        self::FIELD_PHYSICAL  => "体",
+    ];
+
+    public static $priority_arr = [
+        self::PRIORITY_IMPORTANT_URGENT => "重要且紧急",
+        self::PRIORITY_IMPORTANT_UNURG  => "重要不紧急",
+        self::PRIORITY_UNIM_URGENT      => "紧急不重要",
+        self::PRIORITY_UNIM_UNURG       => "不重要且不紧急",
+    ];
+
+    public static $priority_dhtml_arr = [
+        [
+            "key" => self::PRIORITY_IMPORTANT_URGENT,
+            "label" => "重要且紧急",
+        ],
+        [
+            "key" => self::PRIORITY_IMPORTANT_UNURG,
+            "label" => "重要不紧急",
+        ],
+        [
+            "key" => self::PRIORITY_UNIM_URGENT,
+            "label" => "紧急不重要",
+        ],
+        [
+            "key" => self::PRIORITY_UNIM_UNURG,
+            "label" => "不重要且不紧急",
+        ],
+    ];
 
     public static $type_arr = [
-        self::TYPE_FIELD    => "领域",
         self::TYPE_ACTION   => "行为",
-        self::TYPE_PRIORITY => "优先级",
     ];
 
     /**

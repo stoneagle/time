@@ -68,6 +68,7 @@ $config = [
                 "POST frontend/project-api/task"            => "frontend/project-api/task-add",
                 "PUT frontend/project-api/task/<id:\d+>"    => "frontend/project-api/task-update",
                 "DELETE frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-del",
+                "POST frontend/project-api/del/<id:\d+>"    => "frontend/project-api/task-del",
 
                 "POST frontend/project-api/link"                => "frontend/project-api/link-add",
                 "PUT frontend/project-api/link/<linkid:\d+>"    => "frontend/project-api/link-update",
@@ -84,9 +85,13 @@ $config = [
                 "PUT frontend/plan-api/<id:\d+>"    => "frontend/plan-api/update",
                 "DELETE frontend/plan-api/<id:\d+>" => "frontend/plan-api/del",
 
-                "GET frontend/task-api/plan/<year:\d+>/<week:\d+>"    => "frontend/task-api/plan",
-                "PUT frontend/plan-api/plan/<task_id:\d+>"    => "frontend/plan-api/task-oper",
-                "GET frontend/plan-api/chart/<year:\d+>/<week:\d+>"    => "frontend/plan-api/chart",
+                "POST frontend/assets-api/update/<id:\d+>" => "frontend/assets-api/update",
+                "POST frontend/assets-api/del/<id:\d+>"    => "frontend/assets-api/del",
+                "POST frontend/assets-api/data/<id:\d+>"    => "frontend/assets-api/data",
+
+                "GET frontend/task-api/plan/<year:\d+>/<week:\d+>"  => "frontend/task-api/plan",
+                "PUT frontend/plan-api/plan/<task_id:\d+>"          => "frontend/plan-api/task-oper",
+                "GET frontend/plan-api/chart/<year:\d+>/<week:\d+>" => "frontend/plan-api/chart",
 
                 "POST frontend/scheduler-api/<sid:\d+>"  => "frontend/scheduler-api/add",
                 "PUT frontend/scheduler-api/<id:\d+>"    => "frontend/scheduler-api/update",

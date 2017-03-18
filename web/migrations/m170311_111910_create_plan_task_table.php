@@ -15,7 +15,7 @@ class m170311_111910_create_plan_task_table extends Migration
     {
         $this->createTable('{{%plan_task}}', [
             'id'      => Schema::TYPE_PK,
-            'week'       => Schema::TYPE_STRING.' NOT NULL DEFAULT "" COMMENT "周计划日期" ',
+            'week'    => Schema::TYPE_STRING.' NOT NULL DEFAULT "" COMMENT "周计划日期" ',
             'task_id' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "目标任务" ',
             'user_id' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "所属用户" ',
             'ctime'   => Schema::TYPE_TIMESTAMP . ' NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "创建时间"',

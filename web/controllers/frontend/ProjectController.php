@@ -13,11 +13,8 @@ class ProjectController extends BaseController
 
     public function actionIndex()
     {
-        $config_model       = new Config;
-        $config_model->type = Config::TYPE_FIELD;
-        $field_dict         = $config_model->getTypeDict(true);
-        $config_model->type = Config::TYPE_PRIORITY;
-        $priority_dict      = $config_model->getTypeDict(true);
+        $field_dict         = Config::$field_arr;
+        $priority_dict      = Config::$priority_dhtml_arr;
         $type_raw           = Config::getTypeWithParentDict(Config::TYPE_ACTION, "dhtml");
 
         return $this->render('index', [
