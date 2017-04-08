@@ -1,0 +1,1210 @@
+TaskApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+TaskApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+TaskApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+TaskApiController.php:34:15:        $model->del     = Constants::SOFT_DEL_NO;
+TaskApiController.php:36:33:        $query          = $model->getPlanTask();
+TaskApiController.php:37:35:        $date           = $year. "-" .$week;
+TaskApiController.php:38:34:        $now            = date("Y-W", time());
+TaskApiController.php:42:19:            $query->andWhere(["OR", 
+TaskApiController.php:54:19:            $query->andWhere(["week" => $date]);
+TaskApiController.php:56:25:        $result = $query->asArray()->all();
+TaskApiController.php:56:36:        $result = $query->asArray()->all();
+TaskApiController.php:70:21:        return $this->directJson(json_encode($ret));
+ProjectApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+ProjectApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+ProjectApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+ProjectApiController.php:34:33:        $query          = $model->getQuery();
+ProjectApiController.php:35:33:        $data           = $query->asArray()->all();
+ProjectApiController.php:35:44:        $data           = $query->asArray()->all();
+ProjectApiController.php:42:20:        $task_model->user_id = $this->user_obj->id;
+ProjectApiController.php:42:37:        $task_model->user_id = $this->user_obj->id;
+ProjectApiController.php:42:47:        $task_model->user_id = $this->user_obj->id;
+ProjectApiController.php:43:43:        $query               = $task_model->getQuery();
+ProjectApiController.php:44:38:        $task_data           = $query->asArray()->all();
+ProjectApiController.php:44:49:        $task_data           = $query->asArray()->all();
+ProjectApiController.php:51:22:        $action_model->user_id = $this->user_obj->id;
+ProjectApiController.php:51:39:        $action_model->user_id = $this->user_obj->id;
+ProjectApiController.php:51:49:        $action_model->user_id = $this->user_obj->id;
+ProjectApiController.php:52:47:        $query                 = $action_model->getQuery();
+ProjectApiController.php:53:42:        //$action_data           = $query->asArray()->all();
+ProjectApiController.php:53:53:        //$action_data           = $query->asArray()->all();
+ProjectApiController.php:55:13:            ->select("id,text,duration,user_id,type_id,task_id as parent,plan_time,start_date as sort_date,start_date")
+ProjectApiController.php:56:13:            ->andWhere([">=", "id" , 144])
+ProjectApiController.php:57:13:            ->asArray()->all();
+ProjectApiController.php:57:24:            ->asArray()->all();
+ProjectApiController.php:96:46:        $links           = GanttLinks::find()->asArray()->all();
+ProjectApiController.php:96:57:        $links           = GanttLinks::find()->asArray()->all();
+ProjectApiController.php:99:21:        return $this->directJson(json_encode($ret));
+ProjectApiController.php:120:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+ProjectApiController.php:124:27:                    $model->id          = Project::getMaxId();
+ProjectApiController.php:125:27:                    $model->priority_id = $params['priority_id'];
+ProjectApiController.php:126:27:                    $model->field_id    = $params['field_id'];
+ProjectApiController.php:127:27:                    $model->progress   = $params['progress'];
+ProjectApiController.php:132:27:                    $model->id     = Project::getMaxId();
+ProjectApiController.php:133:27:                    $model->parent = (int)$params['parent'];
+ProjectApiController.php:134:27:                    $model->progress   = $params['progress'];
+ProjectApiController.php:138:27:                    $model->id        = Project::getMaxId();
+ProjectApiController.php:139:27:                    $model->type_id   = $params["action_type"];
+ProjectApiController.php:140:27:                    $model->task_id   = $params["parent"];
+ProjectApiController.php:141:27:                    $model->plan_time = $params["plan_time"];
+ProjectApiController.php:142:27:                    $model->end_date  = $params['start_date'];
+ProjectApiController.php:143:27:                    $model->status    = Action::STATUS_INIT;
+ProjectApiController.php:149:19:            $model->text       = $params['text'];
+ProjectApiController.php:150:19:            $model->start_date = $params['start_date'];
+ProjectApiController.php:151:19:            $model->duration   = $params['duration'];
+ProjectApiController.php:152:19:            $model->user_id    = $this->user_obj->id;
+ProjectApiController.php:152:39:            $model->user_id    = $this->user_obj->id;
+ProjectApiController.php:152:49:            $model->user_id    = $this->user_obj->id;
+ProjectApiController.php:153:19:            $model->obj_id     = $params['obj_id'];
+ProjectApiController.php:154:19:            $model->modelValidSave();
+ProjectApiController.php:155:25:            $ret = $this->prepareResponse($action_type, $model->id);
+ProjectApiController.php:155:63:            $ret = $this->prepareResponse($action_type, $model->id);
+ProjectApiController.php:156:25:            return $this->directJson($ret);
+ProjectApiController.php:159:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+ProjectApiController.php:159:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+ProjectApiController.php:160:25:            return $this->directJson($ret);
+ProjectApiController.php:181:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+ProjectApiController.php:184:35:                    $model = $this->findModel($id, Project::class);
+ProjectApiController.php:185:27:                    $model->priority_id = $params['priority_id'];
+ProjectApiController.php:186:27:                    $model->field_id    = $params['field_id'];
+ProjectApiController.php:187:27:                    $model->progress   = $params['progress'];
+ProjectApiController.php:190:35:                    $model = $this->findModel($id, Task::class);
+ProjectApiController.php:191:27:                    $model->parent      = (int)$params['parent'];
+ProjectApiController.php:192:27:                    $model->progress   = $params['progress'];
+ProjectApiController.php:195:35:                    $model = $this->findModel($id, Action::class);
+ProjectApiController.php:196:27:                    $model->type_id   = $params["action_type"];
+ProjectApiController.php:197:27:                    $model->plan_time = $params["plan_time"];
+ProjectApiController.php:203:19:            $model->text       = $params['text'];
+ProjectApiController.php:204:19:            $model->start_date = $params['start_date'];
+ProjectApiController.php:205:19:            $model->duration   = $params['duration'];
+ProjectApiController.php:206:19:            $model->obj_id     = $params['obj_id'];
+ProjectApiController.php:207:19:            $model->modelValidSave();
+ProjectApiController.php:209:25:            $ret = $this->prepareResponse($action_type, $id);
+ProjectApiController.php:210:25:            return $this->directJson($ret);
+ProjectApiController.php:213:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ProjectApiController.php:213:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ProjectApiController.php:214:25:            return $this->directJson($ret);
+ProjectApiController.php:224:40:            list($model, $type) = $this->findModelList($id);
+ProjectApiController.php:228:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+ProjectApiController.php:230:33:                $result = $model->delete(); 
+ProjectApiController.php:235:23:                $model->del = Constants::SOFT_DEL_YES; 
+ProjectApiController.php:236:23:                $model->modelValidSave();
+ProjectApiController.php:238:25:            $ret = $this->prepareResponse($action_type, $id);
+ProjectApiController.php:239:25:            return $this->directJson($ret);
+ProjectApiController.php:242:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ProjectApiController.php:242:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ProjectApiController.php:243:25:            return $this->directJson($ret);
+ProjectApiController.php:258:35:            $params        = $this->getParamsByConf($params_conf, 'post');
+ProjectApiController.php:259:19:            $model->source = $params['source'];
+ProjectApiController.php:260:19:            $model->target = $params['target'];
+ProjectApiController.php:261:19:            $model->type   = $params['type'];
+ProjectApiController.php:262:19:            $model->modelValidSave();
+ProjectApiController.php:263:25:            $ret = $this->prepareResponse($action_type, $model->id);
+ProjectApiController.php:263:63:            $ret = $this->prepareResponse($action_type, $model->id);
+ProjectApiController.php:264:25:            return $this->directJson($ret);
+ProjectApiController.php:267:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+ProjectApiController.php:267:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+ProjectApiController.php:268:25:            return $this->directJson($ret);
+ProjectApiController.php:275:27:            $model = $this->findModel($linkid, GanttLinks::class);
+ProjectApiController.php:282:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+ProjectApiController.php:283:19:            $model->source = $params['source'];
+ProjectApiController.php:284:19:            $model->target = $params['target'];
+ProjectApiController.php:285:19:            $model->type   = $params['type'];
+ProjectApiController.php:286:19:            $model->modelValidSave();
+ProjectApiController.php:288:25:            $ret = $this->prepareResponse($action_type, $linkid);
+ProjectApiController.php:289:25:            return $this->directJson($ret);
+ProjectApiController.php:292:33:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+ProjectApiController.php:292:76:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+ProjectApiController.php:293:25:            return $this->directJson($ret);
+ProjectApiController.php:301:27:            $model = $this->findModel($linkid, GanttLinks::class);
+ProjectApiController.php:302:29:            $result = $model->delete(); 
+ProjectApiController.php:306:25:            $ret = $this->prepareResponse($action_type, $linkid);
+ProjectApiController.php:307:25:            return $this->directJson($ret);
+ProjectApiController.php:310:33:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+ProjectApiController.php:310:76:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+ProjectApiController.php:311:25:            return $this->directJson($ret);
+SchedulerController.php:25:28:        $task_list = $model->getTaskWithFieldAndPriorityList($field_dict, $priority_dict);
+SchedulerController.php:36:21:        return $this->render('index', [
+ActionApiController.php:32:15:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:32:32:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:32:42:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:33:15:        $model->task_id = $task_id;
+ActionApiController.php:37:33:        $result         = $model->getQuery()
+ActionApiController.php:38:13:            ->select("$action_t.*, $project_t.field_id")
+ActionApiController.php:39:13:            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+ActionApiController.php:40:13:            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+ActionApiController.php:41:13:            ->asArray()->all();
+ActionApiController.php:41:24:            ->asArray()->all();
+ActionApiController.php:58:21:        return $this->directJson(json_encode($ret));
+ActionApiController.php:65:15:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:65:32:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:65:42:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:67:19:            $model->start_date = date("Y-m-d", time());
+ActionApiController.php:67:41:            $model->start_date = date("Y-m-d", time());
+ActionApiController.php:67:43:            $model->start_date = date("Y-m-d", time());
+ActionApiController.php:69:15:        $model->status  = Action::$list_arr[$type];
+ActionApiController.php:70:33:        $query          = $model->getQuery();
+ActionApiController.php:74:13:            ->select("$action_t.*, $task_t.text task_name")
+ActionApiController.php:75:13:            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+ActionApiController.php:76:13:            ->asArray()->all();
+ActionApiController.php:76:24:            ->asArray()->all();
+ActionApiController.php:78:21:        return $this->directJson(json_encode($result));
+ActionApiController.php:84:15:        $model->status  = Action::STATUS_END;
+ActionApiController.php:85:15:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:85:32:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:85:42:        $model->user_id = $this->user_obj->id;
+ActionApiController.php:89:33:        $result         = $model->getQuery()
+ActionApiController.php:90:13:            ->select("$action_t.*, $task_t.text task_name, $project_t.field_id")
+ActionApiController.php:91:13:            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+ActionApiController.php:92:13:            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+ActionApiController.php:93:13:            ->asArray()->all();
+ActionApiController.php:93:24:            ->asArray()->all();
+ActionApiController.php:95:21:        return $this->directJson(json_encode($ret));
+ActionApiController.php:110:41:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:110:43:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:111:41:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:111:43:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:113:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+ActionApiController.php:114:19:            $model->id         = Project::getMaxId();
+ActionApiController.php:115:19:            $model->text       = $params['text'];
+ActionApiController.php:116:19:            $model->task_id    = $params['task_id'];
+ActionApiController.php:117:19:            $model->type_id    = $params['type_id'];
+ActionApiController.php:118:19:            $model->plan_time  = $params['plan_time'];
+ActionApiController.php:119:19:            $model->status     = $params['status'];
+ActionApiController.php:120:19:            $model->duration   = 0;
+ActionApiController.php:121:19:            $model->start_date = $params['start_date'];
+ActionApiController.php:122:19:            $model->end_date   = $params['end_date'];
+ActionApiController.php:123:19:            $model->user_id    = $this->user_obj->id;
+ActionApiController.php:123:39:            $model->user_id    = $this->user_obj->id;
+ActionApiController.php:123:49:            $model->user_id    = $this->user_obj->id;
+ActionApiController.php:125:23:                $model->exec_time = \DateUtil::minuteBetween($params["start_date"], $params["end_date"]) * 60;
+ActionApiController.php:127:19:            $model->modelValidSave();
+ActionApiController.php:129:25:            $ret = $this->prepareResponse($action_type, $model->id);
+ActionApiController.php:129:63:            $ret = $this->prepareResponse($action_type, $model->id);
+ActionApiController.php:130:25:            return $this->directJson($ret);
+ActionApiController.php:133:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+ActionApiController.php:133:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+ActionApiController.php:134:25:            return $this->directJson($ret);
+ActionApiController.php:148:41:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:148:43:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:149:41:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:149:43:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+ActionApiController.php:152:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+ActionApiController.php:153:39:            $model             = $this->findModel($id, Action::class);
+ActionApiController.php:155:23:                $model->text       = $params['text'];
+ActionApiController.php:158:23:                $model->type_id    = $params['type_id'];
+ActionApiController.php:161:23:                $model->plan_time    = $params['plan_time'];
+ActionApiController.php:163:23:            if ($model->status == Action::STATUS_EXEC) {
+ActionApiController.php:164:23:                $model->start_date == date("Y-m-d H:i:s", time());
+ActionApiController.php:164:46:                $model->start_date == date("Y-m-d H:i:s", time());
+ActionApiController.php:164:48:                $model->start_date == date("Y-m-d H:i:s", time());
+ActionApiController.php:165:30:            } else if ($model->status == Action::STATUS_END) {
+ActionApiController.php:166:23:                $model->end_date == date("Y-m-d H:i:s", time());
+ActionApiController.php:166:44:                $model->end_date == date("Y-m-d H:i:s", time());
+ActionApiController.php:166:46:                $model->end_date == date("Y-m-d H:i:s", time());
+ActionApiController.php:170:23:                $model->exec_time = \DateUtil::minuteBetween($params["start_date"], $params["end_date"]) * 60;
+ActionApiController.php:172:23:                $model->exec_time  = $params['exec_time'];
+ActionApiController.php:174:19:            $model->status     = $params['status'];
+ActionApiController.php:175:19:            $model->modelValidSave();
+ActionApiController.php:177:25:            $ret = $this->prepareResponse($action_type, $id);
+ActionApiController.php:178:25:            return $this->directJson($ret);
+ActionApiController.php:181:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ActionApiController.php:181:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ActionApiController.php:182:25:            return $this->directJson($ret);
+ActionApiController.php:191:33:            $model       = $this->findModel($id, Action::class);
+ActionApiController.php:192:23:            if ($model->status == Action::STATUS_EXEC) {
+ActionApiController.php:194:30:            } else if ($model->status == Action::STATUS_END) {
+ActionApiController.php:198:34:            $result      = $model->delete();
+ActionApiController.php:202:25:            $ret = $this->prepareResponse($action_type, $id);
+ActionApiController.php:203:25:            return $this->directJson($ret);
+ActionApiController.php:206:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ActionApiController.php:206:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+ActionApiController.php:207:25:            return $this->directJson($ret);
+user:1:43:TaskApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+user:1:60:TaskApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+user:1:70:TaskApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+user:2:43:TaskApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+user:2:60:TaskApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+user:2:70:TaskApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+user:3:43:TaskApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+user:3:60:TaskApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+user:3:70:TaskApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+user:4:43:TaskApiController.php:34:15:        $model->del     = Constants::SOFT_DEL_NO;
+user:5:61:TaskApiController.php:36:33:        $query          = $model->getPlanTask();
+user:6:63:TaskApiController.php:37:35:        $date           = $year. "-" .$week;
+user:7:62:TaskApiController.php:38:34:        $now            = date("Y-W", time());
+user:8:47:TaskApiController.php:42:19:            $query->andWhere(["OR", 
+user:9:47:TaskApiController.php:54:19:            $query->andWhere(["week" => $date]);
+user:10:53:TaskApiController.php:56:25:        $result = $query->asArray()->all();
+user:10:64:TaskApiController.php:56:25:        $result = $query->asArray()->all();
+user:11:53:TaskApiController.php:56:36:        $result = $query->asArray()->all();
+user:11:64:TaskApiController.php:56:36:        $result = $query->asArray()->all();
+user:12:49:TaskApiController.php:70:21:        return $this->directJson(json_encode($ret));
+user:13:46:ProjectApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+user:13:63:ProjectApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+user:13:73:ProjectApiController.php:33:15:        $model->user_id = $this->user_obj->id;
+user:14:46:ProjectApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+user:14:63:ProjectApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+user:14:73:ProjectApiController.php:33:32:        $model->user_id = $this->user_obj->id;
+user:15:46:ProjectApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+user:15:63:ProjectApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+user:15:73:ProjectApiController.php:33:42:        $model->user_id = $this->user_obj->id;
+user:16:64:ProjectApiController.php:34:33:        $query          = $model->getQuery();
+user:17:64:ProjectApiController.php:35:33:        $data           = $query->asArray()->all();
+user:17:75:ProjectApiController.php:35:33:        $data           = $query->asArray()->all();
+user:18:64:ProjectApiController.php:35:44:        $data           = $query->asArray()->all();
+user:18:75:ProjectApiController.php:35:44:        $data           = $query->asArray()->all();
+user:19:51:ProjectApiController.php:42:20:        $task_model->user_id = $this->user_obj->id;
+user:19:68:ProjectApiController.php:42:20:        $task_model->user_id = $this->user_obj->id;
+user:19:78:ProjectApiController.php:42:20:        $task_model->user_id = $this->user_obj->id;
+user:20:51:ProjectApiController.php:42:37:        $task_model->user_id = $this->user_obj->id;
+user:20:68:ProjectApiController.php:42:37:        $task_model->user_id = $this->user_obj->id;
+user:20:78:ProjectApiController.php:42:37:        $task_model->user_id = $this->user_obj->id;
+user:21:51:ProjectApiController.php:42:47:        $task_model->user_id = $this->user_obj->id;
+user:21:68:ProjectApiController.php:42:47:        $task_model->user_id = $this->user_obj->id;
+user:21:78:ProjectApiController.php:42:47:        $task_model->user_id = $this->user_obj->id;
+user:22:74:ProjectApiController.php:43:43:        $query               = $task_model->getQuery();
+user:23:69:ProjectApiController.php:44:38:        $task_data           = $query->asArray()->all();
+user:23:80:ProjectApiController.php:44:38:        $task_data           = $query->asArray()->all();
+user:24:69:ProjectApiController.php:44:49:        $task_data           = $query->asArray()->all();
+user:24:80:ProjectApiController.php:44:49:        $task_data           = $query->asArray()->all();
+user:25:53:ProjectApiController.php:51:22:        $action_model->user_id = $this->user_obj->id;
+user:25:70:ProjectApiController.php:51:22:        $action_model->user_id = $this->user_obj->id;
+user:25:80:ProjectApiController.php:51:22:        $action_model->user_id = $this->user_obj->id;
+user:26:53:ProjectApiController.php:51:39:        $action_model->user_id = $this->user_obj->id;
+user:26:70:ProjectApiController.php:51:39:        $action_model->user_id = $this->user_obj->id;
+user:26:80:ProjectApiController.php:51:39:        $action_model->user_id = $this->user_obj->id;
+user:27:53:ProjectApiController.php:51:49:        $action_model->user_id = $this->user_obj->id;
+user:27:70:ProjectApiController.php:51:49:        $action_model->user_id = $this->user_obj->id;
+user:27:80:ProjectApiController.php:51:49:        $action_model->user_id = $this->user_obj->id;
+user:28:78:ProjectApiController.php:52:47:        $query                 = $action_model->getQuery();
+user:29:73:ProjectApiController.php:53:42:        //$action_data           = $query->asArray()->all();
+user:29:84:ProjectApiController.php:53:42:        //$action_data           = $query->asArray()->all();
+user:30:73:ProjectApiController.php:53:53:        //$action_data           = $query->asArray()->all();
+user:30:84:ProjectApiController.php:53:53:        //$action_data           = $query->asArray()->all();
+user:31:44:ProjectApiController.php:55:13:            ->select("id,text,duration,user_id,type_id,task_id as parent,plan_time,start_date as sort_date,start_date")
+user:32:44:ProjectApiController.php:56:13:            ->andWhere([">=", "id" , 144])
+user:33:44:ProjectApiController.php:57:13:            ->asArray()->all();
+user:33:55:ProjectApiController.php:57:13:            ->asArray()->all();
+user:34:44:ProjectApiController.php:57:24:            ->asArray()->all();
+user:34:55:ProjectApiController.php:57:24:            ->asArray()->all();
+user:35:77:ProjectApiController.php:96:46:        $links           = GanttLinks::find()->asArray()->all();
+user:35:88:ProjectApiController.php:96:46:        $links           = GanttLinks::find()->asArray()->all();
+user:36:77:ProjectApiController.php:96:57:        $links           = GanttLinks::find()->asArray()->all();
+user:36:88:ProjectApiController.php:96:57:        $links           = GanttLinks::find()->asArray()->all();
+user:37:52:ProjectApiController.php:99:21:        return $this->directJson(json_encode($ret));
+user:38:71:ProjectApiController.php:120:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+user:39:59:ProjectApiController.php:124:27:                    $model->id          = Project::getMaxId();
+user:40:59:ProjectApiController.php:125:27:                    $model->priority_id = $params['priority_id'];
+user:41:59:ProjectApiController.php:126:27:                    $model->field_id    = $params['field_id'];
+user:42:59:ProjectApiController.php:127:27:                    $model->progress   = $params['progress'];
+user:43:59:ProjectApiController.php:132:27:                    $model->id     = Project::getMaxId();
+user:44:59:ProjectApiController.php:133:27:                    $model->parent = (int)$params['parent'];
+user:45:59:ProjectApiController.php:134:27:                    $model->progress   = $params['progress'];
+user:46:59:ProjectApiController.php:138:27:                    $model->id        = Project::getMaxId();
+user:47:59:ProjectApiController.php:139:27:                    $model->type_id   = $params["action_type"];
+user:48:59:ProjectApiController.php:140:27:                    $model->task_id   = $params["parent"];
+user:49:59:ProjectApiController.php:141:27:                    $model->plan_time = $params["plan_time"];
+user:50:59:ProjectApiController.php:142:27:                    $model->end_date  = $params['start_date'];
+user:51:59:ProjectApiController.php:143:27:                    $model->status    = Action::STATUS_INIT;
+user:52:51:ProjectApiController.php:149:19:            $model->text       = $params['text'];
+user:53:51:ProjectApiController.php:150:19:            $model->start_date = $params['start_date'];
+user:54:51:ProjectApiController.php:151:19:            $model->duration   = $params['duration'];
+user:55:51:ProjectApiController.php:152:19:            $model->user_id    = $this->user_obj->id;
+user:55:71:ProjectApiController.php:152:19:            $model->user_id    = $this->user_obj->id;
+user:55:81:ProjectApiController.php:152:19:            $model->user_id    = $this->user_obj->id;
+user:56:51:ProjectApiController.php:152:39:            $model->user_id    = $this->user_obj->id;
+user:56:71:ProjectApiController.php:152:39:            $model->user_id    = $this->user_obj->id;
+user:56:81:ProjectApiController.php:152:39:            $model->user_id    = $this->user_obj->id;
+user:57:51:ProjectApiController.php:152:49:            $model->user_id    = $this->user_obj->id;
+user:57:71:ProjectApiController.php:152:49:            $model->user_id    = $this->user_obj->id;
+user:57:81:ProjectApiController.php:152:49:            $model->user_id    = $this->user_obj->id;
+user:58:51:ProjectApiController.php:153:19:            $model->obj_id     = $params['obj_id'];
+user:59:51:ProjectApiController.php:154:19:            $model->modelValidSave();
+user:60:57:ProjectApiController.php:155:25:            $ret = $this->prepareResponse($action_type, $model->id);
+user:60:95:ProjectApiController.php:155:25:            $ret = $this->prepareResponse($action_type, $model->id);
+user:61:57:ProjectApiController.php:155:63:            $ret = $this->prepareResponse($action_type, $model->id);
+user:61:95:ProjectApiController.php:155:63:            $ret = $this->prepareResponse($action_type, $model->id);
+user:62:57:ProjectApiController.php:156:25:            return $this->directJson($ret);
+user:63:65:ProjectApiController.php:159:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:63:105:ProjectApiController.php:159:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:64:65:ProjectApiController.php:159:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:64:105:ProjectApiController.php:159:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:65:57:ProjectApiController.php:160:25:            return $this->directJson($ret);
+user:66:71:ProjectApiController.php:181:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+user:67:67:ProjectApiController.php:184:35:                    $model = $this->findModel($id, Project::class);
+user:68:59:ProjectApiController.php:185:27:                    $model->priority_id = $params['priority_id'];
+user:69:59:ProjectApiController.php:186:27:                    $model->field_id    = $params['field_id'];
+user:70:59:ProjectApiController.php:187:27:                    $model->progress   = $params['progress'];
+user:71:67:ProjectApiController.php:190:35:                    $model = $this->findModel($id, Task::class);
+user:72:59:ProjectApiController.php:191:27:                    $model->parent      = (int)$params['parent'];
+user:73:59:ProjectApiController.php:192:27:                    $model->progress   = $params['progress'];
+user:74:67:ProjectApiController.php:195:35:                    $model = $this->findModel($id, Action::class);
+user:75:59:ProjectApiController.php:196:27:                    $model->type_id   = $params["action_type"];
+user:76:59:ProjectApiController.php:197:27:                    $model->plan_time = $params["plan_time"];
+user:77:51:ProjectApiController.php:203:19:            $model->text       = $params['text'];
+user:78:51:ProjectApiController.php:204:19:            $model->start_date = $params['start_date'];
+user:79:51:ProjectApiController.php:205:19:            $model->duration   = $params['duration'];
+user:80:51:ProjectApiController.php:206:19:            $model->obj_id     = $params['obj_id'];
+user:81:51:ProjectApiController.php:207:19:            $model->modelValidSave();
+user:82:57:ProjectApiController.php:209:25:            $ret = $this->prepareResponse($action_type, $id);
+user:83:57:ProjectApiController.php:210:25:            return $this->directJson($ret);
+user:84:65:ProjectApiController.php:213:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:84:104:ProjectApiController.php:213:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:85:65:ProjectApiController.php:213:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:85:104:ProjectApiController.php:213:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:86:57:ProjectApiController.php:214:25:            return $this->directJson($ret);
+user:87:72:ProjectApiController.php:224:40:            list($model, $type) = $this->findModelList($id);
+user:88:71:ProjectApiController.php:228:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+user:89:65:ProjectApiController.php:230:33:                $result = $model->delete(); 
+user:90:55:ProjectApiController.php:235:23:                $model->del = Constants::SOFT_DEL_YES; 
+user:91:55:ProjectApiController.php:236:23:                $model->modelValidSave();
+user:92:57:ProjectApiController.php:238:25:            $ret = $this->prepareResponse($action_type, $id);
+user:93:57:ProjectApiController.php:239:25:            return $this->directJson($ret);
+user:94:65:ProjectApiController.php:242:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:94:104:ProjectApiController.php:242:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:95:65:ProjectApiController.php:242:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:95:104:ProjectApiController.php:242:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+user:96:57:ProjectApiController.php:243:25:            return $this->directJson($ret);
+user:97:67:ProjectApiController.php:258:35:            $params        = $this->getParamsByConf($params_conf, 'post');
+user:98:51:ProjectApiController.php:259:19:            $model->source = $params['source'];
+user:99:51:ProjectApiController.php:260:19:            $model->target = $params['target'];
+user:100:51:ProjectApiController.php:261:19:            $model->type   = $params['type'];
+user:101:51:ProjectApiController.php:262:19:            $model->modelValidSave();
+user:102:57:ProjectApiController.php:263:25:            $ret = $this->prepareResponse($action_type, $model->id);
+user:102:95:ProjectApiController.php:263:25:            $ret = $this->prepareResponse($action_type, $model->id);
+user:103:57:ProjectApiController.php:263:63:            $ret = $this->prepareResponse($action_type, $model->id);
+user:103:95:ProjectApiController.php:263:63:            $ret = $this->prepareResponse($action_type, $model->id);
+user:104:57:ProjectApiController.php:264:25:            return $this->directJson($ret);
+user:105:65:ProjectApiController.php:267:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:105:105:ProjectApiController.php:267:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:106:65:ProjectApiController.php:267:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:106:105:ProjectApiController.php:267:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:107:57:ProjectApiController.php:268:25:            return $this->directJson($ret);
+user:108:59:ProjectApiController.php:275:27:            $model = $this->findModel($linkid, GanttLinks::class);
+user:109:71:ProjectApiController.php:282:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+user:110:51:ProjectApiController.php:283:19:            $model->source = $params['source'];
+user:111:51:ProjectApiController.php:284:19:            $model->target = $params['target'];
+user:112:51:ProjectApiController.php:285:19:            $model->type   = $params['type'];
+user:113:51:ProjectApiController.php:286:19:            $model->modelValidSave();
+user:114:57:ProjectApiController.php:288:25:            $ret = $this->prepareResponse($action_type, $linkid);
+user:115:57:ProjectApiController.php:289:25:            return $this->directJson($ret);
+user:116:65:ProjectApiController.php:292:33:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:116:108:ProjectApiController.php:292:33:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:117:65:ProjectApiController.php:292:76:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:117:108:ProjectApiController.php:292:76:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:118:57:ProjectApiController.php:293:25:            return $this->directJson($ret);
+user:119:59:ProjectApiController.php:301:27:            $model = $this->findModel($linkid, GanttLinks::class);
+user:120:61:ProjectApiController.php:302:29:            $result = $model->delete(); 
+user:121:57:ProjectApiController.php:306:25:            $ret = $this->prepareResponse($action_type, $linkid);
+user:122:57:ProjectApiController.php:307:25:            return $this->directJson($ret);
+user:123:65:ProjectApiController.php:310:33:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:123:108:ProjectApiController.php:310:33:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:124:65:ProjectApiController.php:310:76:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:124:108:ProjectApiController.php:310:76:            $ret         = $this->prepareResponse($action_type, $linkid, $e->getMessage());
+user:125:57:ProjectApiController.php:311:25:            return $this->directJson($ret);
+user:126:58:SchedulerController.php:25:28:        $task_list = $model->getTaskWithFieldAndPriorityList($field_dict, $priority_dict);
+user:127:51:SchedulerController.php:36:21:        return $this->render('index', [
+user:128:45:ActionApiController.php:32:15:        $model->user_id = $this->user_obj->id;
+user:128:62:ActionApiController.php:32:15:        $model->user_id = $this->user_obj->id;
+user:128:72:ActionApiController.php:32:15:        $model->user_id = $this->user_obj->id;
+user:129:45:ActionApiController.php:32:32:        $model->user_id = $this->user_obj->id;
+user:129:62:ActionApiController.php:32:32:        $model->user_id = $this->user_obj->id;
+user:129:72:ActionApiController.php:32:32:        $model->user_id = $this->user_obj->id;
+user:130:45:ActionApiController.php:32:42:        $model->user_id = $this->user_obj->id;
+user:130:62:ActionApiController.php:32:42:        $model->user_id = $this->user_obj->id;
+user:130:72:ActionApiController.php:32:42:        $model->user_id = $this->user_obj->id;
+user:131:45:ActionApiController.php:33:15:        $model->task_id = $task_id;
+user:132:63:ActionApiController.php:37:33:        $result         = $model->getQuery()
+user:133:43:ActionApiController.php:38:13:            ->select("$action_t.*, $project_t.field_id")
+user:134:43:ActionApiController.php:39:13:            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+user:135:43:ActionApiController.php:40:13:            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+user:136:43:ActionApiController.php:41:13:            ->asArray()->all();
+user:136:54:ActionApiController.php:41:13:            ->asArray()->all();
+user:137:43:ActionApiController.php:41:24:            ->asArray()->all();
+user:137:54:ActionApiController.php:41:24:            ->asArray()->all();
+user:138:51:ActionApiController.php:58:21:        return $this->directJson(json_encode($ret));
+user:139:45:ActionApiController.php:65:15:        $model->user_id = $this->user_obj->id;
+user:139:62:ActionApiController.php:65:15:        $model->user_id = $this->user_obj->id;
+user:139:72:ActionApiController.php:65:15:        $model->user_id = $this->user_obj->id;
+user:140:45:ActionApiController.php:65:32:        $model->user_id = $this->user_obj->id;
+user:140:62:ActionApiController.php:65:32:        $model->user_id = $this->user_obj->id;
+user:140:72:ActionApiController.php:65:32:        $model->user_id = $this->user_obj->id;
+user:141:45:ActionApiController.php:65:42:        $model->user_id = $this->user_obj->id;
+user:141:62:ActionApiController.php:65:42:        $model->user_id = $this->user_obj->id;
+user:141:72:ActionApiController.php:65:42:        $model->user_id = $this->user_obj->id;
+user:142:49:ActionApiController.php:67:19:            $model->start_date = date("Y-m-d", time());
+user:142:71:ActionApiController.php:67:19:            $model->start_date = date("Y-m-d", time());
+user:142:73:ActionApiController.php:67:19:            $model->start_date = date("Y-m-d", time());
+user:143:49:ActionApiController.php:67:41:            $model->start_date = date("Y-m-d", time());
+user:143:71:ActionApiController.php:67:41:            $model->start_date = date("Y-m-d", time());
+user:143:73:ActionApiController.php:67:41:            $model->start_date = date("Y-m-d", time());
+user:144:49:ActionApiController.php:67:43:            $model->start_date = date("Y-m-d", time());
+user:144:71:ActionApiController.php:67:43:            $model->start_date = date("Y-m-d", time());
+user:144:73:ActionApiController.php:67:43:            $model->start_date = date("Y-m-d", time());
+user:145:45:ActionApiController.php:69:15:        $model->status  = Action::$list_arr[$type];
+user:146:63:ActionApiController.php:70:33:        $query          = $model->getQuery();
+user:147:43:ActionApiController.php:74:13:            ->select("$action_t.*, $task_t.text task_name")
+user:148:43:ActionApiController.php:75:13:            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+user:149:43:ActionApiController.php:76:13:            ->asArray()->all();
+user:149:54:ActionApiController.php:76:13:            ->asArray()->all();
+user:150:43:ActionApiController.php:76:24:            ->asArray()->all();
+user:150:54:ActionApiController.php:76:24:            ->asArray()->all();
+user:151:51:ActionApiController.php:78:21:        return $this->directJson(json_encode($result));
+user:152:45:ActionApiController.php:84:15:        $model->status  = Action::STATUS_END;
+user:153:45:ActionApiController.php:85:15:        $model->user_id = $this->user_obj->id;
+user:153:62:ActionApiController.php:85:15:        $model->user_id = $this->user_obj->id;
+user:153:72:ActionApiController.php:85:15:        $model->user_id = $this->user_obj->id;
+user:154:45:ActionApiController.php:85:32:        $model->user_id = $this->user_obj->id;
+user:154:62:ActionApiController.php:85:32:        $model->user_id = $this->user_obj->id;
+user:154:72:ActionApiController.php:85:32:        $model->user_id = $this->user_obj->id;
+user:155:45:ActionApiController.php:85:42:        $model->user_id = $this->user_obj->id;
+user:155:62:ActionApiController.php:85:42:        $model->user_id = $this->user_obj->id;
+user:155:72:ActionApiController.php:85:42:        $model->user_id = $this->user_obj->id;
+user:156:63:ActionApiController.php:89:33:        $result         = $model->getQuery()
+user:157:43:ActionApiController.php:90:13:            ->select("$action_t.*, $task_t.text task_name, $project_t.field_id")
+user:158:43:ActionApiController.php:91:13:            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+user:159:43:ActionApiController.php:92:13:            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+user:160:43:ActionApiController.php:93:13:            ->asArray()->all();
+user:160:54:ActionApiController.php:93:13:            ->asArray()->all();
+user:161:43:ActionApiController.php:93:24:            ->asArray()->all();
+user:161:54:ActionApiController.php:93:24:            ->asArray()->all();
+user:162:51:ActionApiController.php:95:21:        return $this->directJson(json_encode($ret));
+user:163:72:ActionApiController.php:110:41:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+user:163:74:ActionApiController.php:110:41:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+user:164:72:ActionApiController.php:110:43:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+user:164:74:ActionApiController.php:110:43:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+user:165:72:ActionApiController.php:111:41:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+user:165:74:ActionApiController.php:111:41:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+user:166:72:ActionApiController.php:111:43:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+user:166:74:ActionApiController.php:111:43:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+user:167:70:ActionApiController.php:113:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+user:168:50:ActionApiController.php:114:19:            $model->id         = Project::getMaxId();
+user:169:50:ActionApiController.php:115:19:            $model->text       = $params['text'];
+user:170:50:ActionApiController.php:116:19:            $model->task_id    = $params['task_id'];
+user:171:50:ActionApiController.php:117:19:            $model->type_id    = $params['type_id'];
+user:172:50:ActionApiController.php:118:19:            $model->plan_time  = $params['plan_time'];
+user:173:50:ActionApiController.php:119:19:            $model->status     = $params['status'];
+user:174:50:ActionApiController.php:120:19:            $model->duration   = 0;
+user:175:50:ActionApiController.php:121:19:            $model->start_date = $params['start_date'];
+user:176:50:ActionApiController.php:122:19:            $model->end_date   = $params['end_date'];
+user:177:50:ActionApiController.php:123:19:            $model->user_id    = $this->user_obj->id;
+user:177:70:ActionApiController.php:123:19:            $model->user_id    = $this->user_obj->id;
+user:177:80:ActionApiController.php:123:19:            $model->user_id    = $this->user_obj->id;
+user:178:50:ActionApiController.php:123:39:            $model->user_id    = $this->user_obj->id;
+user:178:70:ActionApiController.php:123:39:            $model->user_id    = $this->user_obj->id;
+user:178:80:ActionApiController.php:123:39:            $model->user_id    = $this->user_obj->id;
+user:179:50:ActionApiController.php:123:49:            $model->user_id    = $this->user_obj->id;
+user:179:70:ActionApiController.php:123:49:            $model->user_id    = $this->user_obj->id;
+user:179:80:ActionApiController.php:123:49:            $model->user_id    = $this->user_obj->id;
+user:180:54:ActionApiController.php:125:23:                $model->exec_time = \DateUtil::minuteBetween($params["start_date"], $params["end_date"]) * 60;
+user:181:50:ActionApiController.php:127:19:            $model->modelValidSave();
+user:182:56:ActionApiController.php:129:25:            $ret = $this->prepareResponse($action_type, $model->id);
+user:182:94:ActionApiController.php:129:25:            $ret = $this->prepareResponse($action_type, $model->id);
+user:183:56:ActionApiController.php:129:63:            $ret = $this->prepareResponse($action_type, $model->id);
+user:183:94:ActionApiController.php:129:63:            $ret = $this->prepareResponse($action_type, $model->id);
+user:184:56:ActionApiController.php:130:25:            return $this->directJson($ret);
+user:185:64:ActionApiController.php:133:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+user:185:104:ActionApiController.php:133:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+KnowledgeSkillController.php:22:29:        $area_id = Yii::$app->request->get('area_id', null);
+KnowledgeSkillController.php:22:38:        $area_id = Yii::$app->request->get('area_id', null);
+KnowledgeSkillController.php:27:25:        $result = $model->getQuery()
+KnowledgeSkillController.php:28:13:            ->select("$skill_t.*, GROUP_CONCAT($depend_t.depend_id) as depend_ids")
+KnowledgeSkillController.php:29:13:            ->leftJoin($link_t, "$skill_t.id = $link_t.skill_id")
+KnowledgeSkillController.php:30:13:            ->leftJoin($depend_t, "$skill_t.id = $depend_t.skill_id")
+KnowledgeSkillController.php:31:13:            ->andWhere(["$link_t.area_id" => $area_id])
+KnowledgeSkillController.php:32:13:            ->groupBy("$skill_t.id")
+KnowledgeSkillController.php:33:13:            ->asArray()->all();
+KnowledgeSkillController.php:33:24:            ->asArray()->all();
+KnowledgeSkillController.php:46:36:                + ($one["type_id"] - 1) * KnowledgeSkill::SKILL_TYPE_HEIGHT;
+KnowledgeSkillController.php:63:21:        return $this->render('index', [
+KnowledgeSkillController.php:73:25:            return $this->validModel($model);
+KnowledgeSkillController.php:75:25:            return $this->returnException($e);
+KnowledgeSkillController.php:82:15:        $model->load(Yii::$app->request->queryParams);
+KnowledgeSkillController.php:82:31:        $model->load(Yii::$app->request->queryParams);
+KnowledgeSkillController.php:82:40:        $model->load(Yii::$app->request->queryParams);
+KnowledgeSkillController.php:85:30:            'query' => $model->getQuery(),
+KnowledgeSkillController.php:87:21:        return $this->render('config-index', [
+KnowledgeSkillController.php:87:37:        return $this->render('config-index', [
+KnowledgeSkillController.php:98:39:            $transaction   = Yii::$app->db->beginTransaction();
+KnowledgeSkillController.php:98:43:            $transaction   = Yii::$app->db->beginTransaction();
+KnowledgeSkillController.php:99:26:            if (Yii::$app->request->post()) {
+KnowledgeSkillController.php:99:35:            if (Yii::$app->request->post()) {
+KnowledgeSkillController.php:100:23:                $model->load(Yii::$app->request->post());
+KnowledgeSkillController.php:100:39:                $model->load(Yii::$app->request->post());
+KnowledgeSkillController.php:100:48:                $model->load(Yii::$app->request->post());
+KnowledgeSkillController.php:101:23:                $model->modelValidSave();
+KnowledgeSkillController.php:103:32:                foreach ($model->area_ids as $area_id) {
+KnowledgeSkillController.php:105:37:                    $area_link_model->area_id = $area_id;
+KnowledgeSkillController.php:106:37:                    $area_link_model->skill_id = $model->id;
+KnowledgeSkillController.php:106:56:                    $area_link_model->skill_id = $model->id;
+KnowledgeSkillController.php:107:37:                    $area_link_model->modelValidSave();
+KnowledgeSkillController.php:110:34:                if (!empty($model->depend_ids)) {
+KnowledgeSkillController.php:111:36:                    foreach ($model->depend_ids as $depend_id) {
+KnowledgeSkillController.php:113:38:                        $depend_model->skill_id = $model->id;
+KnowledgeSkillController.php:113:57:                        $depend_model->skill_id = $model->id;
+KnowledgeSkillController.php:114:38:                        $depend_model->depend_id = $depend_id;
+KnowledgeSkillController.php:115:38:                        $depend_model->modelValidSave();
+KnowledgeSkillController.php:119:29:                $transaction->commit(); 
+KnowledgeSkillController.php:121:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+KnowledgeSkillController.php:121:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+KnowledgeSkillController.php:123:53:                $skill_list = KnowledgeSkill::find()->select("id, title")->asArray()->all();
+KnowledgeSkillController.php:123:74:                $skill_list = KnowledgeSkill::find()->select("id, title")->asArray()->all();
+KnowledgeSkillController.php:123:85:                $skill_list = KnowledgeSkill::find()->select("id, title")->asArray()->all();
+KnowledgeSkillController.php:128:35:                $area_list = $area->getQuery()
+KnowledgeSkillController.php:129:21:                    ->andWhere(["$area_t.id" => null])
+KnowledgeSkillController.php:130:21:                    ->andWhere(["origin.del" => Constants::SOFT_DEL_NO])
+KnowledgeSkillController.php:131:21:                    ->asArray()->all();
+KnowledgeSkillController.php:131:32:                    ->asArray()->all();
+KnowledgeSkillController.php:134:21:                    ->select("id, name as text")
+KnowledgeSkillController.php:135:21:                    ->andWhere(["id" => array_unique($parent_arr)])
+KnowledgeSkillController.php:136:21:                    ->asArray()->all();
+KnowledgeSkillController.php:136:32:                    ->asArray()->all();
+KnowledgeSkillController.php:145:23:                $model->max_points = 4;
+KnowledgeSkillController.php:146:29:                $transaction->commit(); 
+KnowledgeSkillController.php:147:29:                return $this->render('config-save', [
+KnowledgeSkillController.php:147:45:                return $this->render('config-save', [
+KnowledgeSkillController.php:156:25:            $transaction->rollBack(); 
+KnowledgeSkillController.php:157:25:            return $this->returnException($e);
+KnowledgeSkillController.php:164:28:            $id = Yii::$app->request->get('id', null);
+KnowledgeSkillController.php:164:37:            $id = Yii::$app->request->get('id', null);
+KnowledgeSkillController.php:165:28:            $model  = $this->findModel($id, KnowledgeSkill::class);
+KnowledgeSkillController.php:166:39:            $transaction   = Yii::$app->db->beginTransaction();
+KnowledgeSkillController.php:166:43:            $transaction   = Yii::$app->db->beginTransaction();
+KnowledgeSkillController.php:168:26:            if (Yii::$app->request->post()) {
+KnowledgeSkillController.php:168:35:            if (Yii::$app->request->post()) {
+KnowledgeSkillController.php:169:23:                $model->load(Yii::$app->request->post());
+KnowledgeSkillController.php:169:39:                $model->load(Yii::$app->request->post());
+KnowledgeSkillController.php:169:48:                $model->load(Yii::$app->request->post());
+KnowledgeSkillController.php:170:23:                $model->modelValidSave();
+KnowledgeSkillController.php:175:43:                    [":skill_id" => $model->id]
+KnowledgeSkillController.php:180:43:                    [":skill_id" => $model->id]
+KnowledgeSkillController.php:183:32:                foreach ($model->area_ids as $area_id) {
+KnowledgeSkillController.php:185:37:                    $area_link_model->area_id = $area_id;
+KnowledgeSkillController.php:186:37:                    $area_link_model->skill_id = $model->id;
+KnowledgeSkillController.php:186:56:                    $area_link_model->skill_id = $model->id;
+KnowledgeSkillController.php:187:37:                    $area_link_model->modelValidSave();
+KnowledgeSkillController.php:190:34:                if (!empty($model->depend_ids)) {
+KnowledgeSkillController.php:191:36:                    foreach ($model->depend_ids as $depend_id) {
+KnowledgeSkillController.php:193:38:                        $depend_model->skill_id = $model->id;
+KnowledgeSkillController.php:193:57:                        $depend_model->skill_id = $model->id;
+KnowledgeSkillController.php:194:38:                        $depend_model->depend_id = $depend_id;
+KnowledgeSkillController.php:195:38:                        $depend_model->modelValidSave();
+KnowledgeSkillController.php:200:29:                $transaction->commit(); 
+KnowledgeSkillController.php:201:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+KnowledgeSkillController.php:201:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+KnowledgeSkillController.php:203:53:                $skill_list = KnowledgeSkill::find()->select("id, title")->asArray()->all();
+KnowledgeSkillController.php:203:74:                $skill_list = KnowledgeSkill::find()->select("id, title")->asArray()->all();
+KnowledgeSkillController.php:203:85:                $skill_list = KnowledgeSkill::find()->select("id, title")->asArray()->all();
+KnowledgeSkillController.php:205:45:                if (isset($skill_list[$model->id])) {
+KnowledgeSkillController.php:206:45:                    unset($skill_list[$model->id]);
+KnowledgeSkillController.php:211:35:                $area_list = $area->getQuery()
+KnowledgeSkillController.php:212:21:                    ->andWhere(["$area_t.id" => null])
+KnowledgeSkillController.php:213:21:                    ->andWhere(["origin.del" => Constants::SOFT_DEL_NO])
+KnowledgeSkillController.php:214:21:                    ->asArray()->all();
+KnowledgeSkillController.php:214:32:                    ->asArray()->all();
+KnowledgeSkillController.php:217:21:                    ->select("id, name as text")
+KnowledgeSkillController.php:218:21:                    ->andWhere(["id" => array_unique($parent_arr)])
+KnowledgeSkillController.php:219:21:                    ->asArray()->all();
+KnowledgeSkillController.php:219:32:                    ->asArray()->all();
+KnowledgeSkillController.php:229:21:                    ->andWhere(["skill_id" => $model->id])
+KnowledgeSkillController.php:229:53:                    ->andWhere(["skill_id" => $model->id])
+KnowledgeSkillController.php:230:21:                    ->asArray()->all();
+KnowledgeSkillController.php:230:32:                    ->asArray()->all();
+KnowledgeSkillController.php:232:23:                $model->depend_ids = $depend_list;
+KnowledgeSkillController.php:235:21:                    ->andWhere(["skill_id" => $model->id])
+KnowledgeSkillController.php:235:53:                    ->andWhere(["skill_id" => $model->id])
+KnowledgeSkillController.php:236:21:                    ->asArray()->all();
+KnowledgeSkillController.php:236:32:                    ->asArray()->all();
+KnowledgeSkillController.php:238:23:                $model->area_ids = $area_list;
+KnowledgeSkillController.php:240:29:                $transaction->commit(); 
+KnowledgeSkillController.php:241:29:                return $this->render('config-save', [
+KnowledgeSkillController.php:241:45:                return $this->render('config-save', [
+KnowledgeSkillController.php:250:25:            $transaction->rollBack(); 
+KnowledgeSkillController.php:251:25:            return $this->returnException($e);
+KnowledgeSkillController.php:258:39:            $transaction   = Yii::$app->db->beginTransaction();
+KnowledgeSkillController.php:258:43:            $transaction   = Yii::$app->db->beginTransaction();
+KnowledgeSkillController.php:259:29:            $ids = Yii::$app->request->post('ids', null);
+KnowledgeSkillController.php:259:38:            $ids = Yii::$app->request->post('ids', null);
+KnowledgeSkillController.php:264:44:            $query = KnowledgeSkill::find()->andWhere(['and',['in', 'id', $ids]]);
+KnowledgeSkillController.php:265:28:            foreach ($query->all() as $model) {
+KnowledgeSkillController.php:270:43:                    [":skill_id" => $model->id]
+KnowledgeSkillController.php:275:43:                    [":skill_id" => $model->id]
+KnowledgeSkillController.php:280:43:                    [":skill_id" => $model->id]
+KnowledgeSkillController.php:284:33:                $result = $model->delete();
+KnowledgeSkillController.php:290:25:            $transaction->commit(); 
+KnowledgeSkillController.php:292:25:            return $this->packageJson($ids, $code, Error::msg($code));
+KnowledgeSkillController.php:294:25:            $transaction->rollBack(); 
+KnowledgeSkillController.php:295:25:            return $this->returnexception($e);
+KnowledgeAreaController.php:24:21:        return $this->render('index', [
+TaskController.php:33:15:        $model->user_id = $this->user_obj->id;
+TaskController.php:33:32:        $model->user_id = $this->user_obj->id;
+TaskController.php:33:42:        $model->user_id = $this->user_obj->id;
+TaskController.php:34:23:        $info = $model->getOne();
+TaskController.php:49:28:        $task_list = $model->getTaskWithFieldAndPriorityList($field_dict, $priority_dict);
+TaskController.php:50:21:        return $this->render('index', [
+SiteController.php:41:46:            /*         return strtotime("2017-3-11 11:30:00"); */
+SiteController.php:41:48:            /*         return strtotime("2017-3-11 11:30:00"); */
+SiteController.php:70:21:        return $this->render('index');
+SiteController.php:80:23:        if (!Yii::$app->user->isGuest) {
+SiteController.php:80:29:        if (!Yii::$app->user->isGuest) {
+SiteController.php:81:25:            return $this->goHome();
+SiteController.php:85:19:        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+SiteController.php:85:35:        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+SiteController.php:85:44:        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+SiteController.php:85:63:        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+SiteController.php:86:25:            return $this->goBack();
+SiteController.php:88:21:        return $this->render('login', [
+SiteController.php:100:18:        Yii::$app->user->logout();
+SiteController.php:100:24:        Yii::$app->user->logout();
+SiteController.php:102:21:        return $this->goHome();
+SiteController.php:113:19:        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+SiteController.php:113:35:        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+SiteController.php:113:44:        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+SiteController.php:113:63:        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+SiteController.php:113:82:        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+SiteController.php:114:22:            Yii::$app->session->setFlash('contactFormSubmitted');
+SiteController.php:114:31:            Yii::$app->session->setFlash('contactFormSubmitted');
+SiteController.php:116:25:            return $this->refresh();
+SiteController.php:118:21:        return $this->render('contact', [
+SiteController.php:130:21:        return $this->render('about');
+ConfigController.php:29:15:        $model->load(Yii::$app->request->queryParams);
+ConfigController.php:29:31:        $model->load(Yii::$app->request->queryParams);
+ConfigController.php:29:40:        $model->load(Yii::$app->request->queryParams);
+ConfigController.php:32:30:            'query' => $model->getQuery(),
+ConfigController.php:34:21:        return $this->render('index', [
+ConfigController.php:46:25:            return $this->validModel($model);
+ConfigController.php:48:25:            return $this->returnException($e);
+ConfigController.php:56:26:            if (Yii::$app->request->post()) {
+ConfigController.php:56:35:            if (Yii::$app->request->post()) {
+ConfigController.php:57:23:                $model->load(Yii::$app->request->post());
+ConfigController.php:57:39:                $model->load(Yii::$app->request->post());
+ConfigController.php:57:48:                $model->load(Yii::$app->request->post());
+ConfigController.php:58:33:                if (empty($model->parent)) {
+ConfigController.php:59:27:                    $model->parent = 0;
+ConfigController.php:61:23:                $model->modelValidSave();
+ConfigController.php:63:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+ConfigController.php:63:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+ConfigController.php:65:29:                return $this->render('save', [
+ConfigController.php:72:25:            return $this->returnException($e);
+ConfigController.php:79:28:            $model  = $this->findModel($id, Config::class);
+ConfigController.php:80:26:            if (Yii::$app->request->post()) {
+ConfigController.php:80:35:            if (Yii::$app->request->post()) {
+ConfigController.php:81:23:                $model->load(Yii::$app->request->post());
+ConfigController.php:81:39:                $model->load(Yii::$app->request->post());
+ConfigController.php:81:48:                $model->load(Yii::$app->request->post());
+ConfigController.php:82:23:                $model->modelValidSave();
+ConfigController.php:84:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+ConfigController.php:84:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+ConfigController.php:86:29:                return $this->render('save', [
+ConfigController.php:94:25:            return $this->returnException($e);
+ConfigController.php:101:29:            $ids = Yii::$app->request->post('ids', null);
+ConfigController.php:101:38:            $ids = Yii::$app->request->post('ids', null);
+ConfigController.php:106:36:            $query = Config::find()->andWhere(['and',['in', 'id', $ids]]);
+ConfigController.php:107:28:            foreach ($query->all() as $model) {
+ConfigController.php:108:33:                $result = $model->delete();
+ConfigController.php:114:25:            return $this->packageJson($ids, $code, Error::msg($code));
+ConfigController.php:116:25:            return $this->returnexception($e);
+AssetsEntityController.php:19:25:            return $this->validModel($model);
+AssetsEntityController.php:21:25:            return $this->returnException($e);
+AssetsEntityController.php:28:15:        $model->load(Yii::$app->request->queryParams);
+AssetsEntityController.php:28:31:        $model->load(Yii::$app->request->queryParams);
+AssetsEntityController.php:28:40:        $model->load(Yii::$app->request->queryParams);
+AssetsEntityController.php:31:30:            'query' => $model->getQuery(),
+AssetsEntityController.php:33:21:        return $this->render('index', [
+AssetsEntityController.php:44:26:            if (Yii::$app->request->post()) {
+AssetsEntityController.php:44:35:            if (Yii::$app->request->post()) {
+AssetsEntityController.php:45:23:                $model->load(Yii::$app->request->post());
+AssetsEntityController.php:45:39:                $model->load(Yii::$app->request->post());
+AssetsEntityController.php:45:48:                $model->load(Yii::$app->request->post());
+AssetsEntityController.php:46:23:                $model->modelValidSave();
+AssetsEntityController.php:47:23:                $model->user_id = $this->user->id;
+AssetsEntityController.php:47:40:                $model->user_id = $this->user->id;
+AssetsEntityController.php:47:46:                $model->user_id = $this->user->id;
+AssetsEntityController.php:49:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+AssetsEntityController.php:49:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+AssetsEntityController.php:51:29:                return $this->render('save', [
+AssetsEntityController.php:57:25:            return $this->returnException($e);
+AssetsEntityController.php:64:28:            $id = Yii::$app->request->get('id', null);
+AssetsEntityController.php:64:37:            $id = Yii::$app->request->get('id', null);
+AssetsEntityController.php:65:28:            $model  = $this->findModel($id, KnowledgeSkill::class);
+AssetsEntityController.php:67:26:            if (Yii::$app->request->post()) {
+AssetsEntityController.php:67:35:            if (Yii::$app->request->post()) {
+AssetsEntityController.php:68:23:                $model->load(Yii::$app->request->post());
+AssetsEntityController.php:68:39:                $model->load(Yii::$app->request->post());
+AssetsEntityController.php:68:48:                $model->load(Yii::$app->request->post());
+AssetsEntityController.php:69:23:                $model->modelValidSave();
+AssetsEntityController.php:71:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+AssetsEntityController.php:71:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+AssetsEntityController.php:73:29:                return $this->render('save', [
+AssetsEntityController.php:80:25:            return $this->returnException($e);
+AssetsEntityController.php:87:29:            $ids = Yii::$app->request->post('ids', null);
+AssetsEntityController.php:87:38:            $ids = Yii::$app->request->post('ids', null);
+AssetsEntityController.php:92:50:            $query = BusinessAssetsEntity::find()->andWhere(['and',['in', 'id', $ids]]);
+AssetsEntityController.php:93:28:            foreach ($query->all() as $model) {
+AssetsEntityController.php:95:33:                $result = $model->delete();
+AssetsEntityController.php:102:25:            return $this->packageJson($ids, $code, Error::msg($code));
+AssetsEntityController.php:104:25:            return $this->returnexception($e);
+PlanApiController.php:22:15:        $model->user_id = $this->user_obj->id;
+PlanApiController.php:22:32:        $model->user_id = $this->user_obj->id;
+PlanApiController.php:22:42:        $model->user_id = $this->user_obj->id;
+PlanApiController.php:23:25:        $result = $model->getQuery()->asArray()->all();
+PlanApiController.php:23:37:        $result = $model->getQuery()->asArray()->all();
+PlanApiController.php:23:48:        $result = $model->getQuery()->asArray()->all();
+PlanApiController.php:25:21:        return $this->directJson(json_encode($ret));
+PlanApiController.php:31:15:        $model->user_id = $this->user_obj->id;
+PlanApiController.php:31:32:        $model->user_id = $this->user_obj->id;
+PlanApiController.php:31:42:        $model->user_id = $this->user_obj->id;
+PlanApiController.php:34:20:        $task_model->user_id = $this->user_obj->id;
+PlanApiController.php:34:37:        $task_model->user_id = $this->user_obj->id;
+PlanApiController.php:34:47:        $task_model->user_id = $this->user_obj->id;
+PlanApiController.php:35:20:        $task_model->del     = Constants::SOFT_DEL_NO;
+PlanApiController.php:36:43:        $query               = $task_model->getPlanTask();
+PlanApiController.php:38:23:        $now = date("Y-W", time());
+PlanApiController.php:39:25:        $date = $year. "-" .$week;
+PlanApiController.php:41:19:            $model->week = $now;
+PlanApiController.php:42:19:            $query->andWhere(["week" => $now]);
+PlanApiController.php:44:19:            $model->week = $date;
+PlanApiController.php:45:19:            $query->andWhere(["week" => $week]);
+PlanApiController.php:47:25:        $result = $model->getQuery()->asArray()->all();
+PlanApiController.php:47:37:        $result = $model->getQuery()->asArray()->all();
+PlanApiController.php:47:48:        $result = $model->getQuery()->asArray()->all();
+PlanApiController.php:48:30:        $task_result = $query->asArray()->all();
+PlanApiController.php:48:41:        $task_result = $query->asArray()->all();
+PlanApiController.php:88:21:        return $this->directJson(json_encode($ret));
+PlanApiController.php:98:41:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:98:43:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:99:41:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:99:43:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:101:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+PlanApiController.php:102:19:            $model->week       = date("Y-W", strtotime($params["start_date"]));
+PlanApiController.php:102:41:            $model->week       = date("Y-W", strtotime($params["start_date"]));
+PlanApiController.php:103:19:            $model->start_date = $params['start_date'];
+PlanApiController.php:104:19:            $model->end_date   = $params['end_date'];
+PlanApiController.php:105:19:            $model->user_id    = $this->user_obj->id;
+PlanApiController.php:105:39:            $model->user_id    = $this->user_obj->id;
+PlanApiController.php:105:49:            $model->user_id    = $this->user_obj->id;
+PlanApiController.php:106:19:            $model->modelValidSave();
+PlanApiController.php:108:25:            $ret = $this->prepareResponse($action_type, $model->id);
+PlanApiController.php:108:63:            $ret = $this->prepareResponse($action_type, $model->id);
+PlanApiController.php:109:25:            return $this->directJson($ret);
+PlanApiController.php:112:33:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+PlanApiController.php:112:73:            $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
+PlanApiController.php:113:25:            return $this->directJson($ret);
+PlanApiController.php:122:41:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:122:43:                "start_date" => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:123:41:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:123:43:                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+PlanApiController.php:125:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+PlanApiController.php:126:39:            $model             = $this->findModel($id, PlanScheduler::class);
+PlanApiController.php:127:19:            $model->week       = date("Y-W", strtotime($params["start_date"]));
+PlanApiController.php:127:41:            $model->week       = date("Y-W", strtotime($params["start_date"]));
+PlanApiController.php:128:19:            $model->start_date = $params['start_date'];
+PlanApiController.php:129:19:            $model->end_date   = $params['end_date'];
+PlanApiController.php:130:19:            $model->modelValidSave();
+PlanApiController.php:132:25:            $ret = $this->prepareResponse($action_type, $id);
+PlanApiController.php:133:25:            return $this->directJson($ret);
+PlanApiController.php:136:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+PlanApiController.php:136:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+PlanApiController.php:137:25:            return $this->directJson($ret);
+PlanApiController.php:145:33:            $model       = $this->findModel($id, PlanScheduler::class);
+PlanApiController.php:147:34:            $result      = $model->delete();
+PlanApiController.php:151:25:            $ret = $this->prepareResponse($action_type, $id);
+PlanApiController.php:152:25:            return $this->directJson($ret);
+PlanApiController.php:155:33:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+PlanApiController.php:155:72:            $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
+PlanApiController.php:156:25:            return $this->directJson($ret);
+PlanApiController.php:167:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+PlanApiController.php:172:32:                $model = $model->find()
+PlanApiController.php:173:21:                    ->andWhere(["task_id" => $task_id])
+PlanApiController.php:174:21:                    ->andWhere(["week" => $params["week"]])
+PlanApiController.php:175:21:                    ->one();
+PlanApiController.php:179:38:                $result      = $model->delete();
+PlanApiController.php:186:23:                $model->week    = $params["week"];
+PlanApiController.php:187:23:                $model->task_id = $task_id;
+PlanApiController.php:188:23:                $model->user_id = $this->user_obj->id;
+PlanApiController.php:188:40:                $model->user_id = $this->user_obj->id;
+PlanApiController.php:188:50:                $model->user_id = $this->user_obj->id;
+PlanApiController.php:189:23:                $model->modelValidSave();
+PlanApiController.php:192:25:            $ret = $this->prepareResponse($action_type, $task_id);
+PlanApiController.php:193:25:            return $this->directJson($ret);
+PlanApiController.php:196:33:            $ret         = $this->prepareResponse($action_type, $task_id, $e->getMessage());
+PlanApiController.php:196:77:            $ret         = $this->prepareResponse($action_type, $task_id, $e->getMessage());
+PlanApiController.php:197:25:            return $this->directJson($ret);
+AssetsApiController.php:20:15:        $model->user_id = $this->user_obj->id;
+AssetsApiController.php:20:32:        $model->user_id = $this->user_obj->id;
+AssetsApiController.php:20:42:        $model->user_id = $this->user_obj->id;
+AssetsApiController.php:21:15:        $model->obj_id = $id;
+AssetsApiController.php:22:15:        $model->field_id = Config::FIELD_ASSET;
+AssetsApiController.php:25:24:        $query = $model->getQuery()
+AssetsApiController.php:26:13:            ->select("$project_t.*, sum($action_t.exec_time) as sum_time")
+AssetsApiController.php:27:13:            ->groupBy("$project_t.id");
+AssetsApiController.php:28:25:        $result = $query->asArray()->all();
+AssetsApiController.php:28:36:        $result = $query->asArray()->all();
+AssetsApiController.php:30:21:        return $this->packageJson($result, Error::ERR_OK, Error::msg(Error::ERR_OK));
+AssetsApiController.php:36:15:        $model->user_id = $this->user_obj->id;
+AssetsApiController.php:36:32:        $model->user_id = $this->user_obj->id;
+AssetsApiController.php:36:42:        $model->user_id = $this->user_obj->id;
+AssetsApiController.php:39:20:        $task_model->user_id = $this->user_obj->id;
+AssetsApiController.php:39:37:        $task_model->user_id = $this->user_obj->id;
+AssetsApiController.php:39:47:        $task_model->user_id = $this->user_obj->id;
+AssetsApiController.php:40:20:        $task_model->del     = Constants::SOFT_DEL_NO;
+AssetsApiController.php:41:43:        $query               = $task_model->getPlanTask();
+AssetsApiController.php:43:23:        $now = date("Y-W", time());
+AssetsApiController.php:44:25:        $date = $year. "-" .$week;
+AssetsApiController.php:46:19:            $model->week = $now;
+AssetsApiController.php:47:19:            $query->andWhere(["week" => $now]);
+AssetsApiController.php:49:19:            $model->week = $date;
+AssetsApiController.php:50:19:            $query->andWhere(["week" => $week]);
+AssetsApiController.php:52:25:        $result = $model->getQuery()->asArray()->all();
+AssetsApiController.php:52:37:        $result = $model->getQuery()->asArray()->all();
+AssetsApiController.php:52:48:        $result = $model->getQuery()->asArray()->all();
+AssetsApiController.php:53:30:        $task_result = $query->asArray()->all();
+AssetsApiController.php:53:41:        $task_result = $query->asArray()->all();
+AssetsApiController.php:93:21:        return $this->directJson(json_encode($ret));
+AssetsApiController.php:108:40:            $params             = $this->getParamsByConf($params_conf, 'post');
+AssetsApiController.php:109:19:            $model->name        = $params['name'];
+AssetsApiController.php:110:19:            $model->type_id     = $params['type_id'];
+AssetsApiController.php:111:19:            $model->value       = $params['value'];
+AssetsApiController.php:112:19:            $model->time        = $params['time'];
+AssetsApiController.php:113:19:            $model->position    = $params['position'];
+AssetsApiController.php:114:19:            $model->access_unit = $params['access_unit'];
+AssetsApiController.php:115:19:            $model->user_id     = $this->user_obj->id;
+AssetsApiController.php:115:40:            $model->user_id     = $this->user_obj->id;
+AssetsApiController.php:115:50:            $model->user_id     = $this->user_obj->id;
+AssetsApiController.php:116:19:            $model->modelValidSave();
+AssetsApiController.php:118:64:            list($x, $y, $width, $height) = explode(",", $model->position);
+AssetsApiController.php:120:25:            return $this->packageJson([
+AssetsApiController.php:121:35:                'id'     => $model->id,
+AssetsApiController.php:128:25:            return $this->returnException($e);
+AssetsApiController.php:143:37:            $params          = $this->getParamsByConf($params_conf, 'post');
+AssetsApiController.php:144:37:            $model           = $this->findModel($id, BusinessAssets::class);
+AssetsApiController.php:147:27:                    $model->$index = $one;
+AssetsApiController.php:150:19:            $model->modelValidSave();
+AssetsApiController.php:151:25:            return $this->packageJson(['id' => $model->id], Error::ERR_OK, Error::msg(Error::ERR_OK));
+AssetsApiController.php:151:54:            return $this->packageJson(['id' => $model->id], Error::ERR_OK, Error::msg(Error::ERR_OK));
+AssetsApiController.php:153:25:            return $this->returnException($e);
+AssetsApiController.php:163:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+AssetsApiController.php:164:33:            $model       = $this->findModel($id, BusinessAssets::class);
+AssetsApiController.php:166:33:                $result = $model->delete(); 
+AssetsApiController.php:171:23:                $model->del = Constants::SOFT_DEL_YES; 
+AssetsApiController.php:172:23:                $model->modelValidSave();
+AssetsApiController.php:174:25:            return $this->packageJson(['id' => $id], Error::ERR_OK, Error::msg(Error::ERR_OK));
+AssetsApiController.php:176:25:            return $this->returnException($e);
+TalentController.php:29:15:        $model->load(Yii::$app->request->queryParams);
+TalentController.php:29:31:        $model->load(Yii::$app->request->queryParams);
+TalentController.php:29:40:        $model->load(Yii::$app->request->queryParams);
+TalentController.php:32:30:            'query' => $model->getQuery(),
+TalentController.php:34:21:        return $this->render('index', [
+TalentController.php:44:25:            return $this->validModel($model);
+TalentController.php:46:25:            return $this->returnException($e);
+TalentController.php:54:26:            if (Yii::$app->request->post()) {
+TalentController.php:54:35:            if (Yii::$app->request->post()) {
+TalentController.php:55:23:                $model->load(Yii::$app->request->post());
+TalentController.php:55:39:                $model->load(Yii::$app->request->post());
+TalentController.php:55:48:                $model->load(Yii::$app->request->post());
+TalentController.php:56:23:                $model->modelValidSave();
+TalentController.php:58:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+TalentController.php:58:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+TalentController.php:60:29:                return $this->render('save', [
+TalentController.php:65:25:            return $this->returnException($e);
+TalentController.php:72:28:            $model  = $this->findModel($id, Config::class);
+TalentController.php:73:26:            if (Yii::$app->request->post()) {
+TalentController.php:73:35:            if (Yii::$app->request->post()) {
+TalentController.php:74:23:                $model->load(Yii::$app->request->post());
+TalentController.php:74:39:                $model->load(Yii::$app->request->post());
+TalentController.php:74:48:                $model->load(Yii::$app->request->post());
+TalentController.php:75:23:                $model->modelValidSave();
+TalentController.php:77:29:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+TalentController.php:77:58:                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+TalentController.php:79:29:                return $this->render('save', [
+TalentController.php:85:25:            return $this->returnException($e);
+TalentController.php:92:29:            $ids = Yii::$app->request->post('ids', null);
+TalentController.php:92:38:            $ids = Yii::$app->request->post('ids', null);
+TalentController.php:97:36:            $query = Config::find()->andWhere(['and',['in', 'id', $ids]]);
+TalentController.php:98:28:            foreach ($query->all() as $model) {
+TalentController.php:99:33:                $result = $model->delete();
+TalentController.php:105:25:            return $this->packageJson($ids, $code, Error::msg($code));
+TalentController.php:107:25:            return $this->returnexception($e);
+AssetsController.php:17:15:        $model->user_id = $this->user_obj->id;
+AssetsController.php:17:32:        $model->user_id = $this->user_obj->id;
+AssetsController.php:17:42:        $model->user_id = $this->user_obj->id;
+AssetsController.php:18:25:        $result = $model->getQuery()->asArray()->all();
+AssetsController.php:18:37:        $result = $model->getQuery()->asArray()->all();
+AssetsController.php:18:48:        $result = $model->getQuery()->asArray()->all();
+AssetsController.php:47:21:        return $this->render('index', [
+BaseController.php:30:14:        $this->req = \Yii::$app->request;
+BaseController.php:30:32:        $this->req = \Yii::$app->request;
+BaseController.php:31:14:        $this->controller = $action->controller->id;
+BaseController.php:31:36:        $this->controller = $action->controller->id;
+BaseController.php:31:48:        $this->controller = $action->controller->id;
+BaseController.php:32:32:        //$session = \Yii::$app->session;
+BaseController.php:33:14:        $this->user_obj = Yii::$app->user->identity;
+BaseController.php:33:36:        $this->user_obj = Yii::$app->user->identity;
+BaseController.php:33:42:        $this->user_obj = Yii::$app->user->identity;
+BaseController.php:35:22:        if (Yii::$app->user->isGuest) {
+BaseController.php:35:28:        if (Yii::$app->user->isGuest) {
+BaseController.php:36:18:            $this->redirect("http://".$_SERVER['HTTP_HOST']."/user/login"); 
+BaseController.php:47:24:        header('Content-type: text/json; charset=utf-8');
+BaseController.php:47:53:        header('Content-type: text/json; charset=utf-8');
+BaseController.php:48:22:        header("Cache-Control: no-cache, must-revalidate");
+BaseController.php:48:34:        header("Cache-Control: no-cache, must-revalidate");
+BaseController.php:48:46:        header("Cache-Control: no-cache, must-revalidate");
+BaseController.php:49:27:        header("Pragma: no-cache");
+BaseController.php:64:24:        header("Content-Type: {$type}");
+BaseController.php:65:22:        header("Cache-Control: no-cache, must-revalidate");
+BaseController.php:65:34:        header("Cache-Control: no-cache, must-revalidate");
+BaseController.php:65:46:        header("Cache-Control: no-cache, must-revalidate");
+BaseController.php:66:27:        header("Pragma: no-cache");
+BaseController.php:106:39:                    $param = Yii::$app->request->get($name, $one[0]);
+BaseController.php:106:48:                    $param = Yii::$app->request->get($name, $one[0]);
+BaseController.php:109:39:                    $param = Yii::$app->request->post($name, $one[0]);
+BaseController.php:109:48:                    $param = Yii::$app->request->post($name, $one[0]);
+BaseController.php:124:25:            'msg'  => $e->getMessage(),
+BaseController.php:125:25:            'file' => $e->getFile(),
+BaseController.php:126:25:            'line' => $e->getLine(),
+BaseController.php:128:26:        //Yii::info($this->logFormat("exception", $params), \LOG_CATEGORY::BACKEND_EXCEPTION);
+BaseController.php:131:29:                return $this->packageJson(
+BaseController.php:133:23:                    $e->getCode(), 
+BaseController.php:134:23:                    $e->getMessage());
+BaseController.php:137:29:                return $this->directJson($e->getMessage);
+BaseController.php:137:44:                return $this->directJson($e->getMessage);
+BaseController.php:146:22:        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {        
+BaseController.php:146:31:        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {        
+BaseController.php:146:49:        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {        
+BaseController.php:146:65:        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {        
+BaseController.php:146:74:        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {        
+BaseController.php:147:32:            if (!is_null($model->id)) {
+BaseController.php:148:31:                $model = $this->findModel($model->id, $class_name);
+BaseController.php:148:49:                $model = $this->findModel($model->id, $class_name);
+BaseController.php:149:23:                $model->load(Yii::$app->request->post());
+BaseController.php:149:39:                $model->load(Yii::$app->request->post());
+BaseController.php:149:48:                $model->load(Yii::$app->request->post());
+BaseController.php:152:25:            return $this->directJson(json_encode($result), "text/json");
+BaseController.php:203:37:        $total_export_count = $query->count();
+BaseController.php:206:26:        header ( "Content-type:application/vnd.ms-excel" );
+BaseController.php:206:50:        header ( "Content-type:application/vnd.ms-excel" );
+BaseController.php:207:26:        header ( "Content-Disposition:filename=" . iconv ( "UTF-8", "GB18030", $file_name ) . ".csv" );
+BaseController.php:207:64:        header ( "Content-Disposition:filename=" . iconv ( "UTF-8", "GB18030", $file_name ) . ".csv" );
+BaseController.php:214:42:            $column_name[$i] = iconv('utf-8', 'GB18030', $v);  
+BaseController.php:221:19:            $query->offset($i * $batch_size)->limit($batch_size);
+BaseController.php:221:45:            $query->offset($i * $batch_size)->limit($batch_size);
+BaseController.php:223:23:                $query->asArray();
+BaseController.php:225:27:            $list = $query->all();
+KnowledgeApiController.php:18:15:        $model->area_id = $area_id;
+KnowledgeApiController.php:19:15:        $model->del     = Constants::SOFT_DEL_NO;
+KnowledgeApiController.php:22:23:        $tree = $model->getAreaTreeArr();
+KnowledgeApiController.php:27:21:        return $this->directJson(json_encode($ret));
+KnowledgeApiController.php:33:15:        $model->area_id = $area_id;
+KnowledgeApiController.php:34:15:        $model->del     = Constants::SOFT_DEL_NO;
+KnowledgeApiController.php:35:15:        $model->parent  = 0;
+KnowledgeApiController.php:36:33:        $query          = $model->getQuery();
+KnowledgeApiController.php:38:13:            ->asArray()
+KnowledgeApiController.php:39:13:            ->all();
+KnowledgeApiController.php:49:21:        return $this->directJson(json_encode($ret));
+KnowledgeApiController.php:57:24:        $params = $this->getParamsByConf($params_conf, 'get');
+KnowledgeApiController.php:60:15:        $model->area_id = $area_id;
+KnowledgeApiController.php:61:15:        $model->del     = Constants::SOFT_DEL_NO;
+KnowledgeApiController.php:62:15:        $model->parent  = $params['id'];
+KnowledgeApiController.php:63:33:        $query          = $model->getQuery();
+KnowledgeApiController.php:64:25:        $result = $query->asArray()->all();
+KnowledgeApiController.php:64:36:        $result = $query->asArray()->all();
+KnowledgeApiController.php:74:21:        return $this->directJson(json_encode($ret));
+KnowledgeApiController.php:86:36:            $params         = $this->getParamsByConf($params_conf, 'post');
+KnowledgeApiController.php:87:19:            $model->name    = $params['name'];
+KnowledgeApiController.php:88:19:            $model->area_id = $params['area_id'];
+KnowledgeApiController.php:89:19:            $model->parent  = $params['parent'];
+KnowledgeApiController.php:92:23:            if ($model->parent != 0) {
+KnowledgeApiController.php:93:36:                $parent_id = $model->parent;
+KnowledgeApiController.php:104:19:            $model->level = $level;
+KnowledgeApiController.php:105:19:            $model->modelValidSave();
+KnowledgeApiController.php:107:25:            return $this->packageJson([
+KnowledgeApiController.php:108:35:                'id'     => $model->id,
+KnowledgeApiController.php:111:25:            return $this->returnException($e);
+KnowledgeApiController.php:122:37:            $params          = $this->getParamsByConf($params_conf, 'post');
+KnowledgeApiController.php:123:37:            $model           = $this->findModel($id, KnowledgeArea::class);
+KnowledgeApiController.php:126:27:                    $model->$index = $one;
+KnowledgeApiController.php:129:19:            $model->modelValidSave();
+KnowledgeApiController.php:130:25:            return $this->packageJson(['id' => $model->id], Error::ERR_OK, Error::msg(Error::ERR_OK));
+KnowledgeApiController.php:130:54:            return $this->packageJson(['id' => $model->id], Error::ERR_OK, Error::msg(Error::ERR_OK));
+KnowledgeApiController.php:132:25:            return $this->returnException($e);
+KnowledgeApiController.php:142:28:            $params = $this->getParamsByConf($params_conf, 'post');
+KnowledgeApiController.php:143:28:            $model  = $this->findModel($id, KnowledgeArea::class);
+KnowledgeApiController.php:145:33:                $result = $model->delete(); 
+KnowledgeApiController.php:150:23:                $model->del = Constants::SOFT_DEL_YES; 
+KnowledgeApiController.php:151:23:                $model->modelValidSave();
+KnowledgeApiController.php:153:25:            return $this->packageJson(['id' => $params['id']], Error::ERR_OK, Error::msg(Error::ERR_OK));
+KnowledgeApiController.php:155:25:            return $this->returnException($e);
+CountRecordController.php:33:28:            $params = $this->getParamsByConf($params_conf, 'post');
+CountRecordController.php:35:19:            $model->user_id = $this->user_obj->id;
+CountRecordController.php:35:36:            $model->user_id = $this->user_obj->id;
+CountRecordController.php:35:46:            $model->user_id = $this->user_obj->id;
+CountRecordController.php:36:19:            $model->id = $params['id'];
+CountRecordController.php:37:29:            $result = $model->getOne();
+CountRecordController.php:38:25:            return $this->packageJson(['info' => $result], Error::ERR_OK, Error::msg(Error::ERR_OK));
+CountRecordController.php:40:25:            return $this->returnException($e);
+CountRecordController.php:53:38:            $params           = $this->getParamsByConf($params_conf, 'post');
+CountRecordController.php:54:19:            $model->action_id = $params['action_id'];
+CountRecordController.php:55:19:            $model->status    = $params['status'];
+CountRecordController.php:56:19:            $model->init_time = 0;
+CountRecordController.php:57:19:            $model->user_id   = $this->user_obj->id;
+CountRecordController.php:57:38:            $model->user_id   = $this->user_obj->id;
+CountRecordController.php:57:48:            $model->user_id   = $this->user_obj->id;
+CountRecordController.php:58:19:            $model->modelValidSave();
+CountRecordController.php:60:25:            return $this->packageJson(['id' => $model->attributes['id']], Error::ERR_OK, Error::msg(Error::ERR_OK));
+CountRecordController.php:60:54:            return $this->packageJson(['id' => $model->attributes['id']], Error::ERR_OK, Error::msg(Error::ERR_OK));
+CountRecordController.php:62:25:            return $this->returnException($e);
+CountRecordController.php:70:39:            $transaction   = Yii::$app->db->beginTransaction();
+CountRecordController.php:70:43:            $transaction   = Yii::$app->db->beginTransaction();
+CountRecordController.php:72:17:                ->andWhere([
+CountRecordController.php:78:17:                ->andWhere(['user_id' => $this->user_obj->id])
+CountRecordController.php:78:47:                ->andWhere(['user_id' => $this->user_obj->id])
+CountRecordController.php:78:57:                ->andWhere(['user_id' => $this->user_obj->id])
+CountRecordController.php:79:17:                ->orderBy("id desc")
+CountRecordController.php:80:17:                ->one();
+CountRecordController.php:86:38:            $params           = $this->getParamsByConf($params_conf, 'post');
+CountRecordController.php:87:19:            $model->status    = $params['status'];
+CountRecordController.php:88:19:            $model->init_time = $params['init_time'];
+CountRecordController.php:89:19:            $model->modelValidSave();
+CountRecordController.php:91:34:            $action_model = $this->findModel($model->action_id, Action::class);
+CountRecordController.php:91:52:            $action_model = $this->findModel($model->action_id, Action::class);
+CountRecordController.php:92:27:            switch ($model->status) {
+CountRecordController.php:94:34:                    $action_model->status = Action::STATUS_END;
+CountRecordController.php:95:34:                    $action_model->modelValidSave();
+CountRecordController.php:98:34:                    $action_model->status = Action::STATUS_WAIT;
+CountRecordController.php:99:34:                    $action_model->modelValidSave();
+CountRecordController.php:105:25:            $transaction->commit(); 
+CountRecordController.php:106:25:            return $this->packageJson(['id' => $model->attributes['id']], Error::ERR_OK, Error::msg(Error::ERR_OK));
+CountRecordController.php:106:54:            return $this->packageJson(['id' => $model->attributes['id']], Error::ERR_OK, Error::msg(Error::ERR_OK));
+CountRecordController.php:108:25:            $transaction->rollBack(); 
+CountRecordController.php:109:25:            return $this->returnException($e);
+ProjectController.php:27:21:        return $this->render('index', [
+ProjectController.php:36:23:        $model = $this->findModel($id, GanttTasks::class);
+ProjectController.php:37:15:        $model->progress = Project::PROGRESS_END;
+ProjectController.php:38:15:        $model->modelValidSave();
+ProjectController.php:40:21:        return $this->packageJson(['id' => $model->id], $code, Error::msg($code));
+ProjectController.php:40:50:        return $this->packageJson(['id' => $model->id], $code, Error::msg($code));
+PlanController.php:17:21:        return $this->render('index', [
+PlanController.php:18:35:            "init_date" => date("Y-W", time()),
+backup/SchedulerController.php:18:15:        $model->user_id = $this->user_obj->id;
+backup/SchedulerController.php:18:32:        $model->user_id = $this->user_obj->id;
+backup/SchedulerController.php:18:42:        $model->user_id = $this->user_obj->id;
+backup/SchedulerController.php:19:33:        $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/SchedulerController.php:19:45:        $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/SchedulerController.php:19:81:        $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/SchedulerController.php:19:92:        $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/SchedulerController.php:22:22:        $config_model->type = Config::TYPE_ACTION;
+backup/SchedulerController.php:23:44:        $action_dict        = $config_model->getTypeDict();
+backup/SchedulerController.php:25:21:        return $this->render('index', [
+backup/SchedulerApiController.php:30:25:        $query  = $model->getQuery();
+backup/SchedulerApiController.php:31:25:        $result = $query->asArray()->all();
+backup/SchedulerApiController.php:31:36:        $result = $query->asArray()->all();
+backup/SchedulerApiController.php:35:21:        return $this->directXml($result);
+backup/SchedulerApiController.php:42:39:            $transaction   = Yii::$app->db->beginTransaction();
+backup/SchedulerApiController.php:42:43:            $transaction   = Yii::$app->db->beginTransaction();
+backup/SchedulerApiController.php:52:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+backup/SchedulerApiController.php:53:19:            $model->text       = $params['text'];
+backup/SchedulerApiController.php:54:19:            $model->process_id = $params['process_id'];
+backup/SchedulerApiController.php:55:19:            $model->start_date = $params['start_date'];
+backup/SchedulerApiController.php:56:19:            $model->end_date   = $params['end_date'];
+backup/SchedulerApiController.php:57:19:            $model->user_id    = $this->user_obj->id;
+backup/SchedulerApiController.php:57:39:            $model->user_id    = $this->user_obj->id;
+backup/SchedulerApiController.php:57:49:            $model->user_id    = $this->user_obj->id;
+backup/SchedulerApiController.php:58:19:            $model->modelValidSave();
+backup/SchedulerApiController.php:60:35:            $process_model = $this->findModel($model->process_id, Process::class);
+backup/SchedulerApiController.php:60:53:            $process_model = $this->findModel($model->process_id, Process::class);
+backup/SchedulerApiController.php:62:31:                $process_model->finish = Process::FINISH_TRUE;
+backup/SchedulerApiController.php:64:31:                $process_model->finish = Process::FINISH_NO;
+backup/SchedulerApiController.php:66:27:            $process_model->modelValidSave();
+backup/SchedulerApiController.php:67:32:            $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+backup/SchedulerApiController.php:67:58:            $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+backup/SchedulerApiController.php:68:24:            $task_model->process_id = $process_model->id;
+backup/SchedulerApiController.php:68:53:            $task_model->process_id = $process_model->id;
+backup/SchedulerApiController.php:69:24:            $task_model->checkAndChangeDuration();
+backup/SchedulerApiController.php:71:25:            $transaction->commit(); 
+backup/SchedulerApiController.php:72:25:            $ret = $this->prepareResponse($action_type, $sid, $model->id);
+backup/SchedulerApiController.php:72:69:            $ret = $this->prepareResponse($action_type, $sid, $model->id);
+backup/SchedulerApiController.php:73:25:            return $this->directJson($ret);
+backup/SchedulerApiController.php:75:25:            $transaction->rollBack(); 
+backup/SchedulerApiController.php:77:33:            $ret         = $this->prepareResponse($action_type, null, null);
+backup/SchedulerApiController.php:78:25:            return $this->directJson($ret);
+backup/SchedulerApiController.php:85:27:            $model = $this->findModel($id, Events::class);
+backup/SchedulerApiController.php:86:39:            $transaction   = Yii::$app->db->beginTransaction();
+backup/SchedulerApiController.php:86:43:            $transaction   = Yii::$app->db->beginTransaction();
+backup/SchedulerApiController.php:96:39:            $params            = $this->getParamsByConf($params_conf, 'post');
+backup/SchedulerApiController.php:97:19:            $model->text       = $params['text'];
+backup/SchedulerApiController.php:98:19:            $model->process_id = $params['process_id'];
+backup/SchedulerApiController.php:99:19:            $model->start_date = $params['start_date'];
+backup/SchedulerApiController.php:100:19:            $model->end_date   = $params['end_date'];
+backup/SchedulerApiController.php:101:19:            $model->modelValidSave();
+backup/SchedulerApiController.php:103:35:            $process_model = $this->findModel($model->process_id, Process::class);
+backup/SchedulerApiController.php:103:53:            $process_model = $this->findModel($model->process_id, Process::class);
+backup/SchedulerApiController.php:105:31:                $process_model->finish = Process::FINISH_TRUE;
+backup/SchedulerApiController.php:107:31:                $process_model->finish = Process::FINISH_NO;
+backup/SchedulerApiController.php:109:27:            $process_model->modelValidSave();
+backup/SchedulerApiController.php:110:32:            $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+backup/SchedulerApiController.php:110:58:            $task_model = $this->findModel($process_model->task_id, GanttTasks::class);
+backup/SchedulerApiController.php:111:24:            $task_model->process_id = $process_model->id;
+backup/SchedulerApiController.php:111:53:            $task_model->process_id = $process_model->id;
+backup/SchedulerApiController.php:112:24:            $task_model->checkAndChangeDuration();
+backup/SchedulerApiController.php:114:25:            $transaction->commit(); 
+backup/SchedulerApiController.php:115:25:            $ret = $this->prepareResponse($action_type, $id, $id);
+backup/SchedulerApiController.php:116:25:            return $this->directJson($ret);
+backup/SchedulerApiController.php:118:25:            $transaction->rollBack(); 
+backup/SchedulerApiController.php:120:33:            $ret         = $this->prepareResponse($action_type, $id, $id);
+backup/SchedulerApiController.php:121:25:            return $this->directJson($ret);
+backup/SchedulerApiController.php:130:33:            $model       = $this->findModel($id, Events::class);
+backup/SchedulerApiController.php:131:34:            $result      = $model->delete();
+backup/SchedulerApiController.php:135:25:            $ret = $this->prepareResponse($action_type, $id, $id);
+backup/SchedulerApiController.php:136:25:            return $this->directJson($ret);
+backup/SchedulerApiController.php:139:33:            $ret         = $this->prepareResponse($action_type, $id, $id);
+backup/SchedulerApiController.php:140:25:            return $this->directJson($ret);
+backup/ProcessController.php:31:15:        $model->user_id = $this->user_obj->id;
+backup/ProcessController.php:31:32:        $model->user_id = $this->user_obj->id;
+backup/ProcessController.php:31:42:        $model->user_id = $this->user_obj->id;
+backup/ProcessController.php:32:15:        $model->task_id = $id;
+backup/ProcessController.php:33:23:        $data = $model->getTreeNodeList();
+backup/ProcessController.php:36:22:        $config_model->type = Config::TYPE_ACTION;
+backup/ProcessController.php:37:44:        $action_dict        = $config_model->getTypeDict();
+backup/ProcessController.php:47:21:        return $this->directJson(json_encode($result));
+backup/ProcessController.php:60:38:            $params           = $this->getParamsByConf($params_conf, 'post');
+backup/ProcessController.php:61:19:            $model->text      = $params['text'];
+backup/ProcessController.php:62:19:            $model->plan_num  = $params['plan_num'];
+backup/ProcessController.php:63:19:            $model->task_id   = $params['task_id'];
+backup/ProcessController.php:64:19:            $model->action_id = $params['action_id'];
+backup/ProcessController.php:65:19:            $model->user_id   = $this->user_obj->id;
+backup/ProcessController.php:65:38:            $model->user_id   = $this->user_obj->id;
+backup/ProcessController.php:65:48:            $model->user_id   = $this->user_obj->id;
+backup/ProcessController.php:66:19:            $model->modelValidSave();
+backup/ProcessController.php:69:19:            $model->user_id = $this->user_obj->id;
+backup/ProcessController.php:69:36:            $model->user_id = $this->user_obj->id;
+backup/ProcessController.php:69:46:            $model->user_id = $this->user_obj->id;
+backup/ProcessController.php:70:37:            $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/ProcessController.php:70:49:            $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/ProcessController.php:70:85:            $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/ProcessController.php:70:96:            $process_dict   = $model->getQuery()->select("id as key, text as label")->asArray()->all();
+backup/ProcessController.php:73:25:            return $this->packageJson([
+backup/ProcessController.php:74:41:                'id'           => $model->attributes['id'],
+backup/ProcessController.php:79:25:            return $this->returnException($e);
+backup/ProcessController.php:92:38:            $params           = $this->getParamsByConf($params_conf, 'post');
+backup/ProcessController.php:93:38:            $model            = $this->findModel($params['id'], Process::class);
+backup/ProcessController.php:94:19:            $model->text      = $params['text'];
+backup/ProcessController.php:95:19:            $model->plan_num  = $params['plan_num'];
+backup/ProcessController.php:96:19:            $model->action_id = $params['action_id'];
+backup/ProcessController.php:97:19:            $model->modelValidSave();
+backup/ProcessController.php:100:25:            return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+backup/ProcessController.php:100:54:            return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+backup/ProcessController.php:102:25:            return $this->returnException($e);
+backup/ProcessController.php:110:33:            $model       = $this->findModel($id, Process::class);
+backup/ProcessController.php:111:34:            $result      = $model->delete();
+backup/ProcessController.php:116:25:            return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+backup/ProcessController.php:116:54:            return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
+backup/ProcessController.php:118:25:            return $this->returnException($e);
+backup/ProcessController.php:128:28:            $params = $this->getParamsByConf($params_conf, 'post');
+backup/ProcessController.php:131:17:                ->select("id")
+backup/ProcessController.php:132:17:                ->andWhere(["id" => $params['ids']])
+backup/ProcessController.php:133:17:                ->andWhere(["finish" => Process::FINISH_TRUE])
+backup/ProcessController.php:134:17:                ->asArray()->all();
+backup/ProcessController.php:134:28:                ->asArray()->all();
+backup/ProcessController.php:138:25:            return $this->packageJson(['list' => $list], $code, Error::msg($code));
+backup/ProcessController.php:140:25:            return $this->returnException($e);

@@ -63,6 +63,8 @@ function directPost(href, post_data)
 {
     var finish_flag = arguments[2] ? false : true;
     var reload_flag = arguments[3] ? false : true;
+    var finish_func_flag = arguments[4] ? true : false;
+    var finish_func = arguments[4];
     $.ajax({
         url: href,
         data: post_data,
@@ -79,9 +81,11 @@ function directPost(href, post_data)
                         confirmButtonColor: "#DD6B55",
                         confirmButtonText: "确定",
                     },function(){
+                        if (finish_func_flag) finish_func(data);
                         if (reload_flag) location.reload();
                     });
                 } else {
+                    if (finish_func_flag) finish_func(data);
                     if (reload_flag) location.reload();
                 }
             } else {

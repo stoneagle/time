@@ -4,19 +4,19 @@ use yii\db\Schema;
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `business_assets`.
+ * Handles the creation of table `assets`.
  */
-class m170313_000157_create_business_assets_table extends Migration
+class m170313_000157_create_assets_table extends Migration
 {
     /**
      * @inheritdoc
      */
     public function up()
     {
-        $this->createTable('{{%business_assets}}', [
+        $this->createTable('{{%assets}}', [
             'id'          => Schema::TYPE_PK,
             'name'        => Schema::TYPE_STRING.' NOT NULL DEFAULT "" COMMENT "名称" ',
-            'type_id'     => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "资产类别" ',
+            'entity_id'   => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "实体id" ',
             'access_unit' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "评估单位，现金流是日期间隔，交易是次数，泡沫是人力" ',
             'value'       => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "价值" ',
             'time'        => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0 COMMENT "总投入时间，单位分钟" ',
@@ -33,6 +33,6 @@ class m170313_000157_create_business_assets_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('{{%business_assets}}');
+        $this->dropTable('{{%assets}}');
     }
 }

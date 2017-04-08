@@ -13,12 +13,19 @@ class ProjectController extends BaseController
 
     public function actionIndex()
     {
-        $field_dict         = Config::$field_arr;
+        $field_raw_dict         = Config::$field_arr;
+        $field_dhtml_dict = [];
+        foreach ($field_raw_dict as $index => $one) {
+            $field_dhtml_dict[] = [
+                "key" => $index,
+                "label" => $one,
+            ];
+        }
         $priority_dict      = Config::$priority_dhtml_arr;
         $type_raw           = Config::getTypeWithParentDict(Config::TYPE_ACTION, "dhtml");
 
         return $this->render('index', [
-            "fieldDict"    => json_encode($field_dict),
+            "fieldDict"    => json_encode($field_dhtml_dict),
             "priorityDict" => json_encode($priority_dict),
             "typeDict"     => json_encode($type_raw),
         ]);

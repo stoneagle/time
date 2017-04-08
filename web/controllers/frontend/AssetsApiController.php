@@ -3,8 +3,8 @@
 namespace app\controllers\frontend;
 
 use app\models\Error;
-use app\models\BusinessAssets;
-use app\models\Project;
+use app\models\Assets;
+use app\models\AssetsSub;
 use app\models\Action;
 use app\models\Constants;
 use app\models\Config;
@@ -14,19 +14,12 @@ use yii\helpers\ArrayHelper;
 
 class AssetsApiController extends BaseController
 {
-    public function actionData($id)
+    public function actionOneAssetsSub($id)
     {
-        $model = new Project;
-        $model->user_id = $this->user_obj->id;
-        $model->obj_id = $id;
-        $model->field_id = Config::FIELD_ASSET;
-        $action_t  = Action::tableName();
-        $project_t = Project::tableName();
-        $query = $model->getQuery()
-            ->select("$project_t.*, sum($action_t.exec_time) as sum_time")
-            ->groupBy("$project_t.id");
-        $result = $query->asArray()->all();
-
+        $model            = new AssetsSub;
+        $model->assets_id = $id;
+        $query            = $model->getQuery();
+        $result           = $query->asArray()->all();
         return $this->packageJson($result, Error::ERR_OK, Error::msg(Error::ERR_OK));
     }
 
@@ -96,10 +89,10 @@ class AssetsApiController extends BaseController
     public function actionAdd()
     {
         try {
-            $model = new BusinessAssets;
+            $model = new Assets;
             $params_conf = [
                 "name"        => [null, true],
-                "type_id"     => [null, true],
+                "entity_id"   => [null, true],
                 "value"       => [null, true],
                 "time"        => [null, true],
                 "position"    => [null, true],
@@ -107,7 +100,7 @@ class AssetsApiController extends BaseController
             ];
             $params             = $this->getParamsByConf($params_conf, 'post');
             $model->name        = $params['name'];
-            $model->type_id     = $params['type_id'];
+            $model->entity_id   = $params['entity_id'];
             $model->value       = $params['value'];
             $model->time        = $params['time'];
             $model->position    = $params['position'];
@@ -134,14 +127,14 @@ class AssetsApiController extends BaseController
         try {
             $params_conf = [
                 "name"        => [null, false],
-                "type_id"     => [null, false],
+                "entity_id"   => [null, false],
                 "value"       => [null, false],
                 "time"        => [null, false],
                 "position"    => [null, true],
                 "access_unit" => [null, false],
             ];
             $params          = $this->getParamsByConf($params_conf, 'post');
-            $model           = $this->findModel($id, BusinessAssets::class);
+            $model           = $this->findModel($id, Assets::class);
             foreach ($params as $index => $one) {
                 if (!is_null($one)) {
                     $model->$index = $one;
@@ -161,7 +154,7 @@ class AssetsApiController extends BaseController
                 "hard_flag" => [false, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
-            $model       = $this->findModel($id, BusinessAssets::class);
+            $model       = $this->findModel($id, Assets::class);
             if ($params['hard_flag']) {
                 $result = $model->delete(); 
                 if (!$result) {

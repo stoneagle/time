@@ -35,7 +35,7 @@ class ConfigController extends BaseController
             'searchModel'  => $model,
             'dataProvider' => $data_provider,
             'typeArr'      => Config::$type_arr,
-            'parentArr'    => Config::getParentList(),
+            'parentArr'    => Config::$field_arr,
         ]);
     }
 
@@ -65,7 +65,7 @@ class ConfigController extends BaseController
                 return $this->render('save', [
                     'model'   => $model,
                     'typeArr' => Config::$type_arr,
-                    'parentArr' => Config::getParentList(),
+                    'parentArr' => Config::$field_arr,
                 ]);
             }
         } catch (\Exception $e) {
@@ -86,6 +86,7 @@ class ConfigController extends BaseController
                 return $this->render('save', [
                     'model'   => $model,
                     'typeArr' => Config::$type_arr,
+                    'parentArr' => Config::$field_arr,
                     'id'      => $id,
                 ]);
             }

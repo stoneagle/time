@@ -112,7 +112,7 @@ class ProjectApiController extends BaseController
                 "progress"    => [0, false],
                 "priority_id" => [0, false],
                 "field_id"    => [0, false],
-                "obj_id"      => [null, true],
+                "obj_id"      => [0, false],
                 "parent"      => [null, true],
                 "action_type" => [null, false],
                 "plan_time"   => [null, false],

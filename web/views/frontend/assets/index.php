@@ -6,6 +6,8 @@ use app\models\Config;
 use app\assets\AppAsset;
 use yii\helpers\ArrayHelper;
 use kartik\select2\Select2;
+use \kartik\date\DatePicker;
+use kartik\grid\GridView;
 
 $this->title                   = '资产管理';
 $this->params['breadcrumbs'][] = $this->title;
@@ -25,6 +27,7 @@ $this->registerJsFile('@web/js/lib/lodash.js',['depends'=>['app\assets\AppAsset'
 $this->registerJsFile('@web/js/lib/jquery-ui.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/gridstack.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
+$this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\assets\AppAsset']]);
 ?>
 <style type="text/css">
     .assets-horizontal dt {
@@ -104,7 +107,83 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
     <div class="gridbox_task col-md-4 panel panel-default" style="height:1024px;" >
         <div id="time_cookie" style="width:auto;height:400px;"></div>
         <div id="time_sum" style="width:auto;height:200px;"></div>
-        <div id="assets_project_list" style="height:400px"></div>  
+        <?php
+         $gridColumns = [
+                /* "box" => [ */
+                /*     'class' => 'yii\grid\CheckboxColumn', */
+                /*     'name' => 'box', */
+                /*     'contentOptions' => [ */
+                /*         'class' => 'data-id' */
+                /*     ], */
+                /* ], */
+                "id",
+                "project_name",
+                [
+                    'attribute' => 'ctime',
+                    'contentOptions' => ['width' => '20%'],
+                    'filter'    => DatePicker::widget([
+                        'model' => $searchModel,
+                        'attribute' => 'ctime',
+                        'convertFormat' => true,
+                        'pluginOptions' => [
+                            'autoclose'=> true,
+                            'format' => 'yyyy-M-dd'
+                        ],
+                    ]),
+                    'value' => function ($model) {
+                        return date("Y-m-d", strtotime($model->ctime));
+                    },
+                ],
+                "button" => [
+                    'header' => '操作',
+                    'contentOptions' => ['style' => 'white-space: normal;', 'width' => '18%'],
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => "{edit} {delete}",
+                    'buttons' => [
+                        'edit' => function ($url, $model) {
+                            return Html::a( 
+                                "修改",
+                                "/frontend/assets-links/update?id=".$model->id."&assets_id=".$model->assets_id,
+                                [
+                                    'data-pjax' => '0',
+                                    'class'     => 'label label-primary handle',
+                                ]
+                            );
+                        },
+                        'delete' => function ($url, $model) {
+                            return Html::a( 
+                                "删除",
+                                "/frontend/assets-links/delete",
+                                [
+                                    'data-pjax' => '0',
+                                    'name'      => "links_delete_one",
+                                    'model_id'  => $model->id,
+                                    'class'     => 'label label-primary handle',
+                                ]
+                            );
+                        }
+                    ]
+                ],
+            ];
+
+        ?>
+        <div class="grid-view" id="w1">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'panel' => [
+                    'type' => GridView::TYPE_PRIMARY,
+                    'heading' => '<h3 class="panel-title"><i class="glyphicon glyphicon-book"></i></h3>',
+                ],
+                'toolbar' => [
+                    //$fullExportMenu,
+                    //Html::a('新建艺术欣赏',['create?'.$_SERVER['QUERY_STRING']],['data-pjax'      => 0, 'class' => 'btn btn-success',]),
+                ],
+                'options' => ['class' => 'grid-view','style'=>'overflow:auto', 'id' => 'grid'],
+                'columns' => $gridColumns
+                ])
+            ?>
+        </div>
     </div>
     <div id="assets_dashboard" class="dhx_cal_container col-md-8 panel panel-default" style=' height:1024px; '>
         <div class="row">
@@ -127,8 +206,8 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
     </div>
 </div>
 
-<div class="modal fade" id="assets_save" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog" role="document">
+<div class="modal fade bs-example-modal-lg" id="assets_save" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <form id="assets_form" method="post" action="" class="form-horizontal" >
                 <div class="modal-header">
@@ -143,10 +222,18 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="assets_type" class="col-sm-3 control-label">资产类别:</label>
+                            <label for="assets_entity" class="col-sm-3 control-label">资产所属实体:</label>
                             <div class="col-sm-9">
-                                <select id="assets_type" name="type_id" class="form-control" >
-                                </select>
+                                <?php
+                                    echo Select2::widget([
+                                        'name' => 'entity_id',
+                                        'data' => $entity_dict,
+                                        'options' => [
+                                            'placeholder' => '请选择对应实体',
+                                            'multiple' => false
+                                        ],
+                                    ]);
+                                ?>
                             </div>
                         </div>
                         <div class="form-group">
@@ -179,69 +266,26 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
     </div>
 </div>
 
-<div class="modal fade" id="assets_info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog" role="document">
+<div class="modal fade bs-example-modal-lg" id="assets_info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingOne">
                         <h4 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            相关项目列表 
+                            子资产列表 
                             </a>
                         </h4>
                     </div>
                     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                         <div class="panel-body">
-                        <table id="assets_table" class="table table-bordered">
-                        </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingTwo">
-                        <h4 class="panel-title">
-                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            新增项目
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                        <div class="panel-body">
-                            <form id="project_form" method="post" action="" class="form-horizontal" >
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="project_name" class="col-sm-3 control-label">项目名称:</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" id="project_name" name="text"></input>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="project_priority" class="col-sm-3 control-label">重要性:</label>
-                                        <div class="col-sm-9">
-                                            <select id="project_priority" name="priority_id" class="form-control" >
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="project_start_date" class="col-sm-3 control-label">开始日期:</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" id="project_start_date" name="start_date"></input>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" class="form-control" id="project_type" name="type" value=<?php echo Project::LEVEL_PROJECT;?> >
-                                    <input type="hidden" class="form-control" id="project_end_date" name="end_date">
-                                    <input type="hidden" class="form-control" id="project_obj_id" name="obj_id">
-                                    <input type="hidden" class="form-control" id="project_parent" name="parent" value=0 >
-                                    <input type="hidden" class="form-control" id="project_duration" name="duration" value=0 >
-                                    <input type="hidden" class="form-control" id="project_progress" name="progress" value=0 >
-                                    <input type="hidden" class="form-control" name="field_id" value=<?php echo Config::FIELD_ASSET;?> >
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                    <button type="submit" class="btn btn-primary" id="project_submit" >提交</button>
-                                </div>
-                            </form>
+                            <table id="assets_sub_table" class="table table-bordered">
+                            </table>
+                            <div class="modal-footer">
+                                <button id="add_assets_sub" type="button" class="btn btn-success" >新增子资产</button>
+                                <button id="add_assets_link" type="button" class="btn btn-success" >新增项目</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -252,14 +296,9 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
 
 <script type="text/javascript">
     // 资产块图
-    var type_dict        = <?php echo $type_dict;?>;
     var type_raw_dict    = <?php echo $type_raw_dict;?>;
     var type_access_dict = <?php echo $type_access_dict;?>;
     var priority_dict    = <?php echo $priority_dict;?>;
-    /* $("#assets_type").select2({ */
-    /*     placeholder: '请选择类别' */
-    /* }) */
-    $("#assets_type").select2(type_dict);
     $("#project_priority").select2(priority_dict);
     $("#project_start_date").datepicker({
         dateFormat: "yy-mm-dd",
@@ -271,7 +310,6 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
 
     var chunk_num      = <?php echo $init_chunk_num;?>;
     var last_one_id    = <?php echo $last_one_id;?>;
-    var list_type_dict = <?php echo $list_type_dict;?>;
     var init_flag      = false;
     var options        = {
         width: 6,
@@ -289,7 +327,6 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
         var grid = $(this).data('gridstack');
         _.each(items, function (node) {
             var assets_info = items_dict[node.id];
-            console.log(assets_info);
             var assets_detail = 
                 '<dl class="assets-horizontal">' + 
                 '<dt>资产名称</dt><dd>' + assets_info.name + '</dd>' + 
@@ -298,7 +335,6 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
                 '<dt>' + type_access_dict[assets_info.type_id] + '</dt><dd>' + assets_info.access_unit + '</dd>' + 
                 '<dt>投入时间</dt><dd>' + assets_info.time + '</dd>' + 
                 '</dl>'
-                console.log(assets_detail);
             var assets_one = '<div><div class="grid-stack-item-content" ><div class="container-fluid assets-container" style="height:100%" ><div class="panel panel-default assets-panel" style="height:100%;text-align:left;" id="assets-panel-'+node.id+'" assets_id="'+ node.id +'" >' + assets_detail + '</div></div></div><div/>';
             grid.addWidget($(assets_one),
                 node.x, node.y, node.width, node.height, false, 1, 5, 1, 5, node.id);
@@ -357,11 +393,8 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
                 var item_length = 0;
             }
             if (item_length < chunk_num) {
-                console.log(item_length);
-                console.log(chunk_num);
                 // 对比找出被删除的那一项
                 if (last_one_id != 0) {
-                    console.log(last_one_id);
                     var href = "/frontend/assets-api/del/" + last_one_id;
                     var post_data = {};
                     directPost(href, post_data, false, true)
@@ -374,22 +407,6 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
             }
         }
     });
-
-    /* $('#grid1').on('removed', function(event, items) { */
-    /*     for (var i = 0; i < items.length; i++) { */
-    /*           console.log('item removed'); */
-    /*           console.log(items[i]); */
-    /*     } */
-    /* }); */
-    /* $('#grid1').on('dragstop', function(event, items) { */
-    /*     console.log('item drag stop'); */
-    /* }); */
-    /* $('#grid1').on('resizestart', function(event, items) { */
-    /*     console.log('item resizestart'); */
-    /* }); */
-    /* $('#grid1').on('resizestop', function(event, items) { */
-    /*     console.log('item resizestop'); */
-    /* }); */
 
     // 表单提交操作
     $('#assets_form').on('submit', function(e){
@@ -432,8 +449,9 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
     // assets-panel管理
     $(".assets-panel").dblclick(function(){
         var id = $(this).attr("assets_id");
-        var href = "/frontend/assets-api/data?id=" + id;
-        $("#project_obj_id").val(id);
+        var href = "/frontend/assets-api/one-assets-sub?id=" + id;
+        $("#add_assets_sub").attr("assets_id", id);
+        $("#add_assets_link").attr("assets_id", id);
         $.ajax({
             url: href,
             data: {},
@@ -443,18 +461,21 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
                 var data = eval('(' + result + ')');  
                 if (data.error === 0) {
                     table_html = "";
-                    var table_html = "<tr><th>项目名称</th><th>开始日期</th><th>持续天数</th><th>消耗时间</th><th>操作</th></tr>"; 
+                    var table_html = "<tr><th>子资产名称</th><th>描述</th><th>创建时间</th><th>操作</th></tr>"; 
                     for (var arr_index in data.data) {
                         var one = data.data[arr_index];
                         table_html += "<tr><td>" 
-                            + one.text + "</td><td>" 
-                            + one.start_date + "</td><td>" 
-                            + one.duration + "</td><td> " 
-                            + one.sum_time + '</td><td><button type="button" class="btn btn-danger btn-sm project-del" project_id=' +one.id+ '>删除</button></td></tr>'
+                            + one.name + "</td><td>" 
+                            + one.desc + "</td><td>" 
+                            + one.ctime + '</td>'
+                            + '<td>'
+                            + '<button type="button" class="btn btn-success btn-sm assets_sub_edit" assets_sub_id=' +one.id+ '>修改</button>'
+                            + '<button type="button" class="btn btn-danger btn-sm assets_sub_del" assets_sub_id=' +one.id+ '>删除</button>'
+                            + '</td></tr>'
                     }
-                    $('#assets_table').html(table_html);   
+                    $('#assets_sub_table').html(table_html);   
                     $('#assets_info').modal('show')
-                    init_project_del();
+                    init_assets_sub_btn();
                 } else {
                     swal("操作失败!", data.message, "error");
                 }
@@ -465,90 +486,38 @@ $this->registerJsFile('@web/js/lib/gridstack.jQueryUI.js',['depends'=>['app\asse
         })
     });
 
-    // 项目提交操作
-    $('#project_form').on('submit', function(e){
+    $("#add_assets_sub").on("click", function(e) {
         e.preventDefault();
-        $("#project_end_date").val($('#project_start_date').val());
-        var post_data = $(this).serializeArray();
-        var href = "/frontend/project-api/task";
-        $.ajax({
-            url: href,
-            data: post_data,
-            dataType: 'text',
-            type: 'POST',
-            success: function(result) {
-                var data = eval('(' + result + ')');  
-                if (data.action != "error") {
-                    swal({
-                        title: "操作成功!",   
-                        text: data.message,  
-                        type: "success",    
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "确定",
-                    },function(){
-                        location.reload();
-                    });
-                } else {
-                    swal("操作失败!", data.msg, "error");
-                }
-            },
-            error: function(data) {
-                swal("操作失败!", data.msg, "error");
-            }
-        })
+        var assets_id = $(this).attr("assets_id");
+        jump_href = "/frontend/assets-sub/create?assets_id=" + assets_id;
+        window.location.href = jump_href;
     });
 
-    function init_project_del() {
-        $('.project-del').on('click', function(e){
+    $("#add_assets_link").on("click", function(e) {
+        e.preventDefault();
+        var assets_id = $(this).attr("assets_id");
+        jump_href = "/frontend/assets-links/create?assets_id=" + assets_id;
+        window.location.href = jump_href;
+    });
+
+    function init_assets_sub_btn() {
+        $('.assets_sub_del').on('click', function(e){
             e.preventDefault();
-            var id = $(this).attr("project_id");
-            var href      = "/frontend/project-api/del/" + id;
-            var text_info = "是否删除该项目";
-            var hint      = "已执行的项目不会被彻底删除";
-            var post_data = {};
-            swal({
-                title: text_info,                   //弹出框的title
-                text: hint,                         //弹出框里面的提示文本
-                type: "warning",                    //弹出框类型
-                showCancelButton: true,             //是否显示取消按钮
-                confirmButtonColor: "#DD6B55",      //确定按钮颜色
-                cancelButtonText: "取消",           //取消按钮文本
-                confirmButtonText: "是的，确定！",  //确定按钮上面的文档
-                closeOnConfirm: false,
-                showLoaderOnConfirm: true,
-            }, function () {
-                setTimeout(
-                    function(){     
-                        $.ajax({
-                            url: href,
-                            data: post_data,
-                            dataType: 'text',
-                            type: 'POST',
-                            success: function(result) {
-                                var data = eval('(' + result + ')');  
-                                if (data.type != "error") {
-                                    swal({
-                                        title: "操作成功!",   
-                                        text: data.msg,  
-                                        type: "success",    
-                                        confirmButtonColor: "#DD6B55",
-                                        confirmButtonText: "确定",
-                                    },function(){
-                                        location.reload();
-                                    });
-                                } else {
-                                    swal("操作失败!", data.msg, "error");
-                                }
-                            },
-                            error: function(data) {
-                                swal("操作失败!", data.msg, "error");
-                            }
-                        })
-                    }, 
-                    500 
-                );
-            });
-        });
+            var id = $(this).attr("assets_sub_id");
+            var href      = "/frontend/assets-sub/delete";
+            var text_info = "是否删除该子资产";
+            var hint      = "已执行的子资产不会被彻底删除";
+            var post_data = {
+                "ids" : id
+            };
+            checkPost(text_info, hint, href, post_data);
+        }); 
+        $('.assets_sub_edit').on('click', function(e){
+            e.preventDefault();
+            var id = $(this).attr("assets_sub_id");
+            jump_href = "/frontend/assets-sub/update?id=" + id;
+            window.location.href = jump_href;
+        }); 
     }
 
     // 时间饼图

@@ -156,7 +156,7 @@ class BaseController extends Controller
     // model查找
     protected function findModel($id, $class_name)
     {
-        if (($model = $class_name::findOne($id)) !== null) {
+        if (($model = $class_name::findOne($id)) != null) {
             return $model;
         } else {
             throw new \Exception("无法找到对象", Error::ERR_MODEL);
