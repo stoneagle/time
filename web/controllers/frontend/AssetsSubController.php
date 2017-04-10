@@ -4,6 +4,8 @@ namespace app\controllers\frontend;
 
 use Yii;
 use app\models\Config;
+use app\models\BaseEntity;
+use app\models\FieldObj;
 use app\models\Assets;
 use app\models\AssetsSub;
 use app\models\Error;
@@ -13,6 +15,16 @@ use yii\data\ActiveDataProvider;
 
 class AssetsSubController extends BaseController
 {
+    // 获取子资产
+    public function actionOneAssetsSub($id)
+    {
+        $model         = new AssetsSub;
+        $model->obj_id = $id;
+        $query         = $model->getQuery();
+        $result        = $query->asArray()->all();
+        return $this->packageJson($result, Error::ERR_OK, Error::msg(Error::ERR_OK));
+    }
+    
     public function actionValid()
     {
         try {
@@ -34,12 +46,14 @@ class AssetsSubController extends BaseController
                 return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
             } else {
                 $params_conf = [
-                    "assets_id"   => [null, true],
+                    "obj_id"   => [null, true],
                 ];
                 $params = $this->getParamsByConf($params_conf, 'get');
-                $model->assets_id = $params["assets_id"];
+                $model->obj_id = $params["obj_id"];
+                $field_model = new FieldObj;
                 return $this->render('save', [
-                    'model'   => $model,
+                    'model'     => $model,
+                    'entityArr' => $field_model->getDictByObjId(Config::FIELD_ASSET, $params["obj_id"]),
                 ]);
             }
         } catch (\Exception $e) {
@@ -59,9 +73,11 @@ class AssetsSubController extends BaseController
                 $code = Error::ERR_OK;
                 return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
             } else {
+                $field_model = new FieldObj;
                 return $this->render('save', [
-                    'model'        => $model,
-                    'id'           => $id,
+                    'model'     => $model,
+                    'entityArr' => $field_model->getDictByObjId(Config::FIELD_ASSET, $model->obj_id),
+                    'id'        => $id,
                 ]);
             }
         } catch (\Exception $e) {

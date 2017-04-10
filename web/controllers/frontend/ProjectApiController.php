@@ -113,8 +113,9 @@ class ProjectApiController extends BaseController
                 "priority_id" => [0, false],
                 "field_id"    => [0, false],
                 "obj_id"      => [0, false],
+                "entity_id"   => [0, false],
                 "parent"      => [null, true],
-                "action_type" => [null, false],
+                "type_id"     => [null, false],
                 "plan_time"   => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
@@ -124,19 +125,21 @@ class ProjectApiController extends BaseController
                     $model->id          = Project::getMaxId();
                     $model->priority_id = $params['priority_id'];
                     $model->field_id    = $params['field_id'];
-                    $model->progress   = $params['progress'];
+                    $model->obj_id      = $params['obj_id'];
+                    $model->progress    = $params['progress'];
                     break;
                 case Project::LEVEL_TASK :
                     // task与action的id不能跟project重复
-                    $model         = new Task;
-                    $model->id     = Project::getMaxId();
-                    $model->parent = (int)$params['parent'];
-                    $model->progress   = $params['progress'];
+                    $model            = new Task;
+                    $model->id        = Project::getMaxId();
+                    $model->parent    = (int)$params['parent'];
+                    $model->progress  = $params['progress'];
+                    $model->entity_id = $params['entity_id'];
                     break;
                 case Project::LEVEL_ACTION :
                     $model            = new Action;
                     $model->id        = Project::getMaxId();
-                    $model->type_id   = $params["action_type"];
+                    $model->type_id   = $params["type_id"];
                     $model->task_id   = $params["parent"];
                     $model->plan_time = $params["plan_time"];
                     $model->end_date  = $params['start_date'];
@@ -150,7 +153,6 @@ class ProjectApiController extends BaseController
             $model->start_date = $params['start_date'];
             $model->duration   = $params['duration'];
             $model->user_id    = $this->user_obj->id;
-            $model->obj_id     = $params['obj_id'];
             $model->modelValidSave();
             $ret = $this->prepareResponse($action_type, $model->id);
             return $this->directJson($ret);
@@ -173,9 +175,9 @@ class ProjectApiController extends BaseController
                 "progress"    => [0, false],
                 "priority_id" => [0, false],
                 "field_id"    => [0, false],
-                "obj_id"      => [null, true],
+                //"obj_id"      => [0, false],
                 "parent"      => [null, true],
-                "action_type" => [null, false],
+                "type_id" => [null, false],
                 "plan_time"   => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
@@ -184,6 +186,7 @@ class ProjectApiController extends BaseController
                     $model = $this->findModel($id, Project::class);
                     $model->priority_id = $params['priority_id'];
                     $model->field_id    = $params['field_id'];
+                    //$model->obj_id     = $params['obj_id'];
                     $model->progress   = $params['progress'];
                     break;
                 case Project::LEVEL_TASK :
@@ -193,7 +196,7 @@ class ProjectApiController extends BaseController
                     break;
                 case Project::LEVEL_ACTION :
                     $model = $this->findModel($id, Action::class);
-                    $model->type_id   = $params["action_type"];
+                    $model->type_id   = $params["type_id"];
                     $model->plan_time = $params["plan_time"];
                     break;
                 default :
@@ -203,7 +206,6 @@ class ProjectApiController extends BaseController
             $model->text       = $params['text'];
             $model->start_date = $params['start_date'];
             $model->duration   = $params['duration'];
-            $model->obj_id     = $params['obj_id'];
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type, $id);

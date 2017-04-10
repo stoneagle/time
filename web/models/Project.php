@@ -71,4 +71,33 @@ class Project extends BaseActiveRecord
         $a_id = $a_id["max_id"];
         return max($p_id, $t_id, $a_id) + 1;
     }
+
+    public static function getEntityDictByFieldIndex($obj_id_arr)
+    {
+        $ret = [];
+        $field_obj_model = new FieldObj;
+        foreach ($obj_id_arr as $field_id => $obj_ids) {
+            $dict = [];
+            $entity_t = $field_obj_model->getEntityTableName($field_id);
+            $field_obj_t      = FieldObj::tableName();
+            $field_obj_link_t = FieldObjEntityLink::tableName();
+            $entity_list      = FieldObjEntityLink::find()
+                ->select("$field_obj_t.field_id, $field_obj_t.id, $field_obj_link_t.entity_id, $entity_t.name as entity_name")
+                ->leftJoin($field_obj_t, "$field_obj_t.id = $field_obj_link_t.obj_id")
+                ->leftJoin($entity_t, "$entity_t.id = $field_obj_link_t.entity_id")
+                ->andWhere(["$field_obj_t.field_id" => $field_id])
+                ->andWhere(["$field_obj_t.id" => $obj_ids])
+                ->asArray()->all();
+            $result = [];
+            foreach ($entity_list as $one) {
+                $result[$one["id"]][] = [
+                    "key"   => $one["entity_id"],
+                    "label" => $one["entity_name"]
+                ]; 
+            }
+
+            $ret[$field_id] = $result;
+        }
+        return $ret;
+    }
 }

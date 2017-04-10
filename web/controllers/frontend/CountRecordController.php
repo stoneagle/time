@@ -65,9 +65,9 @@ class CountRecordController extends BaseController
 
     public function actionUpdate()
     {
+        $transaction   = Yii::$app->db->beginTransaction();
         try {
             // 每个用户只会保留一条最新的执行中记录
-            $transaction   = Yii::$app->db->beginTransaction();
             $model = CountRecord::find()
                 ->andWhere([
                     'status' => [
@@ -91,7 +91,9 @@ class CountRecordController extends BaseController
             $action_model = $this->findModel($model->action_id, Action::class);
             switch ($model->status) {
                 case CountRecord::STATUS_FINISH :
-                    $action_model->status = Action::STATUS_END;
+                    $action_model->status    = Action::STATUS_END;
+                    $action_model->exec_time = $params["init_time"];
+                    $action_model->end_date  = date("Y-m-d H:i:s", time());
                     $action_model->modelValidSave();
                     break;
                 case CountRecord::STATUS_CANCEL :

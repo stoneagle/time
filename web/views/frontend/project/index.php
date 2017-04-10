@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use app\models\Project;
+use app\models\Config;
 use app\assets\AppAsset;
 use yii\helpers\ArrayHelper;
 
@@ -61,11 +62,13 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
     var field_opt                           = <?php echo $fieldDict;?>;
     var priority_opt                        = <?php echo $priorityDict;?>;
     var type_dict                           = <?php echo $typeDict;?>;
+    var entity_field_dict                   = <?php echo $entityFieldDict;?>;
     gantt.locale.labels.section_description = "名称";
     gantt.locale.labels.section_field_id    = "领域";
     gantt.locale.labels.section_priority_id = "重要性";
+    gantt.locale.labels.section_entity_id   = "相关实体";
     gantt.locale.labels.section_plan_time   = "计划时间";
-    gantt.locale.labels.section_action_type = "行为类别";
+    gantt.locale.labels.section_type_id     = "行为类别";
 
     var custom_sections                = [
         {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
@@ -99,7 +102,24 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
             currentSections.push(priority_section);
             gantt.config.lightbox.sections = currentSections;
         } else if (task.$level == <?php echo Project::LEVEL_TASK;?>) {
-            var currentSections = custom_sections.slice();
+            var currentSections    = custom_sections.slice();
+
+            var parent_project_obj = gantt.getTask(task.parent);
+            if (parent_project_obj.field_id != <?php echo Config::FIELD_GENERAL ?>) {
+                var project_field_id   = parent_project_obj.field_id;
+                var project_obj_id     = parent_project_obj.obj_id;
+                var entity_arr         = entity_field_dict[project_field_id][project_obj_id].slice();
+                entity_arr.unshift({"key" : 0, "label" : "无关联"});
+
+                if (entity_arr) {
+                    var default_v = entity_arr[0]['key'];
+                } else {
+                    var default_v = "";
+                }
+                var entity_section   = {name:"entity_id", height:30, type:"select", map_to:"entity_id", options:entity_arr, default_value:default_v};
+                currentSections.push(entity_section);
+            }
+
             gantt.config.lightbox.sections = currentSections;
         } else if (task.$level == <?php echo Project::LEVEL_ACTION;?>) {
             var currentSections = action_sections.slice();
@@ -112,7 +132,7 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
             } else {
                 var default_v = "";
             }
-            var action_type_section = {name:"action_type", height:30, type:"select", map_to:"action_type", options:action_type_arr, default_value:default_v};
+            var action_type_section = {name:"type_id", height:30, type:"select", map_to:"type_id", options:action_type_arr, default_value:default_v};
             currentSections.push(action_type_section);
             gantt.config.lightbox.sections = currentSections;
         }

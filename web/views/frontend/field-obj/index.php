@@ -5,9 +5,9 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use \kartik\date\DatePicker;
 
-$this->title = '技能训练管理';
+$this->title = '领域项目管理';
 $this->params['breadcrumbs'][] = $this->title;
-$this->registerJsFile('@web/js/frontend/knowledge-links/index.js',['depends'=>['app\assets\AppAsset']]);
+$this->registerJsFile('@web/js/frontend/field-obj/index.js',['depends'=>['app\assets\AppAsset']]);
 ?>
 
 <div>
@@ -25,14 +25,10 @@ $this->registerJsFile('@web/js/frontend/knowledge-links/index.js',['depends'=>['
                 "id",
                 "project_name",
                 [
-                    "attribute" => "entity_ids",
-                    //'filter' => Html::activeDropDownList($searchModel, 'entity_ids', $entityArr, ['class' => 'form-control']),
-                    'value' => function ($model) use($entityArr) {
-                        $entity_list = explode(",", $model->entity_ids);
-                        foreach ($entity_list as &$one) {
-                            $one = ArrayHelper::getValue($entityArr, $one);
-                        }
-                        return implode(',', $entity_list);
+                    "attribute" => "field_id",
+                    'filter' => Html::activeDropDownList($searchModel, 'field_id', $fieldArr, ['class' => 'form-control']),
+                    'value' => function ($model) use($fieldArr) {
+                        return ArrayHelper::getValue($fieldArr, $model->field_id);
                     },
                 ],
                 [
@@ -110,7 +106,7 @@ $this->registerJsFile('@web/js/frontend/knowledge-links/index.js',['depends'=>['
                 ],
                 'toolbar' => [
                     //$fullExportMenu,
-                    Html::a('新建技能训练',['create?'.$_SERVER['QUERY_STRING']],['data-pjax'      => 0, 'class' => 'btn btn-success',]),
+                    Html::a('新建领域项目',['create?'.$_SERVER['QUERY_STRING']],['data-pjax'      => 0, 'class' => 'btn btn-success',]),
                 ],
                 'options' => ['class' => 'grid-view','style'=>'overflow:auto', 'id' => 'grid'],
                 'columns' => $gridColumns

@@ -127,23 +127,8 @@ class KnowledgeSkillController extends BaseController
                 $skill_list = ArrayHelper::map($skill_list,"id","title");
 
                 $area = new KnowledgeArea;
-                $area_t = KnowledgeArea::tableName();
-                $area_list = $area->getQuery()
-                    ->andWhere(["$area_t.id" => null])
-                    ->andWhere(["origin.del" => Constants::SOFT_DEL_NO])
-                    ->asArray()->all();
-                $parent_arr = ArrayHelper::getColumn($area_list, "parent");
-                $parent_list = KnowledgeArea::find()
-                    ->select("id, name as text")
-                    ->andWhere(["id" => array_unique($parent_arr)])
-                    ->asArray()->all();
-                $parent_list = ArrayHelper::index($parent_list, "id");
-                foreach ($area_list as $one) {
-                    $parent_list[$one["parent"]]["children"][(int)$one["id"]] = $one["name"];
-                }
-                foreach ($parent_list as $one) {
-                    $area_dict[$one["text"]] = $one["children"];
-                }
+                $area->del = Constants::SOFT_DEL_NO;
+                $area_dict = $area->getAreaLeafDict();
 
                 $model->max_points = 4;
                 $transaction->commit(); 
@@ -210,23 +195,8 @@ class KnowledgeSkillController extends BaseController
                 }
 
                 $area = new KnowledgeArea;
-                $area_t = KnowledgeArea::tableName();
-                $area_list = $area->getQuery()
-                    ->andWhere(["$area_t.id" => null])
-                    ->andWhere(["origin.del" => Constants::SOFT_DEL_NO])
-                    ->asArray()->all();
-                $parent_arr = ArrayHelper::getColumn($area_list, "parent");
-                $parent_list = KnowledgeArea::find()
-                    ->select("id, name as text")
-                    ->andWhere(["id" => array_unique($parent_arr)])
-                    ->asArray()->all();
-                $parent_list = ArrayHelper::index($parent_list, "id");
-                foreach ($area_list as $one) {
-                    $parent_list[$one["parent"]]["children"][(int)$one["id"]] = $one["name"];
-                }
-                foreach ($parent_list as $one) {
-                    $area_dict[$one["text"]] = $one["children"];
-                }
+                $area->del = Constants::SOFT_DEL_NO;
+                $area_dict = $area->getAreaLeafDict();
 
                 $depend_list = DependSkillLink::find()
                     ->andWhere(["skill_id" => $model->id])

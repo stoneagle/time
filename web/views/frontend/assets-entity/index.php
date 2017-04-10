@@ -24,12 +24,13 @@ $this->registerJsFile('@web/js/frontend/assets-entity/index.js',['depends'=>['ap
                 ],
                 "id",
                 "name",
+                "desc",
                 [
-                    "attribute" => "type_id",
+                    "attribute" => "parent",
                     'contentOptions' => ['width' => '10%'],
-                    'filter' => Html::activeDropDownList($searchModel, 'type_id', $typeArr, ['class' => 'form-control']),
-                    'value' => function ($model) use($typeArr) {
-                        return ArrayHelper::getValue($typeArr, $model->type_id);
+                    'filter' => Html::activeDropDownList($searchModel, 'parent', $parentArr, ['class' => 'form-control']),
+                    'value' => function ($model) use($parentArr) {
+                        return ArrayHelper::getValue($parentArr, $model->parent);
                     },
                 ],
                 [

@@ -41,35 +41,11 @@ AppAsset::register($this);
             ]
         ],
         [
-            'label' => '知识', 
+            'label' => '领域', 
             'items' => [
-                ['label' => '领域管理', 'url' => ['/frontend/knowledge-area/index']],
-                ['label' => '训练管理', 'url' => ['/frontend/knowledge-links/index']],
-            ]
-        ],
-        [
-            'label' => '资产', 
-            'items' => [
-                ['label' => '资产管理', 'url' => ['/frontend/assets/index']],
-            ]
-        ],
-        [
-            'label' => '挑战', 
-            'items' => [
-                ['label' => '挑战管理', 'url' => ['/frontend/chanllege-links/index']],
-            ]
-        ],
-        [
-            'label' => '艺术', 
-            'items' => [
-                ['label' => '作品管理', 'url' => ['/frontend/art-work/index']],
-                ['label' => '艺术管理', 'url' => ['/frontend/art-links/index']],
-            ]
-        ],
-        [
-            'label' => '组织', 
-            'items' => [
-                ['label' => '组织管理', 'url' => ['/frontend/organization-links/index']],
+                ['label' => '领域项目关联', 'url' => ['/frontend/field-obj/index']],
+                ['label' => '知识领域管理', 'url' => ['/frontend/knowledge-area/index']],
+                ['label' => '资产名目管理', 'url' => ['/frontend/assets/index']],
             ]
         ],
         [
@@ -81,6 +57,7 @@ AppAsset::register($this);
                 ['label' => '资产配置', 'url' => ['/frontend/assets-entity/index']],
                 ['label' => '挑战配置', 'url' => ['/frontend/chanllege-entity/index']],
                 ['label' => '艺术配置', 'url' => ['/frontend/art-entity/index']],
+                ['label' => '作品管理', 'url' => ['/frontend/art-work/index']],
                 ['label' => '组织配置', 'url' => ['/frontend/organization-entity/index']],
                 ['label' => '国家配置', 'url' => ['/frontend/country/index']],
             ]

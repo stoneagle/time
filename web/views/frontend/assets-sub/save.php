@@ -28,7 +28,16 @@
     } 
     ?>
     <?php  
-        echo $form->field($model, 'assets_id')->textInput()->hiddenInput()->label(false);
+        echo $form->field($model, 'obj_id')->textInput()->hiddenInput()->label(false);
+    ?>
+    <?php 
+        echo $form->field($model, 'entity_id')->widget(
+            Select2::className(), [
+            'data' => $entityArr,
+            'pluginOptions' => [
+                'allowClear' => true,
+            ],
+        ])->hint('请选择实体'); 
     ?>
     <?= $form->field($model, 'name')->textInput(['placeholder' => '不能为空'])?>
     <?= $form->field($model, 'desc')->textInput(['placeholder' => '不能为空'])?>

@@ -10,7 +10,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\data\ActiveDataProvider;
 
-class ChanllegeEntityController extends BaseController
+class ChanllegeEntityController extends BaseFieldController
 {
     public function actionValid()
     {
@@ -24,40 +24,13 @@ class ChanllegeEntityController extends BaseController
 
     public function actionIndex()
     {
-        $model = new ChanllegeEntity();
-        $model->load(Yii::$app->request->queryParams);
-
-        $parent_arr = ChanllegeEntity::getParentDict();
-
-        $data_provider = new ActiveDataProvider([
-            'query' => $model->getQuery(),
-        ]);
-        return $this->render('index', [
-            'searchModel'  => $model,
-            'dataProvider' => $data_provider,
-            'parentArr'    => $parent_arr,
-        ]);
+        return $this->baseEntityIndex(ChanllegeEntity::class);
     }
 
     public function actionCreate()
     {
-        $model = new ChanllegeEntity();
         try {
-            if (Yii::$app->request->post()) {
-                $model->load(Yii::$app->request->post());
-                if (empty($model->parent)) {
-                    $model->parent = 0;
-                }
-                $model->modelValidSave();
-                $code = Error::ERR_OK;
-                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
-            } else {
-                $parent_arr = ChanllegeEntity::getParentDict();
-                return $this->render('save', [
-                    'model'   => $model,
-                    'parentArr'    => $parent_arr,
-                ]);
-            }
+            return $this->baseEntityCreate(ChanllegeEntity::class);
         } catch (\Exception $e) {
             return $this->returnException($e);
         }
@@ -66,28 +39,7 @@ class ChanllegeEntityController extends BaseController
     public function actionUpdate()
     {
         try {
-            $id = Yii::$app->request->get('id', null);
-            $model  = $this->findModel($id, ChanllegeEntity::class);
-
-            if (Yii::$app->request->post()) {
-                $model->load(Yii::$app->request->post());
-                if (empty($model->parent)) {
-                    $model->parent = 0;
-                }
-                $model->modelValidSave();
-                $code = Error::ERR_OK;
-                return $this->packageJson(['id' => $model->attributes['id']], $code, Error::msg($code));
-            } else {
-                if (empty($model->parent)) {
-                    $model->parent = "";
-                }
-                $parent_arr = ChanllegeEntity::getParentDict();
-                return $this->render('save', [
-                    'model'        => $model,
-                    'id'           => $id,
-                    'parentArr'    => $parent_arr,
-                ]);
-            }
+            return $this->baseEntityUpdate(ChanllegeEntity::class);
         } catch (\Exception $e) {
             return $this->returnException($e);
         }
@@ -96,22 +48,7 @@ class ChanllegeEntityController extends BaseController
     public function actionDelete()
     {
         try {
-            $ids = Yii::$app->request->post('ids', null);
-            if (empty($ids)) {
-                throw new \Exception (Error::msg(Error::ERR_PARAMS), Error::ERR_PARAMS);
-            }
-            $ids_str = explode(',',$ids);
-            $query = ChanllegeEntity::find()->andWhere(['and',['in', 'id', $ids]]);
-            foreach ($query->all() as $model) {
-                // todo 如果实体已经使用，不允许删除
-                $result = $model->delete();
-                if (!$result) {
-                    throw new \Exception (Error::msg(Error::ERR_DEL), Error::ERR_DEL);
-                }
-
-            }
-            $code = Error::ERR_OK;
-            return $this->packageJson($ids, $code, Error::msg($code));
+            return $this->baseEntityDelete(ChanllegeEntity::class);
         } catch (\Exception $e) {
             return $this->returnexception($e);
         }

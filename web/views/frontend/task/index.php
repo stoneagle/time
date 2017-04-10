@@ -328,7 +328,8 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
 
     clock = $('#clockbox').FlipClock({
         clockFace: 'HourlyCounter',
-        autoStart: false
+        autoStart: false,
+        minimumDigits: 1
     });
 
     $("#clock_pause").on('click', function (e) {

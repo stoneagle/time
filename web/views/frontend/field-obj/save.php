@@ -3,21 +3,23 @@
     use yii\helpers\Html;
     use yii\widgets\ActiveForm;
     use kartik\select2\Select2;
+    use kartik\depdrop\DepDrop;
+    use app\models\FieldObj;
 
-    $this->params['breadcrumbs'][] = ['label' => '艺术管理', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = ['label' => '领域项目管理', 'url' => ['index']];
     $this->params['breadcrumbs'][] = $this->title;
     if ($model->isNewRecord) {
         $href = "create";
-        $this->title = '创建艺术';
+        $this->title = '创建领域项目';
     } else {
         $href = "update?id=".$id;
         $this->params['breadcrumbs'][] = ['label' => $model->project_name];
-        $this->title = '更新艺术';
+        $this->title = '更新领域项目';
     }
 
     $form = ActiveForm::begin([
         'id' => 'form',
-        'options' => ['class' => 'chanllege-entity'],
+        'options' => ['class' => 'field-obj'],
         'enableAjaxValidation' => true,
         'validationUrl' => 'valid',
     ])
@@ -28,15 +30,24 @@
     } 
     ?>
     <?= $form->field($model, 'project_name')->textInput(['placeholder' => '不能为空'])?>
+    <?= $form->field($model, 'field_id')->dropDownList($fieldArr, 
+        [
+            'id'     => 'field_id',
+            'prompt' => '请选择领域'
+        ]
+    )?>
     <?php 
-        echo $form->field($model, 'work_ids')->widget(
-            Select2::className(), [
-            'data' => $workArr,
+        echo $form->field($model, 'entity_ids')->widget(DepDrop::classname(), [
+            'type' => DepDrop::TYPE_SELECT2,
+            'options' => ['multiple' => true],
+            'data' => $initEntityArr,
             'pluginOptions' => [
-                'allowClear' => true,
-                'multiple' => true,
-            ],
-        ])->hint('请选择相关作品'); 
+                'depends' => ['field_id'],
+                'placeholder' => '请选择相关实体',
+                'url' => 'get-entity',
+                'multiple' => true, 
+            ]
+        ]);
     ?>
     <?php 
         echo $form->field($model, 'priority_id')->widget(
@@ -75,7 +86,7 @@ $(function(){
                         confirmButtonText: "确定",
                     },function(){
                         id = data.data['id'];
-                        window.location.href = "/frontend/art-links/index";
+                        window.location.href = "/frontend/field-obj/index";
                     });
                 } else {
                     swal("操作失败!", data.message, "error");

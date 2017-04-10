@@ -28,14 +28,15 @@
     } 
     ?>
     <?= $form->field($model, 'name')->textInput(['placeholder' => '不能为空'])?>
+    <?= $form->field($model, 'desc')->textInput(['placeholder' => '不能为空'])?>
     <?php 
-        echo $form->field($model, 'type_id')->widget(
+        echo $form->field($model, 'parent')->widget(
             Select2::className(), [
-            'data' => $typeArr,
+            'data' => $parentArr,
             'pluginOptions' => [
                 'allowClear' => true,
             ],
-        ])->hint('请选择类别'); 
+        ])->hint('请选择所属实体'); 
     ?>
     <div class="form-group">
         <?= Html::submitButton('提交', ['class' => 'btn btn-primary']) ?>

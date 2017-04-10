@@ -109,16 +109,8 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
         return true;
     })
 
-
-    /* // 额外选项 */
+    // 额外选项
     scheduler.config.lightbox.sections         = init_sections;
-
-    /* // 自定义event内容 */
-    scheduler.attachEvent("onTemplatesReady", function(){
-        scheduler.templates.event_text=function(start,end,event){
-            return "<b>" + event.text+ "</b>";
-        }
-    }); 
 
     // 初始化
     scheduler.init('review_scheduler', new Date(),"week");
@@ -243,7 +235,11 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
                 html += scheduler.templates.event_date(ev.start_date) + "</span>";
             }
             // displaying event text
-        html += "</div>";
+            if (ev.task_name) {
+                html += ev.task_name + "-" + ev.text + "</div>";
+            } else {
+                html += ev.text + "</div>";
+            }
 
         // resize section
         html += "<div class='dhx_event_resize my_event_resize' style='width: " + container_width + "'></div>";

@@ -117,7 +117,11 @@ class ActionApiController extends BaseController
             $model->type_id    = $params['type_id'];
             $model->plan_time  = $params['plan_time'];
             $model->status     = $params['status'];
-            $model->duration   = 0;
+            if ($model->status == Action::STATUS_END) {
+                $model->duration = \DateUtil::daysBetween($model->start_date, $model->end_date);
+            } else {
+                $model->duration   = 0;
+            }
             $model->start_date = $params['start_date'];
             $model->end_date   = $params['end_date'];
             $model->user_id    = $this->user_obj->id;
@@ -145,8 +149,8 @@ class ActionApiController extends BaseController
                 "plan_time"  => [null, false],
                 "exec_time"  => [0, false],
                 "status"     => [0, true],
-                "start_date" => [date("Y-m-d H:i:s", time()), false],
-                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+                "start_date" => [null, false],
+                "end_date"   => [null, false],
                 "event_pid"  => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
@@ -160,18 +164,26 @@ class ActionApiController extends BaseController
             if (!is_null($params['plan_time'])) {
                 $model->plan_time    = $params['plan_time'];
             }
-            if ($model->status == Action::STATUS_EXEC) {
-                $model->start_date == date("Y-m-d H:i:s", time());
-            } else if ($model->status == Action::STATUS_END) {
-                $model->end_date == date("Y-m-d H:i:s", time());
-            }
 
             if (!is_null($params["event_pid"])) {
                 $model->exec_time = \DateUtil::minuteBetween($params["start_date"], $params["end_date"]) * 60;
             } else {
                 $model->exec_time  = $params['exec_time'];
             }
+            // 执行时，更新action开始时间
+            if (($model->status == Action::STATUS_EXEC) && ($model->status != $params["status"])) {
+                $model->start_date = date("Y-m-d H:i:s", time());
+            } 
             $model->status     = $params['status'];
+
+            // 拖动修改时，更新开始于结束时间
+            if (!is_null($params["start_date"])) {
+                $model->start_date = $params["start_date"];
+            }
+            if (!is_null($params["end_date"])) {
+                $model->end_date = $params["end_date"];
+            }
+            $model->duration = \DateUtil::daysBetween($model->start_date, $model->end_date);
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type, $id);

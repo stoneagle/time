@@ -6,7 +6,7 @@ use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 
-class KnowledgeArea extends BaseActiveRecord
+class KnowledgeArea extends BaseEntity
 {
     const TABLE_NAME    = "knowledge_area";
 
@@ -18,15 +18,15 @@ class KnowledgeArea extends BaseActiveRecord
     public function rules()
     {
         return [
+            [['parent', 'field'], 'integer'],
+            [['ctime', 'utime'], 'safe'],
+            [['name'], 'string', 'max' => 255],
         ];
     }
 
     public function attributeLabels()
     {
         return [
-            [['parent', 'field'], 'integer'],
-            [['ctime', 'utime'], 'safe'],
-            [['name'], 'string', 'max' => 255],
         ];
     }
 
@@ -61,5 +61,47 @@ class KnowledgeArea extends BaseActiveRecord
             } 
         }
         return array_values($result);
+    }
+
+    public function getAreaLeafDict($multi_flag = true, $type = self::DICT_TYPE_MAP)
+    {
+        $area_t = self::tableName();
+        $area_list = $this->getQuery()
+            ->andWhere(["$area_t.id" => null])
+            ->asArray()->all();
+        $parent_arr = ArrayHelper::getColumn($area_list, "parent");
+        $parent_list = KnowledgeArea::find()
+            ->select("id, name as text")
+            ->andWhere(["id" => array_unique($parent_arr)])
+            ->asArray()->all();
+        $parent_list = ArrayHelper::index($parent_list, "id");
+        foreach ($area_list as $one) {
+            $parent_list[$one["parent"]]["children"][(int)$one["id"]] = $one["name"];
+        }
+        $area_dict = [];
+        foreach ($parent_list as $one) {
+            switch ($type) {
+                case self::DICT_TYPE_MAP :
+                    $area_dict[$one["text"]] = $one["children"];
+                    break;
+                case self::DICT_TYPE_ARR :
+                    foreach ($one["children"] as $cid => $cname) {
+                        $area_dict[$one["text"]][] = [
+                            'id' => $cid,
+                            'name' => $cname,
+                        ];
+                    }
+                    break;
+            }
+        }
+        if (!$multi_flag) {
+            $ret = [];
+            foreach ($area_dict as $parent_name => $area_arr) {
+                $ret = $entity_dict + $area_arr;
+            }
+        } else {
+            $ret = $area_dict;
+        }
+        return $ret;
     }
 }

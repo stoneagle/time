@@ -6,7 +6,7 @@ use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 
-class OrganizationEntity extends BaseActiveRecord
+class OrganizationEntity extends BaseEntity
 {
     const TABLE_NAME    = "organization_entity";
 
@@ -38,30 +38,16 @@ class OrganizationEntity extends BaseActiveRecord
 
     public function getQuery()
     {
-        $organization_t = self::tableName();
-        $query = self::find();
-        return $query;
+        return parent::getQuery();
     }
 
     public static function getParentDict()
     {
-        $parent_arr = self::find()
-            ->select("name, id")
-            ->andWhere(["parent" => 0])
-            ->asArray()->all();
-        $parent_dict = ArrayHelper::map($parent_arr, "id", "name");
-        $parent_dict[0] = "无隶属";
-        ksort($parent_dict);
-        return $parent_dict;
+        return parent::getParentDict();
     }
 
-    public static function getChildDict()
+    public static function getChildDict($type = self::DICT_TYPE_ARR)
     {
-        $parent_arr = self::find()
-            ->select("name, id")
-            ->andWhere(["NOT", ["parent" => 0]])
-            ->asArray()->all();
-        $parent_dict = ArrayHelper::map($parent_arr, "id", "name");
-        return $parent_dict;
+        return parent::getChildDict($type);
     }
 }

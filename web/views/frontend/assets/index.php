@@ -107,83 +107,6 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
     <div class="gridbox_task col-md-4 panel panel-default" style="height:1024px;" >
         <div id="time_cookie" style="width:auto;height:400px;"></div>
         <div id="time_sum" style="width:auto;height:200px;"></div>
-        <?php
-         $gridColumns = [
-                /* "box" => [ */
-                /*     'class' => 'yii\grid\CheckboxColumn', */
-                /*     'name' => 'box', */
-                /*     'contentOptions' => [ */
-                /*         'class' => 'data-id' */
-                /*     ], */
-                /* ], */
-                "id",
-                "project_name",
-                [
-                    'attribute' => 'ctime',
-                    'contentOptions' => ['width' => '20%'],
-                    'filter'    => DatePicker::widget([
-                        'model' => $searchModel,
-                        'attribute' => 'ctime',
-                        'convertFormat' => true,
-                        'pluginOptions' => [
-                            'autoclose'=> true,
-                            'format' => 'yyyy-M-dd'
-                        ],
-                    ]),
-                    'value' => function ($model) {
-                        return date("Y-m-d", strtotime($model->ctime));
-                    },
-                ],
-                "button" => [
-                    'header' => '操作',
-                    'contentOptions' => ['style' => 'white-space: normal;', 'width' => '18%'],
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => "{edit} {delete}",
-                    'buttons' => [
-                        'edit' => function ($url, $model) {
-                            return Html::a( 
-                                "修改",
-                                "/frontend/assets-links/update?id=".$model->id."&assets_id=".$model->assets_id,
-                                [
-                                    'data-pjax' => '0',
-                                    'class'     => 'label label-primary handle',
-                                ]
-                            );
-                        },
-                        'delete' => function ($url, $model) {
-                            return Html::a( 
-                                "删除",
-                                "/frontend/assets-links/delete",
-                                [
-                                    'data-pjax' => '0',
-                                    'name'      => "links_delete_one",
-                                    'model_id'  => $model->id,
-                                    'class'     => 'label label-primary handle',
-                                ]
-                            );
-                        }
-                    ]
-                ],
-            ];
-
-        ?>
-        <div class="grid-view" id="w1">
-            <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'panel' => [
-                    'type' => GridView::TYPE_PRIMARY,
-                    'heading' => '<h3 class="panel-title"><i class="glyphicon glyphicon-book"></i></h3>',
-                ],
-                'toolbar' => [
-                    //$fullExportMenu,
-                    //Html::a('新建艺术欣赏',['create?'.$_SERVER['QUERY_STRING']],['data-pjax'      => 0, 'class' => 'btn btn-success',]),
-                ],
-                'options' => ['class' => 'grid-view','style'=>'overflow:auto', 'id' => 'grid'],
-                'columns' => $gridColumns
-                ])
-            ?>
-        </div>
     </div>
     <div id="assets_dashboard" class="dhx_cal_container col-md-8 panel panel-default" style=' height:1024px; '>
         <div class="row">
@@ -215,47 +138,68 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
                     <h4 class="modal-title" id="assets_save_title"></h4>
                 </div>
                 <div class="modal-body">
-                        <div class="form-group">
-                            <label for="assets_name" class="col-sm-3 control-label">资产名称:</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="assets_name" name="name"></input>
-                            </div>
+                    <div class="form-group">
+                        <label for="assets_name" class="col-sm-3 control-label">资产项目名称:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="assets_name" name="name"></input>
                         </div>
-                        <div class="form-group">
-                            <label for="assets_entity" class="col-sm-3 control-label">资产所属实体:</label>
-                            <div class="col-sm-9">
-                                <?php
-                                    echo Select2::widget([
-                                        'name' => 'entity_id',
-                                        'data' => $entity_dict,
-                                        'options' => [
-                                            'placeholder' => '请选择对应实体',
-                                            'multiple' => false
-                                        ],
-                                    ]);
-                                ?>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assets_priority" class="col-sm-3 control-label">优先级:</label>
+                        <div class="col-sm-9">
+                            <?php
+                                echo Select2::widget([
+                                    'name' => 'priority_id',
+                                    'data' => $priority_dict,
+                                    'options' => [
+                                        'placeholder' => '请选择优先级',
+                                        'multiple' =>  false
+                                    ],
+                                ]);
+                            ?>
                         </div>
-                        <div class="form-group">
-                            <label for="value" class="col-sm-3 control-label">初始价值(人民币/k):</label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" name="value" min=0 value=0 >
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assets_entity" class="col-sm-3 control-label">资产相关实体:</label>
+                        <div class="col-sm-9">
+                            <?php
+                                echo Select2::widget([
+                                    'name' => 'entity_ids',
+                                    'data' => $entity_dict,
+                                    'options' => [
+                                        'placeholder' => '请选择对应实体',
+                                        'multiple' => true 
+                                    ],
+                                ]);
+                            ?>
                         </div>
-                        <div class="form-group">
-                            <label for="time" class="col-sm-3 control-label">初始时间颗粒(单位/30min):</label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" name="time" min=0 value=0 >
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="head_count" class="col-sm-3 control-label">初始人力资源(人数):</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" name="head_count" min=0 value=0 >
                         </div>
-                        <div class="form-group">
-                            <label for="access_unit" class="col-sm-3 control-label">资产评定单位:</label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" name="access_unit" min=0 value=0 >
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="value" class="col-sm-3 control-label">初始价值(人民币/元):</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" name="value" min=0 value=0 >
                         </div>
-                        <input type="hidden" class="form-control" id="assets_position" name="position">
-                        <input type="hidden" class="form-control" id="assets_id" name="id">
+                    </div>
+                    <div class="form-group">
+                        <label for="income_flow" class="col-sm-3 control-label">初始现金流(人民币/k):</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" name="income_flow" min=0 value=0 >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="time_span" class="col-sm-3 control-label">结算间隔:</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" name="time_span" min=0 value=0 >
+                        </div>
+                    </div>
+                    <input type="hidden" class="form-control" id="assets_position" name="position">
+                    <input type="hidden" class="form-control" id="assets_id" name="id">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -284,7 +228,7 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
                             </table>
                             <div class="modal-footer">
                                 <button id="add_assets_sub" type="button" class="btn btn-success" >新增子资产</button>
-                                <button id="add_assets_link" type="button" class="btn btn-success" >新增项目</button>
+                                <button id="rm_field_obj" type="button" class="btn btn-danger" >删除项目</button>
                             </div>
                         </div>
                     </div>
@@ -296,14 +240,7 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
 
 <script type="text/javascript">
     // 资产块图
-    var type_raw_dict    = <?php echo $type_raw_dict;?>;
-    var type_access_dict = <?php echo $type_access_dict;?>;
     var priority_dict    = <?php echo $priority_dict;?>;
-    $("#project_priority").select2(priority_dict);
-    $("#project_start_date").datepicker({
-        dateFormat: "yy-mm-dd",
-        timeFormat:  "hh:mm:ss"
-    });
 
     var general_width = 3;
     var general_height = 3;
@@ -312,7 +249,7 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
     var last_one_id    = <?php echo $last_one_id;?>;
     var init_flag      = false;
     var options        = {
-        width: 6,
+        width: 12,
         float: false,
         removable: '.trash',
         removeTimeout: 100,
@@ -329,11 +266,10 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
             var assets_info = items_dict[node.id];
             var assets_detail = 
                 '<dl class="assets-horizontal">' + 
-                '<dt>资产名称</dt><dd>' + assets_info.name + '</dd>' + 
+                '<dt>资产名称</dt><dd>' + assets_info.project_name + '</dd>' + 
                 '<dt>价值</dt><dd>' + assets_info.value + '</dd>' + 
-                '<dt>类别</dt><dd>' + type_raw_dict[assets_info.type_id] + '</dd>' + 
-                '<dt>' + type_access_dict[assets_info.type_id] + '</dt><dd>' + assets_info.access_unit + '</dd>' + 
-                '<dt>投入时间</dt><dd>' + assets_info.time + '</dd>' + 
+                '<dt>人力资源</dt><dd>' + assets_info.head_count + '</dd>' + 
+                '<dt>现金流</dt><dd>' + assets_info.income_flow + '/' + assets_info.time_span + '天</dd>' + 
                 '</dl>'
             var assets_one = '<div><div class="grid-stack-item-content" ><div class="container-fluid assets-container" style="height:100%" ><div class="panel panel-default assets-panel" style="height:100%;text-align:left;" id="assets-panel-'+node.id+'" assets_id="'+ node.id +'" >' + assets_detail + '</div></div></div><div/>';
             grid.addWidget($(assets_one),
@@ -356,8 +292,8 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
             var grid = $("#grid1").data('gridstack');
             var x_pos = 0;
             var y_pos = 0;
-            for (var y = 0; y <= 6; y++) {
-                for (var x = 0; x<= 5; x++) {
+            for (var y = 0; y <= 12; y++) {
+                for (var x = 0; x<= 12; x++) {
                     var result = grid.isAreaEmpty(x, y, general_width, general_height)
                     if (result) {
                         x_pos = x;
@@ -373,7 +309,6 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
             $('#assets_position').val(position)
         }
         $('#assets_save_title').html("新增资产");
-        $('#assets_task_id').val(0)
         $('#assets_save').modal('show')
     });
 
@@ -393,9 +328,10 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
                 var item_length = 0;
             }
             if (item_length < chunk_num) {
+                console.log(items);
                 // 对比找出被删除的那一项
                 if (last_one_id != 0) {
-                    var href = "/frontend/assets-api/del/" + last_one_id;
+                    var href = "/frontend/assets/del/" + last_one_id;
                     var post_data = {};
                     directPost(href, post_data, false, true)
                 }
@@ -415,9 +351,9 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
         var assets_id = $("#assets_id").val();
         var href = "";
         if (assets_id == 0) {
-            href = "/frontend/assets-api/add";
+            href = "/frontend/assets/add";
         } else {
-            href = "/frontend/assets-api/update/" + assets_id;
+            href = "/frontend/assets/update/" + assets_id;
         }
 
         $.ajax({
@@ -449,9 +385,9 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
     // assets-panel管理
     $(".assets-panel").dblclick(function(){
         var id = $(this).attr("assets_id");
-        var href = "/frontend/assets-api/one-assets-sub?id=" + id;
+        var href = "/frontend/assets-sub/one-assets-sub?id=" + id;
         $("#add_assets_sub").attr("assets_id", id);
-        $("#add_assets_link").attr("assets_id", id);
+        $("#rm_field_obj").attr("assets_id", id);
         $.ajax({
             url: href,
             data: {},
@@ -461,12 +397,13 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
                 var data = eval('(' + result + ')');  
                 if (data.error === 0) {
                     table_html = "";
-                    var table_html = "<tr><th>子资产名称</th><th>描述</th><th>创建时间</th><th>操作</th></tr>"; 
+                    var table_html = "<tr><th>子资产名称</th><th>描述</th><th>实体名称</th><th>创建时间</th><th>操作</th></tr>"; 
                     for (var arr_index in data.data) {
                         var one = data.data[arr_index];
                         table_html += "<tr><td>" 
                             + one.name + "</td><td>" 
                             + one.desc + "</td><td>" 
+                            + one.entity_name + "</td><td>" 
                             + one.ctime + '</td>'
                             + '<td>'
                             + '<button type="button" class="btn btn-success btn-sm assets_sub_edit" assets_sub_id=' +one.id+ '>修改</button>'
@@ -489,15 +426,16 @@ $this->registerJsFile('@web/js/frontend/assets/index.js',['depends'=>['app\asset
     $("#add_assets_sub").on("click", function(e) {
         e.preventDefault();
         var assets_id = $(this).attr("assets_id");
-        jump_href = "/frontend/assets-sub/create?assets_id=" + assets_id;
+        jump_href = "/frontend/assets-sub/create?obj_id=" + assets_id;
         window.location.href = jump_href;
     });
 
-    $("#add_assets_link").on("click", function(e) {
+    $("#rm_field_obj").on("click", function(e) {
         e.preventDefault();
-        var assets_id = $(this).attr("assets_id");
-        jump_href = "/frontend/assets-links/create?assets_id=" + assets_id;
-        window.location.href = jump_href;
+        var field_obj_id = $(this).attr("assets_id");
+        var href = "/frontend/assets/del/" + field_obj_id;
+        var post_data = {};
+        directPost(href, post_data, false, true)
     });
 
     function init_assets_sub_btn() {
