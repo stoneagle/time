@@ -37,7 +37,7 @@ class ProjectController extends BaseController
             }
         }
         // todo，做成接口形式获取
-        $entity_field_dict = Project::getEntityDictByFieldIndex($obj_arr);
+        $entity_field_dict = Project::getEntityDictByFieldIndex($obj_arr, $this->user_obj->id);
 
         return $this->render('index', [
             "fieldDict"       => json_encode($field_dhtml_dict),

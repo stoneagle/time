@@ -69,6 +69,8 @@ $config = [
                 "PUT frontend/project-api/task/<id:\d+>"    => "frontend/project-api/task-update",
                 "DELETE frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-del",
                 "POST frontend/project-api/del/<id:\d+>"    => "frontend/project-api/task-del",
+                "POST frontend/project-api/get-resource-dict/<obj_id:\d+>/<entity_id:\d+>"    => "frontend/project-api/get-resource-dict",
+                "POST frontend/project-api/get-resource-dict-by-task/<task_id:\d+>"    => "frontend/project-api/get-resource-dict-by-task",
 
                 "POST frontend/project-api/link"                => "frontend/project-api/link-add",
                 "PUT frontend/project-api/link/<linkid:\d+>"    => "frontend/project-api/link-update",

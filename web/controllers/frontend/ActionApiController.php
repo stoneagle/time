@@ -102,21 +102,24 @@ class ActionApiController extends BaseController
             $model = new Action;
 
             $params_conf = [
-                "text"       => [null, true],
-                "task_id"    => [null, true],
-                "type_id"    => [null, true],
-                "plan_time"  => [null, true],
-                "status"     => [Action::STATUS_INIT, false],
-                "start_date" => [date("Y-m-d H:i:s", time()), false],
-                "end_date"   => [date("Y-m-d H:i:s", time()), false],
+                "text"        => [null, true],
+                "task_id"     => [null, true],
+                "type_id"     => [null, true],
+                "resource_id" => [null, true],
+                "plan_time"   => [null, true],
+                "status"      => [Action::STATUS_INIT, false],
+                "start_date"  => [date("Y-m-d H:i:s", time()), false],
+                "end_date"    => [date("Y-m-d H:i:s", time()), false],
             ];
-            $params            = $this->getParamsByConf($params_conf, 'post');
-            $model->id         = Project::getMaxId();
-            $model->text       = $params['text'];
-            $model->task_id    = $params['task_id'];
-            $model->type_id    = $params['type_id'];
-            $model->plan_time  = $params['plan_time'];
-            $model->status     = $params['status'];
+            $params             = $this->getParamsByConf($params_conf, 'post');
+            $model->id          = Project::getMaxId();
+            $model->text        = $params['text'];
+            $model->task_id     = $params['task_id'];
+            $model->type_id     = $params['type_id'];
+            $model->resource_id = $params['resource_id'];
+            $model->plan_time   = $params['plan_time'];
+            $model->status      = $params['status'];
+
             if ($model->status == Action::STATUS_END) {
                 $model->duration = \DateUtil::daysBetween($model->start_date, $model->end_date);
             } else {
@@ -144,14 +147,15 @@ class ActionApiController extends BaseController
         try {
             $action_type = "updated";
             $params_conf = [
-                "text"       => [null, false],
-                "type_id"    => [null, false],
-                "plan_time"  => [null, false],
-                "exec_time"  => [0, false],
-                "status"     => [0, true],
-                "start_date" => [null, false],
-                "end_date"   => [null, false],
-                "event_pid"  => [null, false],
+                "text"        => [null, false],
+                "type_id"     => [null, false],
+                "resource_id" => [null, false],
+                "plan_time"   => [null, false],
+                "exec_time"   => [0, false],
+                "status"      => [0, true],
+                "start_date"  => [null, false],
+                "end_date"    => [null, false],
+                "event_pid"   => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model             = $this->findModel($id, Action::class);
@@ -160,6 +164,9 @@ class ActionApiController extends BaseController
             }
             if (!is_null($params['type_id'])) {
                 $model->type_id    = $params['type_id'];
+            }
+            if (!is_null($params['resource_id'])) {
+                $model->resource_id    = $params['resource_id'];
             }
             if (!is_null($params['plan_time'])) {
                 $model->plan_time    = $params['plan_time'];

@@ -45,8 +45,9 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
 
 <script type="text/javascript">
     // 时间表 
-    var task_dict = <?php echo $taskDict;?>;
-    var task_type_dict = <?php echo $taskTypeDict;?>;
+    var task_dict          = <?php echo $taskDict;?>;
+    var task_type_dict     = <?php echo $taskTypeDict;?>;
+    var init_resource_dict = <?php echo $initResourceDict;?>;
 
     scheduler.config.first_hour = 3;
     scheduler.config.time_step = 15;
@@ -54,10 +55,11 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
     scheduler.config.multi_day = true;
     scheduler.config.xml_date="%Y-%m-%d %H:%i:%s";
     
-    scheduler.locale.labels.section_name      = "名称";
-    scheduler.locale.labels.section_plan_time = "计划时间";
-    scheduler.locale.labels.section_type_id   = "行为类别";
-    scheduler.locale.labels.section_task_id   = "所属任务";
+    scheduler.locale.labels.section_name        = "名称";
+    scheduler.locale.labels.section_plan_time   = "计划时间";
+    scheduler.locale.labels.section_type_id     = "行为类别";
+    scheduler.locale.labels.section_task_id     = "所属任务";
+    scheduler.locale.labels.section_resource_id = "相关资源";
 
     var update_select_options = function(select, options) { // helper function
         select.options.length = 0;
@@ -68,8 +70,32 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
     };
 
     var parent_onchange = function(event) {
+        // 更新type_id列表
         var new_child_options = task_type_dict[this.value];
         update_select_options(scheduler.formSection('type_id').control, new_child_options);
+        // 更新资源resource_id列表
+        var href = "/frontend/project-api/get-resource-dict-by-task/" + this.value;
+        var post_data = {}
+        directPost();
+        $.ajax({
+            url: href,
+            data: post_data,
+            dataType: 'text',
+            async: false,
+            type: 'POST',
+            success: function(result) {
+                var data = eval('(' + result + ')');  
+                if (data.error != 0) {
+                    swal("资源获取失败!", data.message, "error");
+                } else {
+                    var resource_dict = data.data.dict;
+                    update_select_options(scheduler.formSection('resource_id').control, resource_dict);
+                }
+            },
+            error: function(data) {
+                swal("操作失败!", data.message, "error");
+            }
+        })
     };
 
     var init_sections = [  
@@ -77,7 +103,8 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
         {name:"description", height:70, map_to:"desc", type:"textarea" , focus:true},
         {name:"plan_time", height: 30, map_to: "plan_time", type: "textarea", focus: true},
         {name:"task_id", height:30, type:"select", options:task_dict , map_to:"task_id", onchange:parent_onchange },
-        {name:"type_id", height:30, type:"select", options:task_type_dict , map_to:"type_id"}
+        {name:"type_id", height:30, type:"select", options:task_type_dict , map_to:"type_id"},
+        {name:"resource_id", height:30, type:"select", options:init_resource_dict , map_to:"resource_id"}
         //{name:"time", height:72, type:"calendar_time", map_to:"auto"},
     ];
 

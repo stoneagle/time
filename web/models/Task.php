@@ -97,4 +97,18 @@ class Task extends BaseActiveRecord
         $query->andWhere(["$task_t.entity_id" => $entity_id]);
         return $query->asArray()->all();
     }
+
+    public static function getTaskWithProject($task_id)
+    {
+        $task_t = self::tableName();
+        $project_t = Project::tableName();
+        //$field_obj_t = FieldObj::tableName();
+        $result = self::find() 
+            ->select("$project_t.obj_id, $project_t.field_id, $task_t.entity_id")
+            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+            //->leftJoin($field_obj_t, "$project_t.obj_id = $field_obj_t.id")
+            ->andWhere(["$task_t.id" => $task_id])
+            ->asArray()->one();
+        return $result;
+    }
 }

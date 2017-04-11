@@ -69,6 +69,7 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
     gantt.locale.labels.section_entity_id   = "相关实体";
     gantt.locale.labels.section_plan_time   = "计划时间";
     gantt.locale.labels.section_type_id     = "行为类别";
+    gantt.locale.labels.section_resource_id = "相关资源";
 
     var custom_sections                = [
         {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
@@ -126,6 +127,32 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
             var task_level_obj = gantt.getTask(task.parent); 
             var project_level_obj = gantt.getTask(task_level_obj.parent); 
             var action_type_arr = type_dict[project_level_obj.field_id];
+            var entity_id = task_level_obj.entity_id;
+            if (entity_id) {
+                var href = "/frontend/project-api/get-resource-dict/" + project_level_obj.obj_id + "/" + task_level_obj.entity_id;
+                var post_data = {}
+                directPost();
+                $.ajax({
+                    url: href,
+                    data: post_data,
+                    dataType: 'text',
+                    async: false,
+                    type: 'POST',
+                    success: function(result) {
+                        var data = eval('(' + result + ')');  
+                        if (data.error != 0) {
+                            swal("资源获取失败!", data.message, "error");
+                        } else {
+                            var resource_dict = data.data.dict;
+                            var resource_section = {name:"resource_id", height:30, type:"select", map_to:"resource_id", options:resource_dict, default_value:resource_dict[0]['key']};
+                            currentSections.push(resource_section);
+                        }
+                    },
+                    error: function(data) {
+                        swal("操作失败!", data.message, "error");
+                    }
+                })
+            }
 
             if (action_type_arr) {
                 var default_v = action_type_arr[0]['key'];

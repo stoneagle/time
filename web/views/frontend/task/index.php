@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use app\models\CountRecord;
+use app\models\Constants;
 use app\models\Action;
 use app\assets\AppAsset;
 use yii\helpers\ArrayHelper;
@@ -141,6 +142,13 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                             <label for="action_type" class="col-sm-3 control-label">行动类别:</label>
                             <div class="col-sm-9">
                                 <select id="action_type" name="type_id" class="form-control" >
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="action_resource" class="col-sm-3 control-label">相关资源:</label>
+                            <div class="col-sm-9">
+                                <select id="action_resource" name="resource_id" class="form-control" >
                                 </select>
                             </div>
                         </div>
@@ -525,6 +533,9 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
         $("#action_type").select2({
             placeholder: '请选择类别'
         })
+        $("#action_resource").select2({
+            placeholder: '请选择类别'
+        })
 
         // checkbox的勾选，对已初始化的任务，进行移入移出堆栈操作
         // onCheck时机在更新后出发，checkbox状态会修改
@@ -589,6 +600,33 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
             var collapse_obj = $("#collapse_" + task_id);
             var task_name  = collapse_obj.attr("task_name");
             var field_id   = collapse_obj.attr("field_id");
+
+            // 更新资源下拉框
+            var href = "/frontend/project-api/get-resource-dict-by-task/" + task_id;
+            var post_data = {
+                type : <?php echo Constants::DICT_TYPE_SELECT2;?>
+            }
+            directPost();
+            $.ajax({
+                url: href,
+                data: post_data,
+                dataType: 'text',
+                async: false,
+                type: 'POST',
+                success: function(result) {
+                    var data = eval('(' + result + ')');  
+                    if (data.error != 0) {
+                        swal("资源获取失败!", data.message, "error");
+                    } else {
+                        var resource_dict = data.data.dict;
+                        $("#action_resource").empty();
+                        $("#action_resource").select2(resource_dict);
+                    }
+                },
+                error: function(data) {
+                    swal("操作失败!", data.message, "error");
+                }
+            })
 
             $("#action_type").empty();
             $("#action_type").select2(type_dict[field_id]);
