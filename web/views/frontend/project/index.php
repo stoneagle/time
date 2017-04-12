@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 use app\models\Project;
-use app\models\Config;
+use app\models\Area;
 use app\assets\AppAsset;
 use yii\helpers\ArrayHelper;
 
@@ -59,17 +59,11 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
         /*     }} */
         {name:"add",        label:"",           width:44 }
     ];
-    var field_opt                           = <?php echo $fieldDict;?>;
-    var priority_opt                        = <?php echo $priorityDict;?>;
-    var type_dict                           = <?php echo $typeDict;?>;
-    var entity_field_dict                   = <?php echo $entityFieldDict;?>;
+    var target_dict                         = <?php echo $targetDict;?>;
     gantt.locale.labels.section_description = "名称";
-    gantt.locale.labels.section_field_id    = "领域";
-    gantt.locale.labels.section_priority_id = "重要性";
+    gantt.locale.labels.section_target_id   = "所属目标";
     gantt.locale.labels.section_entity_id   = "相关实体";
     gantt.locale.labels.section_plan_time   = "计划时间";
-    gantt.locale.labels.section_type_id     = "行为类别";
-    gantt.locale.labels.section_resource_id = "相关资源";
 
     var custom_sections                = [
         {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
@@ -86,52 +80,22 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
 
         if (task.$level == <?php echo Project::LEVEL_PROJECT;?>) {
             var currentSections = custom_sections.slice();
-            if (field_opt) {
-                var default_v = field_opt[0]['key'];
-            } else {
-                var default_v = "";
-            }
-            var field_section = {name:"field_id", height:30, type:"select", map_to:"field_id", options:field_opt, default_value:default_v};
-            currentSections.push(field_section);
 
-            if (priority_opt) {
-                var default_v = priority_opt[0]['key'];
+            if (target_dict) {
+                var default_v = target_dict[0]['key'];
             } else {
                 var default_v = "";
             }
-            var priority_section = {name:"priority_id", height:30, type:"select", map_to:"priority_id", options:priority_opt, default_value:default_v};
-            currentSections.push(priority_section);
+            var target_section = {name:"target_id", height:30, type:"select", map_to:"target_id", options:target_dict, default_value:default_v};
+            currentSections.push(target_section);
             gantt.config.lightbox.sections = currentSections;
         } else if (task.$level == <?php echo Project::LEVEL_TASK;?>) {
             var currentSections    = custom_sections.slice();
-
             var parent_project_obj = gantt.getTask(task.parent);
-            if (parent_project_obj.field_id != <?php echo Config::FIELD_GENERAL ?>) {
-                var project_field_id   = parent_project_obj.field_id;
-                var project_obj_id     = parent_project_obj.obj_id;
-                var entity_arr         = entity_field_dict[project_field_id][project_obj_id].slice();
-                entity_arr.unshift({"key" : 0, "label" : "无关联"});
-
-                if (entity_arr) {
-                    var default_v = entity_arr[0]['key'];
-                } else {
-                    var default_v = "";
-                }
-                var entity_section   = {name:"entity_id", height:30, type:"select", map_to:"entity_id", options:entity_arr, default_value:default_v};
-                currentSections.push(entity_section);
-            }
-
-            gantt.config.lightbox.sections = currentSections;
-        } else if (task.$level == <?php echo Project::LEVEL_ACTION;?>) {
-            var currentSections = action_sections.slice();
-            var task_level_obj = gantt.getTask(task.parent); 
-            var project_level_obj = gantt.getTask(task_level_obj.parent); 
-            var action_type_arr = type_dict[project_level_obj.field_id];
-            var entity_id = task_level_obj.entity_id;
-            if (entity_id) {
-                var href = "/frontend/project-api/get-resource-dict/" + project_level_obj.obj_id + "/" + task_level_obj.entity_id;
+            if (parent_project_obj.field_id != <?php echo Area::FIELD_GENERAL ?>) {
+                var target_id   = parent_project_obj.target_id;
+                var href = "/frontend/target/get-entity-dict/" + target_id;
                 var post_data = {}
-                directPost();
                 $.ajax({
                     url: href,
                     data: post_data,
@@ -141,11 +105,12 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
                     success: function(result) {
                         var data = eval('(' + result + ')');  
                         if (data.error != 0) {
-                            swal("资源获取失败!", data.message, "error");
+                            swal("实体获取失败!", data.message, "error");
                         } else {
-                            var resource_dict = data.data.dict;
-                            var resource_section = {name:"resource_id", height:30, type:"select", map_to:"resource_id", options:resource_dict, default_value:resource_dict[0]['key']};
-                            currentSections.push(resource_section);
+                            var entity_dict = data.data.dict;
+                            entity_dict.unshift({"key" : "0", "label" : "无关联"});
+                            var entity_section = {name:"entity_id", height:30, type:"select", map_to:"entity_id", options:entity_dict, default_value:entity_dict[0]['key']};
+                            currentSections.push(entity_section);
                         }
                     },
                     error: function(data) {
@@ -153,14 +118,9 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_gantt.js',['depends'=>['app\
                     }
                 })
             }
-
-            if (action_type_arr) {
-                var default_v = action_type_arr[0]['key'];
-            } else {
-                var default_v = "";
-            }
-            var action_type_section = {name:"type_id", height:30, type:"select", map_to:"type_id", options:action_type_arr, default_value:default_v};
-            currentSections.push(action_type_section);
+            gantt.config.lightbox.sections = currentSections;
+        } else if (task.$level == <?php echo Project::LEVEL_ACTION;?>) {
+            var currentSections   = action_sections.slice();
             gantt.config.lightbox.sections = currentSections;
         }
         return true;

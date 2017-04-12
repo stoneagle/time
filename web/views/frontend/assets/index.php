@@ -2,7 +2,6 @@
 use yii\helpers\Html;
 use app\models\BusinessAssets;
 use app\models\Project;
-use app\models\Config;
 use app\assets\AppAsset;
 use yii\helpers\ArrayHelper;
 use kartik\select2\Select2;

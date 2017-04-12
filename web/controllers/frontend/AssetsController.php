@@ -3,7 +3,6 @@
 namespace app\controllers\frontend;
 
 use Yii;
-use app\models\Config;
 use app\models\FieldObj;
 use app\models\AssetsEntity;
 use app\models\AssetsInfo;
@@ -18,7 +17,7 @@ class AssetsController extends BaseFieldController
     {
         $model = new FieldObj; 
         $model->user_id = $this->user_obj->id;
-        $model->field_id = Config::FIELD_ASSET;
+        $model->field_id = Area::FIELD_ASSET;
         $result = $model->getQuery()->asArray()->all();
         $list = [];
         $chunk_dict = ArrayHelper::index($result, "id");
@@ -36,7 +35,7 @@ class AssetsController extends BaseFieldController
 
         return $this->render('index', [
             // 优先级
-            "priority_dict" => Config::$priority_arr,
+            "priority_dict" => Target::$priority_arr,
             // 实体类别
             "entity_dict" => $entity_dict,
             // 资产区块
@@ -67,7 +66,7 @@ class AssetsController extends BaseFieldController
             $model->project_name = $params["name"];
             $model->entity_ids   = $params["entity_ids"];
             $model->user_id      = $this->user_obj->id;
-            $model->field_id     = Config::FIELD_ASSET;
+            $model->field_id     = Area::FIELD_ASSET;
             $model->priority_id  = $params["priority_id"];
             $this->addFieldEntityProject($model);
 

@@ -69,8 +69,6 @@ $config = [
                 "PUT frontend/project-api/task/<id:\d+>"    => "frontend/project-api/task-update",
                 "DELETE frontend/project-api/task/<id:\d+>" => "frontend/project-api/task-del",
                 "POST frontend/project-api/del/<id:\d+>"    => "frontend/project-api/task-del",
-                "POST frontend/project-api/get-resource-dict/<obj_id:\d+>/<entity_id:\d+>"    => "frontend/project-api/get-resource-dict",
-                "POST frontend/project-api/get-resource-dict-by-task/<task_id:\d+>"    => "frontend/project-api/get-resource-dict-by-task",
 
                 "POST frontend/project-api/link"                => "frontend/project-api/link-add",
                 "PUT frontend/project-api/link/<linkid:\d+>"    => "frontend/project-api/link-update",
@@ -78,7 +76,7 @@ $config = [
 
                 "GET frontend/action-api/list/<type:\d+>"    => "frontend/action-api/list",
                 "GET frontend/action-api/data/<task_id:\d+>" => "frontend/action-api/data",
-                "POST frontend/action-api/<id:\d+>"   => "frontend/action-api/add",
+                "POST frontend/action-api/<id:\d+>"          => "frontend/action-api/add",
                 "POST frontend/action-api/update/<id:\d+>"   => "frontend/action-api/update",
                 "PUT frontend/action-api/<id:\d+>"           => "frontend/action-api/update",
                 "DELETE frontend/action-api/<id:\d+>"        => "frontend/action-api/del",
@@ -87,8 +85,8 @@ $config = [
                 "PUT frontend/plan-api/<id:\d+>"    => "frontend/plan-api/update",
                 "DELETE frontend/plan-api/<id:\d+>" => "frontend/plan-api/del",
 
-                "POST frontend/assets/del/<id:\d+>"    => "frontend/assets/del",
-                "POST frontend/assets-sub/one-assets-sub/<id:\d+>"    => "frontend/assets-sub/one-assets-sub",
+                "POST frontend/assets/del/<id:\d+>"                => "frontend/assets/del",
+                "POST frontend/assets-sub/one-assets-sub/<id:\d+>" => "frontend/assets-sub/one-assets-sub",
 
                 "GET frontend/task-api/plan/<year:\d+>/<week:\d+>"  => "frontend/task-api/plan",
                 "PUT frontend/plan-api/plan/<task_id:\d+>"          => "frontend/plan-api/task-oper",
@@ -98,12 +96,16 @@ $config = [
                 "PUT frontend/scheduler-api/<id:\d+>"    => "frontend/scheduler-api/update",
                 "DELETE frontend/scheduler-api/<id:\d+>" => "frontend/scheduler-api/del",
 
-                "GET frontend/knowledge-api/<area_id:\d+>/area-tree-root"     => "frontend/knowledge-api/area-tree-root",
-                "GET frontend/knowledge-api/<area_id:\d+>/area-tree-children" => "frontend/knowledge-api/area-tree-children",
-                "GET frontend/knowledge-api/area-circle/<area_id:\d+>" => "frontend/knowledge-api/area-circle",
-                "POST frontend/knowledge-api/del-area/<id:\d+>" => "frontend/knowledge-api/del-area",
-                "POST frontend/knowledge-api/update-area/<id:\d+>" => "frontend/knowledge-api/update-area",
-                "GET frontend/knowledge-skill/index/<area_id:\d+>"     => "frontend/knowledge-skill/index",
+                "GET frontend/area/<field_id:\d+>/area-tree-root"     => "frontend/area/area-tree-root",
+                "GET frontend/area/<field_id:\d+>/area-tree-children" => "frontend/area/area-tree-children",
+                "GET frontend/area/area-circle/<field_id:\d+>"        => "frontend/area/area-circle",
+                "POST frontend/area/del-area/<id:\d+>"                => "frontend/area/del-area",
+                "POST frontend/area/update-area/<id:\d+>"             => "frontend/area/update-area",
+
+                "GET frontend/knowledge-skill/index/<area_id:\d+>"   => "frontend/knowledge-skill/index",
+
+                "POST frontend/target/get-entity-dict/<id:\d+>"             => "frontend/target/get-entity-dict",
+                "GET frontend/target/get-entity-dict/<id:\d+>"             => "frontend/target/get-entity-dict",
             ],
         ],
     ],

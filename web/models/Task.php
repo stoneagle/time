@@ -5,7 +5,6 @@ namespace app\models;
 use Yii;
 use app\models\Action;
 use app\models\Project;
-use app\models\Config;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 
@@ -61,30 +60,17 @@ class Task extends BaseActiveRecord
     }
 
 
-    public function getTaskWithFieldAndPriorityList($field_dict, $priority_dict)
+    public function getTaskWithProjectText()
     {
-        $query     = $this->getQuery();
         $task_t    = self::tableName();
         $project_t = Project::tableName();
-        $query->leftJoin($project_t, "$task_t.parent = $project_t.id");
-        $query->select("
-            $task_t.id, $task_t.text, $project_t.priority_id,
-            $project_t.field_id,$project_t.text as project_text
-            ")->orderby("$project_t.priority_id, $task_t.ctime");
-        $result = $query->asArray()->all();
-
-        $task_list = [];
-        foreach ($result as $one) {
-            $priority_name = ArrayHelper::getValue($priority_dict, $one["priority_id"]); 
-            $field_name = ArrayHelper::getValue($field_dict, $one["field_id"]); 
-            $text = "[$priority_name]".$field_name."——".$one["project_text"]."——".$one["text"];
-            $task_list[$one['id']] = [
-                "text"      => $text,
-                "task_name" => $one['text'],
-                "field_id" => $one['field_id'],
-            ];
-        }
-        return $task_list;
+        $query     = $this->getQuery()
+            ->leftJoin($project_t, "$task_t.parent = $project_t.id")
+            ->select("
+                $task_t.id, $task_t.text, $project_t.text as project_text
+                ")
+            ->orderby("$task_t.parent");
+        return $query->asArray()->all();
     }
 
     public function getTaskByEntityId($field_id, $entity_id)
@@ -96,19 +82,5 @@ class Task extends BaseActiveRecord
         $query->andWhere(["$project_t.field_id" => $field_id]);
         $query->andWhere(["$task_t.entity_id" => $entity_id]);
         return $query->asArray()->all();
-    }
-
-    public static function getTaskWithProject($task_id)
-    {
-        $task_t = self::tableName();
-        $project_t = Project::tableName();
-        //$field_obj_t = FieldObj::tableName();
-        $result = self::find() 
-            ->select("$project_t.obj_id, $project_t.field_id, $task_t.entity_id")
-            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
-            //->leftJoin($field_obj_t, "$project_t.obj_id = $field_obj_t.id")
-            ->andWhere(["$task_t.id" => $task_id])
-            ->asArray()->one();
-        return $result;
     }
 }

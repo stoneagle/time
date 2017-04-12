@@ -81,8 +81,17 @@ class Action extends BaseActiveRecord
 
     public function getQuery()
     {
-        $action_t = self::tableName();
-        $query = self::find();
+        $action_t  = self::tableName();
+        $task_t    = Task::tableName();
+        $project_t = Project::tableName();
+        $target_t  = Target::tableName();
+        $query     = self::find()
+            ->select("$action_t.*, $target_t.field_id, $target_t.priority_id, $task_t.text task_name")
+            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+            ->leftJoin($target_t, "$target_t.id = $project_t.target_id")
+            ;
+
         $query->andFilterWhere(["$action_t.status"     => $this->status]);
         $query->andFilterWhere(["$action_t.user_id" => $this->user_id]);
         $query->andFilterWhere(["$action_t.task_id" => $this->task_id]);

@@ -5,7 +5,6 @@ namespace app\models;
 use Yii;
 use app\models\Task;
 use app\models\Action;
-use app\models\Config;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 
@@ -56,8 +55,19 @@ class Project extends BaseActiveRecord
             ->leftJoin($action_t, "$task_t.id = $action_t.task_id");
         $query->andFilterWhere(["$project_t.del"      => Constants::SOFT_DEL_NO]);
         $query->andFilterWhere(["$project_t.user_id"  => $this->user_id]);
-        $query->andFilterWhere(["$project_t.field_id" => $this->field_id]);
-        $query->andFilterWhere(["$project_t.obj_id"   => $this->obj_id]);
+        return $query;
+    }
+
+    public function getTargetQuery()
+    {
+        $project_t = self::tableName();
+        $target_t  = Target::tableName();
+        $query = self::find()
+            ->select("$project_t.*, $target_t.field_id, $target_t.priority_id, $target_t.id target_id")
+            ->leftJoin($target_t, "$target_t.id = $project_t.target_id")
+            ->andFilterWhere(["$project_t.del"      => Constants::SOFT_DEL_NO])
+            ->andFilterWhere(["$project_t.user_id"  => $this->user_id]);
+            ;
         return $query;
     }
 

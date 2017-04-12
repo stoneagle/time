@@ -139,13 +139,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="action_type" class="col-sm-3 control-label">行动类别:</label>
-                            <div class="col-sm-9">
-                                <select id="action_type" name="type_id" class="form-control" >
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="action_resource" class="col-sm-3 control-label">相关资源:</label>
                             <div class="col-sm-9">
                                 <select id="action_resource" name="resource_id" class="form-control" >
@@ -173,8 +166,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
     var action_del_href    = "/frontend/action-api/del";
 
     var field_dict      = <?php echo $field_arr;?>;
-    var type_dict       = <?php echo $type_arr;?>;
-    var type_raw        = <?php echo $type_raw;?>;
     var task_id_arr     = <?php echo $task_id_arr;?>;
     var status_arr      = <?php echo $status_arr;?>;
 
@@ -395,7 +386,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                         id:clock_exec_aid,
                         text:exec_obj['text'],
                         task_name:exec_obj['task_name'],
-                        type_id:exec_obj['type_id'],
                         task_id:exec_obj['task_id'],
                         plan_time:exec_obj[ 'plan_time' ],
                     }
@@ -469,12 +459,12 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
         // 右侧grid
         grid = new dhtmlXGridObject(grid_prefix + task_id);
         grid.setImagePath("/css/lib/imgs/dhxgrid_terrace/");                 
-        grid.setHeader("ID,行动名称,计划时间,类别,状态,描述,<div style='width:100%; text-align:left;'><button id = 'grid" + task_id + "_add' class='btn btn-success btn-xs' >新建</button></div>");
+        grid.setHeader("ID,行动名称,计划时间,状态,描述,<div style='width:100%; text-align:left;'><button id = 'grid" + task_id + "_add' class='btn btn-success btn-xs' >新建</button></div>");
         // grid.enableAutoWidth(true,600,100);
-        grid.setInitWidthsP("10,25,10,10,10,25,9");            
-        grid.setColAlign("left, left, left, left, left, left"); 
-        grid.setColTypes("ro,ed,ed,co,coro,ed,ch");                  
-        grid.setColSorting("str,str,int,str,str,txt");             
+        grid.setInitWidthsP("10,25,10,10,25,9");            
+        grid.setColAlign("left, left, left, left, left"); 
+        grid.setColTypes("ro,ed,ed,coro,ed,ch");                  
+        grid.setColSorting("str,str,int,str,txt");             
         grid.enableAutoHeight(true);
         /* grid.enableDragAndDrop(true); */
         /* grid.rowToDragElement=function(id){ */
@@ -485,16 +475,12 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
         // 双击修改，其中field需要针对性的修改combo
         var collapse_obj = $("#collapse_" + task_id);
         var field_id   = collapse_obj.attr("field_id");
-        var type_combo = grid.getCombo(type_index);
-        for (key in type_raw[field_id]) {
-            type_combo.put(key, type_raw[field_id][key]);
-        }
         var status_combo = grid.getCombo(status_index);
         for (key in status_arr) {
             status_combo.put(key, status_arr[key]);
         }
 
-        grid.setColumnIds("id,text,plan_time,type_id,status,desc,check");
+        grid.setColumnIds("id,text,plan_time,status,desc,check");
         grid.init();       
         grid.load("/frontend/action-api/data/" + task_id,"json"); 
 
@@ -529,13 +515,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                 grid_obj.deleteRow(id);
             });
         });
-
-        $("#action_type").select2({
-            placeholder: '请选择类别'
-        })
-        $("#action_resource").select2({
-            placeholder: '请选择类别'
-        })
 
         // checkbox的勾选，对已初始化的任务，进行移入移出堆栈操作
         // onCheck时机在更新后出发，checkbox状态会修改
@@ -582,7 +561,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                         id:rId,
                         text:this.cellById(rId,text_index).getValue(),
                         task_name:task_name,
-                        type_id:this.cellById(rId,type_index).getValue(),
                         task_id:task_id,
                         plan_time:this.cellById(rId,plan_time_index).getValue(),
                     }
@@ -628,8 +606,6 @@ $this->registerJsFile('@web/js/lib/flipclock.js',['depends'=>['app\assets\AppAss
                 }
             })
 
-            $("#action_type").empty();
-            $("#action_type").select2(type_dict[field_id]);
             $('#action_save_title').html("新增行动");
             $('#action_task_id').val(task_id)
             $('#action_task_name').val(task_name)

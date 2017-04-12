@@ -3,7 +3,6 @@
 namespace app\controllers\frontend;
 
 use Yii;
-use app\models\Config;
 use app\models\Action;
 use app\models\Error;
 use app\models\Task;

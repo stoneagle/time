@@ -3,7 +3,6 @@
 namespace app\controllers\frontend;
 
 use Yii;
-use app\models\Config;
 use app\models\Country;
 use app\models\Error;
 use yii\filters\VerbFilter;

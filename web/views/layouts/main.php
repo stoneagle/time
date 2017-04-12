@@ -32,7 +32,7 @@ AppAsset::register($this);
     $nav_items = [
         ['label' => '首页', 'url' => ['/frontend/site/index']],
         [
-            'label' => '时间计划', 
+            'label' => '时间', 
             'items' => [
                 ['label' => '项目管理', 'url' => ['/frontend/project/index']],
                 ['label' => '计划管理', 'url' => ['/frontend/plan/index']],
@@ -41,24 +41,27 @@ AppAsset::register($this);
             ]
         ],
         [
-            'label' => '领域', 
-            'items' => [
-                ['label' => '领域项目关联', 'url' => ['/frontend/field-obj/index']],
-                ['label' => '知识领域管理', 'url' => ['/frontend/knowledge-area/index']],
-                ['label' => '资产名目管理', 'url' => ['/frontend/assets/index']],
+            'label'        => '目标',
+            'items'        => [
+                ['label'   => '目标管理', 'url'   => ['/frontend/target/index']],
+                ['label'   => '领域管理', 'url'   => ['/frontend/area/index']],
+                //['label' => '资产名目管理', 'url' => ['/frontend/assets/index']],
+            ]
+        ],
+        [
+            'label'      => '实体',
+            'items'      => [
+                ['label' => '技能管理', 'url' => ['/frontend/entity-skill/config-index']],
+                ['label' => '作品管理', 'url' => ['/frontend/entity-work/index']],
+                ['label' => '圈子管理', 'url' => ['/frontend/entity-circle/index']],
+                ['label' => '资产管理', 'url' => ['/frontend/entity-asset/index']],
+                ['label' => '探索管理', 'url' => ['/frontend/entity-quest/index']],
+                ['label' => '生活管理', 'url' => ['/frontend/entity-life/index']],
             ]
         ],
         [
             'label' => "后台管理",
             'items' => [
-                ['label' => '配置管理', 'url' => ['/frontend/config/index']],
-                ['label' => '技能配置', 'url' => ['/frontend/knowledge-skill/config-index']],
-                ['label' => '天赋配置', 'url' => ['/frontend/talent/index']],
-                ['label' => '资产配置', 'url' => ['/frontend/assets-entity/index']],
-                ['label' => '挑战配置', 'url' => ['/frontend/chanllege-entity/index']],
-                ['label' => '艺术配置', 'url' => ['/frontend/art-entity/index']],
-                ['label' => '作品管理', 'url' => ['/frontend/art-work/index']],
-                ['label' => '组织配置', 'url' => ['/frontend/organization-entity/index']],
                 ['label' => '国家配置', 'url' => ['/frontend/country/index']],
             ]
         ]

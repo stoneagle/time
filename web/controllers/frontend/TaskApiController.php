@@ -2,12 +2,12 @@
 
 namespace app\controllers\frontend;
 
+use app\models\Area;
 use app\models\Project;
 use app\models\Action;
 use app\models\PlanTask;
 use app\models\Task;
 use app\models\Constants;
-use app\models\Config;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -68,27 +68,5 @@ class TaskApiController extends BaseController
             ];
         }
         return $this->directJson(json_encode($ret));
-    }
-
-    public function actionAdd($sid)
-    {
-        try {
-        } catch (\exception $e) {
-        }
-    }
-
-    public function actionUpdate($id)
-    {
-        try {
-        } catch (\exception $e) {
-        }
-        
-    }
-
-    public function actionDel($id)
-    {
-        try {
-        } catch (\exception $e) {
-        }
     }
 }

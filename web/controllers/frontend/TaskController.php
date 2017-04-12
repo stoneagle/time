@@ -3,8 +3,9 @@
 namespace app\controllers\frontend;
 
 use Yii;
-use app\models\Config;
 use app\models\Action;
+use app\models\Target;
+use app\models\Area;
 use app\models\Error;
 use app\models\Task;
 use app\models\Project;
@@ -38,11 +39,8 @@ class TaskController extends BaseController
             $action_left = 0;
         }
 
-        $config_model       = new Config;
-        $field_dict         = Config::$field_arr;
-        $type_dict          = Config::getTypeWithParentDict(Config::TYPE_ACTION, "select2");
-        $type_raw           = Config::getTypeWithParentDict(Config::TYPE_ACTION);
-        $priority_dict      = Config::$priority_arr;
+        $field_dict         = Area::$field_arr;
+        $priority_dict      = Target::$priority_arr;
 
         // 获取task任务列表
         $model     = new Task;
@@ -51,8 +49,6 @@ class TaskController extends BaseController
             "action_left"     => $action_left,
             "action_info"     => json_encode($info),
             "field_arr"       => json_encode(array_flip($field_dict)),
-            "type_arr"        => json_encode($type_dict),
-            "type_raw"        => json_encode($type_raw),
             "task_list"       => $task_list,
             "task_id_arr"     => json_encode(array_keys($task_list)),
             "status_arr"      => json_encode(Action::$status_arr),

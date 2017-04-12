@@ -8,8 +8,8 @@ use app\models\Action;
 use app\models\GanttLinks;
 use app\models\Constants;
 use app\models\Error;
-use app\models\FieldObj;
-use app\models\FieldObjEntityLink;
+use app\models\Target;
+use app\models\TargetEntityLink;
 use Yii;
 use yii\filters\VerbFilter;
 
@@ -27,40 +27,6 @@ class ProjectApiController extends BaseController
         ];
     }
 
-    public function actionGetResourceDict($obj_id, $entity_id)
-    {
-        try {
-            $params_conf = [
-                "type" => [Constants::DICT_TYPE_DHX, false],
-            ];
-            $params        = $this->getParamsByConf($params_conf, 'post');
-            $field_obj     = $this->findModel($obj_id, FieldObj::class);
-            $resource_dict = FieldObjEntityLink::getResourceByObjAndEntity($obj_id, $field_obj->field_id, $entity_id, $params["type"]);
-            return $this->packageJson([
-                'dict'     => $resource_dict,
-            ], Error::ERR_OK, Error::msg(Error::ERR_OK));
-        } catch (\exception $e) {
-            return $this->returnException($e);
-        }
-    }
-
-    public function actionGetResourceDictByTask($task_id)
-    {
-        try {
-            $params_conf = [
-                "type" => [Constants::DICT_TYPE_DHX, false],
-            ];
-            $params        = $this->getParamsByConf($params_conf, 'post');
-            $task_obj = Task::getTaskWithProject($task_id);
-            $resource_dict = FieldObjEntityLink::getResourceByObjAndEntity($task_obj["obj_id"], $task_obj["field_id"], $task_obj["entity_id"], $params["type"]);
-            return $this->packageJson([
-                'dict'     => $resource_dict,
-            ], Error::ERR_OK, Error::msg(Error::ERR_OK));
-        } catch (\exception $e) {
-            return $this->returnException($e);
-        }
-    }
-
     // REST接口，获取基础数据
     public function actionData()
     {
@@ -68,7 +34,7 @@ class ProjectApiController extends BaseController
 
         $model          = new Project;
         $model->user_id = $this->user_obj->id;
-        $query          = $model->getQuery();
+        $query          = $model->getTargetQuery();
         $data           = $query->asArray()->all();
         foreach ($data as $one) {
             $one['type'] = Project::LEVEL_PROJECT;
@@ -89,7 +55,7 @@ class ProjectApiController extends BaseController
         $query                 = $action_model->getQuery();
         //$action_data           = $query->asArray()->all();
         $action_data           = $query
-            ->select("id,text,duration,user_id,type_id,task_id as parent,plan_time,start_date as sort_date,start_date")
+            ->select("id,text,duration,user_id,task_id as parent,plan_time,start_date as sort_date,start_date")
             ->andWhere([">=", "id" , 144])
             ->asArray()->all();
         foreach ($action_data as $one) {
@@ -147,13 +113,9 @@ class ProjectApiController extends BaseController
                 "end_date"    => [null, false],
                 "duration"    => [null, true],
                 "progress"    => [0, false],
-                "priority_id" => [0, false],
-                "field_id"    => [0, false],
-                "obj_id"      => [0, false],
+                "target_id"   => [0, false],
                 "entity_id"   => [0, false],
-                "resource_id" => [0, false],
                 "parent"      => [null, true],
-                "type_id"     => [null, false],
                 "plan_time"   => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
@@ -161,9 +123,7 @@ class ProjectApiController extends BaseController
                 case Project::LEVEL_PROJECT :
                     $model              = new Project;
                     $model->id          = Project::getMaxId();
-                    $model->priority_id = $params['priority_id'];
-                    $model->field_id    = $params['field_id'];
-                    $model->obj_id      = $params['obj_id'];
+                    $model->target_id      = $params['target_id'];
                     $model->progress    = $params['progress'];
                     break;
                 case Project::LEVEL_TASK :
@@ -177,11 +137,9 @@ class ProjectApiController extends BaseController
                 case Project::LEVEL_ACTION :
                     $model              = new Action;
                     $model->id          = Project::getMaxId();
-                    $model->type_id     = $params["type_id"];
                     $model->task_id     = $params["parent"];
                     $model->plan_time   = $params["plan_time"];
                     $model->end_date    = $params['start_date'];
-                    $model->resource_id = $params['resource_id'];
                     $model->status      = Action::STATUS_INIT;
                     break;
                 default :
@@ -212,22 +170,16 @@ class ProjectApiController extends BaseController
                 "start_date"  => [null, true],
                 "duration"    => [null, true],
                 "progress"    => [0, false],
-                "priority_id" => [0, false],
-                "field_id"    => [0, false],
-                //"obj_id"    => [0, false],
+                "target_id"    => [0, false],
                 "entity_id"   => [0, false],
-                "resource_id" => [0, false],
                 "parent"      => [null, true],
-                "type_id"     => [null, false],
                 "plan_time"   => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             switch ($params['type']) {
                 case Project::LEVEL_PROJECT :
                     $model = $this->findModel($id, Project::class);
-                    $model->priority_id = $params['priority_id'];
-                    $model->field_id    = $params['field_id'];
-                    //$model->obj_id     = $params['obj_id'];
+                    $model->target_id     = $params['target_id'];
                     $model->progress   = $params['progress'];
                     break;
                 case Project::LEVEL_TASK :
@@ -238,9 +190,7 @@ class ProjectApiController extends BaseController
                     break;
                 case Project::LEVEL_ACTION :
                     $model              = $this->findModel($id, Action::class);
-                    $model->type_id     = $params["type_id"];
                     $model->plan_time   = $params["plan_time"];
-                    $model->resource_id = $params['resource_id'];
                     break;
                 default :
                     throw new \Exception("gantt类型出错", Error::ERR_GANTT_TYPE);

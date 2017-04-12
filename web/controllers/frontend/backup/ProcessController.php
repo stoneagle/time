@@ -3,7 +3,6 @@
 namespace app\controllers\frontend;
 
 use app\models\Process;
-use app\models\Config;
 use app\models\GanttTasks;
 use app\models\Constants;
 use app\models\Error;
@@ -32,9 +31,6 @@ class ProcessController extends BaseController
         $model->task_id = $id;
         $data = $model->getTreeNodeList();
 
-        $config_model       = new Config;
-        $config_model->type = Config::TYPE_ACTION;
-        $action_dict        = $config_model->getTypeDict();
         foreach ($data as &$one) {
             $config_name = ArrayHelper::getValue($action_dict, $one['action_id']);
             $one['text'] = "[{$config_name}]".$one['text'];

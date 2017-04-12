@@ -4,11 +4,11 @@ namespace app\controllers\frontend;
 
 use app\models\Error;
 use app\models\Task;
+use app\models\Area;
 use app\models\PlanScheduler;
 use app\models\PlanTask;
 use app\models\Action;
 use app\models\Constants;
-use app\models\Config;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -67,7 +67,7 @@ class PlanApiController extends BaseController
         }
         
         // 处理该周已选任务的数量，以及消耗时间
-        $field_dict         = Config::$field_arr;
+        $field_dict         = Area::$field_arr;
 
         $tmp_arr["field"] = [];
         foreach ($task_result as $one) {
