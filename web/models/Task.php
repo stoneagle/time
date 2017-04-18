@@ -23,6 +23,9 @@ class Task extends BaseActiveRecord
     public function rules()
     {
         return [
+            [['parent', 'duration', 'progress', 'user_id', 'entity_id', 'del'], 'integer'],
+            [['start_date', 'ctime', 'utime'], 'safe'],
+            [['text'], 'string', 'max' => 255],
         ];
     }
 
@@ -42,6 +45,17 @@ class Task extends BaseActiveRecord
         return $query;
     }
 
+    public function getTaskWithActionQuery()
+    {
+        $task_t   = self::tableName();
+        $action_t = Action::tableName();
+        $query    = $this->getQuery()
+            ->select("$task_t.*")
+            ->leftJoin($action_t, "$action_t.task_id = $task_t.id")
+            ->orderBy("$action_t.start_date");
+        return $query;
+    }
+
     public function getPlanTask()
     {
         $task_t         = self::tableName();
@@ -50,7 +64,7 @@ class Task extends BaseActiveRecord
         $plan_task_t    = PlanTask::tableName();
         $query          = $this->getQuery();
         $query->select("
-            $task_t.id, $task_t.text, $project_t.field_id, sum($action_t.plan_time) as sum_time, $task_t.progress, max($plan_task_t.week) as week
+            $task_t.id, $task_t.text, sum($action_t.plan_time) as sum_time, $task_t.progress, max($plan_task_t.week) as week
             ")
             ->leftJoin($project_t, "$project_t.id = $task_t.parent")
             ->leftJoin($action_t, "$action_t.task_id = $task_t.id")
@@ -62,14 +76,26 @@ class Task extends BaseActiveRecord
 
     public function getTaskWithProjectText()
     {
+        $action_t  = Action::tableName();
         $task_t    = self::tableName();
         $project_t = Project::tableName();
+        $target_t  = Target::tableName();
         $query     = $this->getQuery()
+            ->select([ "
+            $task_t.id, $task_t.text, $task_t.entity_id, 
+            $project_t.text as project_text,
+            $project_t.target_id,
+            $target_t.field_id,
+            COUNT($action_t.id) as action_num,
+            SUM(IF($action_t.status = ".Action::STATUS_END.", 1,0)) as exec_num
+            " ])
             ->leftJoin($project_t, "$task_t.parent = $project_t.id")
-            ->select("
-                $task_t.id, $task_t.text, $project_t.text as project_text
-                ")
-            ->orderby("$task_t.parent");
+            ->leftJoin($action_t, "$action_t.task_id = $task_t.id")
+            ->leftJoin($target_t, "$target_t.id = $project_t.target_id")
+            ->andWhere(["NOT", ["$task_t.progress" => 1]])
+            ->orderby("$task_t.parent, $task_t.start_date")
+            ->groupby("$task_t.id")
+            ;
         return $query->asArray()->all();
     }
 

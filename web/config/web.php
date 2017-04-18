@@ -102,10 +102,10 @@ $config = [
                 "POST frontend/area/del-area/<id:\d+>"                => "frontend/area/del-area",
                 "POST frontend/area/update-area/<id:\d+>"             => "frontend/area/update-area",
 
-                "GET frontend/knowledge-skill/index/<area_id:\d+>"   => "frontend/knowledge-skill/index",
+                "GET frontend/entity-skill/index/<area_id:\d+>" => "frontend/entity-skill/index",
 
-                "POST frontend/target/get-entity-dict/<id:\d+>"             => "frontend/target/get-entity-dict",
-                "GET frontend/target/get-entity-dict/<id:\d+>"             => "frontend/target/get-entity-dict",
+                "POST frontend/target/get-entity-dict/<id:\d+>" => "frontend/target/get-entity-dict",
+                "GET frontend/target/get-entity-dict/<id:\d+>"  => "frontend/target/get-entity-dict",
             ],
         ],
     ],

@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 AppAsset::register($this);
 $this->registerCssFile('@web/css/lib/select2.css',['depends'=>['app\assets\AppAsset']]);
 $this->registerCssFile('@web/css/lib/jstree/jstree.css',['depends'=>['app\assets\AppAsset']]);
-$this->registerCssFile('@web/css/knowledge-skill/index.css',['depends'=>['app\assets\AppAsset']]);
+$this->registerCssFile('@web/css/entity-skill/index.css',['depends'=>['app\assets\AppAsset']]);
 
 $this->registerJsFile('@web/js/lib/select2.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
 $this->registerJsFile('@web/js/lib/jstree.js',['depends'=>['app\assets\AppAsset'], 'position'=>$this::POS_HEAD]);
@@ -88,8 +88,8 @@ $this->registerJsFile('@web/js/lib/knockout.min.js',['depends'=>['app\assets\App
 
 
 <script type="text/javascript">
-var add_user_skill_href = "/frontend/knowledge-api/add-user-skill";
-var remove_user_skill_href = "/frontend/knowledge-api/remove-user-skill";
+var add_user_skill_href = "/frontend/entity-skill/add-user-skill";
+var remove_user_skill_href = "/frontend/entity-skill/remove-user-skill";
 (function($, ko){
 	//Private utilities
 	function namespace(namespaceString) {

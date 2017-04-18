@@ -5,6 +5,7 @@ class ArrDict
 {
     public static function getDictByType($type, $list, $multi_flag = false, $multi_index = "", $id_index = "id", $name_index = "name")
     {
+        $dict = [];
         switch ($type) {
             case Constants::DICT_TYPE_MAP :
                 foreach ($list as $one) {
@@ -14,7 +15,7 @@ class ArrDict
                         $dict[$one[$id_index]] = $one[$name_index];
                     }
                 }
-               break;
+                break;
             case Constants::DICT_TYPE_ARR :
                 foreach ($list as $one) {
                     if ($multi_flag) {

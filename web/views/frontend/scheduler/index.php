@@ -27,7 +27,7 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
 ?>
 <div class="container-fluid">
     <h1><?= Html::encode($this->title); ?></h1>
-    <div id="review_scheduler" class="dhx_cal_container col-md-12 panel panel-default" style=' height:1024px; '>
+    <div id="review_scheduler" class="dhx_cal_container col-md-12 panel panel-default" style=' height:1200px; '>
         <div class="dhx_cal_navline">
             <div class="dhx_cal_prev_button">&nbsp;</div>
             <div class="dhx_cal_next_button">&nbsp;</div>
@@ -46,12 +46,13 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
 <script type="text/javascript">
     // 时间表 
     var task_dict = <?php echo $taskDict;?>;
+    var field_dict = <?php echo $fieldDict;?>;
 
-    scheduler.config.first_hour = 3;
-    scheduler.config.time_step = 15;
-    scheduler.config.touch = "force";
-    scheduler.config.multi_day = true;
-    scheduler.config.xml_date="%Y-%m-%d %H:%i:%s";
+    scheduler.config.first_hour = 0;
+    scheduler.config.time_step  = 15;
+    scheduler.config.touch      = "force";
+    scheduler.config.multi_day  = true;
+    scheduler.config.xml_date   = "%Y-%m-%d %H:%i:%s";
     
     scheduler.locale.labels.section_name        = "名称";
     scheduler.locale.labels.section_plan_time   = "计划时间";
@@ -159,10 +160,15 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
     // 复制，剪切，粘贴 
     var modified_event_id = null; 
     scheduler.templates.event_class = function(start, end, event) { 
+        var css = "my_event";
         // my_event是自定义event的class 
-        if (event.id == modified_event_id) 
-            return "copied_event my_event"; 
-        return "my_event";  
+        if (event.id == modified_event_id) {
+            css += " copied_event";
+        } 
+        if(event.field_id) {
+            css += " event_" + field_dict[event.field_id];
+        }
+        return css; // default return
     }; 
 
     scheduler.attachEvent("onEventCopied", function(ev) { 
@@ -218,31 +224,27 @@ $this->registerJsFile('@web/js/lib/dhtmlx/locale_cn_scheduler.js',['depends'=>['
 
     // 自定义event盒子
     scheduler.renderEvent = function(container, ev, width, height, header_content, body_content) {
-        var container_width = container.style.width; // e.g. "105px"
-
-        // move section
+        var container_width = container.style.width; 
         var html = "<div class='dhx_event_move my_event_move' style='width: " + container_width + "'></div>";
-        // container for event contents
-        html+= "<div class='my_event_body'>";
-            html += "<span class='event_date'>";
-            // two options here: show only start date for short events or start+end for long
-            if ((ev.end_date - ev.start_date) / 60000 > 40) { // if event is longer than 40 minutes
-                html += scheduler.templates.event_header(ev.start_date, ev.end_date, ev);
-                html += "</span><br/>";
-            } else {
-                html += scheduler.templates.event_date(ev.start_date) + "</span>";
-            }
-            // displaying event text
+
+        html += "<div class='my_event_body'>";
+        html += "<span class='event_date'>";
+        if (((ev.end_date - ev.start_date) / 60000) > 30) { 
+            html += scheduler.templates.event_header(ev.start_date, ev.end_date, ev);
+            html += ":&nbsp</span><br/>";
             if (ev.task_name) {
                 html += ev.task_name + "-" + ev.text + "</div>";
             } else {
                 html += ev.text + "</div>";
             }
-
-        // resize section
+        } else {
+            container.style.height = "20px";
+            //html += scheduler.templates.event_date(ev.start_date) + ev.text + "</span>";
+            html += scheduler.templates.event_header(ev.start_date, ev.end_date, ev) + ":&nbsp" + ev.text + "</span>";
+        }
         html += "<div class='dhx_event_resize my_event_resize' style='width: " + container_width + "'></div>";
 
         container.innerHTML = html;
-        return true; // required, true - we've created custom form; false - display default one instead
+        return true; 
     };
 </script>

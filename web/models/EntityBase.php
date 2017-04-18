@@ -8,6 +8,8 @@ use yii\helpers\ArrayHelper;
 
 class EntityBase extends BaseActiveRecord
 {
+    public $user_id;
+
     // 根据field_id获取entity列表
     public function getEntityList($field_id, $entity_ids_arr)
     {
@@ -26,7 +28,7 @@ class EntityBase extends BaseActiveRecord
                 $query        = AreaSkillLink::find()
                     ->select("$entity_t.id, $entity_t.name, $area_t.name as area_name")
                     ->leftJoin($entity_t, "$entity_mid_t.skill_id = $entity_t.id")
-                    ->leftJoin($area_t, "$area_t.id = $entity_mid_t.area_id");
+                    ->leftJoin($area_t, "$area_t.id               = $entity_mid_t.area_id");
                 break;
             case Area::FIELD_CHANLLEGE :
                 $entity_t = EntityQuest::tableName();

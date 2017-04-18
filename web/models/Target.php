@@ -106,7 +106,7 @@ class Target extends BaseActiveRecord
         // 删除原有关联
         TargetEntityLink::deleteAll(
             "target_id = :target_id",
-            [":target_id" => $model->id]
+            [":target_id" => $this->id]
         );
         $this->addTargetAndLink();
         return true;
@@ -125,5 +125,50 @@ class Target extends BaseActiveRecord
             throw new \Exception (Error::msg(Error::ERR_DEL), Error::ERR_DEL);
         }
         return true;
+    }
+
+    public function getTargetEntityDict($type = Constants::DICT_TYPE_ARR)
+    {
+        $target_t = self::tableName();
+        $link_t = TargetEntityLink::tableName();
+        $entity_ids_list = self::find()
+            ->select("$target_t.name, $target_t.id as target_id, GROUP_CONCAT($link_t.entity_id) as entity_ids, $target_t.field_id")
+            ->leftJoin($link_t, "$link_t.target_id = $target_t.id")
+            ->andWhere(["$target_t.user_id" => $this->user_id])
+            ->groupBy("$target_t.id")
+            ->asArray()->all();
+        $field_entity_arr = [];
+        $target_entity_arr = [];
+        foreach ($entity_ids_list as $one) {
+            if (!isset($field_entity_arr[$one["field_id"]])) {
+                $field_entity_arr[$one["field_id"]] = [];
+            }
+            if (!isset($target_entity_arr[$one["field_id"]][$one["target_id"]])) {
+                $target_entity_arr[$one["field_id"]][$one["target_id"]] = [];
+            }
+            $field_entity_arr[$one["field_id"]] = array_merge($field_entity_arr[$one["field_id"]], array_unique(explode(',', $one["entity_ids"])));
+            $target_entity_arr[$one["field_id"]][$one['target_id']] = array_merge($target_entity_arr[$one["field_id"]][$one["target_id"]], array_unique(explode(',', $one["entity_ids"])));
+        }
+        $field_entity_dict = [];
+        $entity_model = new EntityBase;
+        foreach ($field_entity_arr as $field_id => $entity_arr) {
+            $field_entity_dict[$field_id] = $entity_model->getEntityDict($field_id, Constants::DICT_TYPE_MAP, array_unique($entity_arr), false);
+        }
+
+        $result = [];
+
+        foreach ($target_entity_arr as $field_id => $one) {
+            foreach ($one as $target_id => $entity_ids_arr) {
+                $tmp_list = [];
+                foreach ($entity_ids_arr as $entity_id) {
+                    $tmp_list[] = [
+                        "id"   => $entity_id,
+                        "name" => $field_entity_dict[$field_id][$entity_id],
+                    ];
+                } 
+                $result[$target_id] = \ArrDict::getDictByType($type, $tmp_list);
+            }
+        }
+        return $result;
     }
 }

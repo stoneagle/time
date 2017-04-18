@@ -255,7 +255,7 @@ $this->registerJsFile('@web/js/lib/echarts.js',['depends'=>['app\assets\AppAsset
     grid.setInitWidthsP("12,13,40,15,19");            
     grid.setColAlign("left, left, left, left, left"); 
     grid.setColTypes("ch,ro,ro,ro,ro");                  
-    grid.enableAutoHeight(true);
+    grid.enableAutoHeight(true, 400);
     grid.setColumnIds("select, week, text, plan_time, finish");
 
     grid.init();       

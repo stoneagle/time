@@ -20,14 +20,14 @@ class PlanApiController extends BaseController
     {
         $model          = new PlanScheduler;
         $model->user_id = $this->user_obj->id;
-        $result = $model->getQuery()->asArray()->all();
-        $ret["data"] = $result;
+        $result         = $model->getQuery()->asArray()->all();
+        $ret["data"]    = $result;
         return $this->directJson(json_encode($ret));
     }
 
     public function actionChart($year, $week)
     {
-        $model = new PlanScheduler;
+        $model          = new PlanScheduler;
         $model->user_id = $this->user_obj->id;
 
         $task_model          = new Task;

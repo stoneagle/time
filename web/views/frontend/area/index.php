@@ -289,7 +289,7 @@ $this->registerJsFile('@web/js/lib/d3.js',['depends'=>['app\assets\AppAsset'], '
                 .style("fill", function(d) { return d.children ? color(d.depth) : null; })
                 .on("click", function(d) { 
                     if (d3.select(this).classed("node--leaf")) {
-                        var href = "/frontend/knowledge-skill/index/" + d.data.id;
+                        var href = "/frontend/entity-skill/index/" + d.data.id;
                         window.location = href;
                     } else {
                         if (focus !== d) 

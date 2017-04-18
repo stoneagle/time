@@ -3,6 +3,7 @@
 namespace app\controllers\frontend;
 
 use Yii;
+use app\models\Constants;
 use app\models\Action;
 use app\models\Target;
 use app\models\Area;
@@ -40,18 +41,37 @@ class TaskController extends BaseController
         }
 
         $field_dict         = Area::$field_arr;
-        $priority_dict      = Target::$priority_arr;
 
         // 获取task任务列表
-        $model     = new Task;
-        $task_list = $model->getTaskWithFieldAndPriorityList($field_dict, $priority_dict);
+        $target          = new Target;
+        $target->user_id = $this->user_obj->id;
+        $dict_map       = $target->getTargetEntityDict(Constants::DICT_TYPE_MAP);
+
+        $model       = new Task;
+        $task_list   = $model->getTaskWithProjectText();
+        $task_id_arr = ArrayHelper::getColumn($task_list, 'id');
+        $task_dict   = [];
+        foreach ($task_list as $one) {
+            $entity_name = $dict_map[$one["target_id"]][$one["entity_id"]];
+            $text        = $one["project_text"]."-".$entity_name."-".$one["text"];
+
+            $task_dict[$one["id"]] = [
+                "task_name"   => $one["text"],
+                "text"        => $text,
+                "exec_num"    => $one["exec_num"],
+                "action_num"  => $one["action_num"],
+                "color_class" => "task_".Area::$field_en_arr[$one["field_id"]],
+            ];
+        }
+
         return $this->render('index', [
-            "action_left"     => $action_left,
-            "action_info"     => json_encode($info),
-            "field_arr"       => json_encode(array_flip($field_dict)),
-            "task_list"       => $task_list,
-            "task_id_arr"     => json_encode(array_keys($task_list)),
-            "status_arr"      => json_encode(Action::$status_arr),
+            "action_left"   => $action_left,
+            "action_info"   => json_encode($info),
+            "field_arr"     => json_encode(array_flip($field_dict)),
+            "task_list"     => $task_dict,
+            "task_list_arr" => json_encode($task_dict),
+            "task_id_arr"   => json_encode($task_id_arr),
+            "status_arr"    => json_encode(Action::$status_arr),
         ]);
     }
 

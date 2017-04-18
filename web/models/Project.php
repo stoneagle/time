@@ -18,9 +18,6 @@ class Project extends BaseActiveRecord
 
     const TABLE_NAME    = "project";
 
-    // 用来额外存储process的id
-    public $process_id = null;
-
     public static $level_arr = [
         self::LEVEL_PROJECT => "project",
         self::LEVEL_TASK    => "task",
@@ -35,6 +32,9 @@ class Project extends BaseActiveRecord
     public function rules()
     {
         return [
+            [['duration', 'progress', 'user_id', 'target_id', 'del'], 'integer'],
+            [['start_date', 'ctime', 'utime'], 'safe'],
+            [['text'], 'string', 'max' => 255],
         ];
     }
 
@@ -50,10 +50,12 @@ class Project extends BaseActiveRecord
         $action_t  = Action::tableName();
         $task_t    = Task::tableName();
         $query     = self::find()
-            ->orderBy("$project_t.ctime")
             ->leftJoin($task_t, "$project_t.id = $task_t.parent")
-            ->leftJoin($action_t, "$task_t.id = $action_t.task_id");
+            ->leftJoin($action_t, "$task_t.id = $action_t.task_id")
+            ->orderBy("$project.ctime")
+            ;
         $query->andFilterWhere(["$project_t.del"      => Constants::SOFT_DEL_NO]);
+        $query->andFilterWhere(["$task_t.del"         => Constants::SOFT_DEL_NO]);
         $query->andFilterWhere(["$project_t.user_id"  => $this->user_id]);
         return $query;
     }
@@ -62,11 +64,11 @@ class Project extends BaseActiveRecord
     {
         $project_t = self::tableName();
         $target_t  = Target::tableName();
-        $query = self::find()
+        $query     = self::find()
             ->select("$project_t.*, $target_t.field_id, $target_t.priority_id, $target_t.id target_id")
             ->leftJoin($target_t, "$target_t.id = $project_t.target_id")
             ->andFilterWhere(["$project_t.del"      => Constants::SOFT_DEL_NO])
-            ->andFilterWhere(["$project_t.user_id"  => $this->user_id]);
+            ->andFilterWhere(["$project_t.user_id"  => $this->user_id])
             ;
         return $query;
     }

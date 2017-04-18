@@ -25,6 +25,7 @@ class ActionApiController extends BaseController
             ],
         ];
     }
+
     // REST接口，获取基础数据
     public function actionData($task_id)
     {
@@ -76,8 +77,27 @@ class ActionApiController extends BaseController
         return $this->directJson(json_encode($ret));
     }
 
+    public function actionGetTask()
+    {
+        try {
+            $params_conf = [
+                "id" => [null, true],
+            ];
+            $params = $this->getParamsByConf($params_conf, 'post');
+            $model = $this->findModel($params["id"], Action::class);
+            return $this->packageJson([
+                'task_id'   => $model->task_id,
+                'plan_time' => $model->plan_time,
+                'text'      => $model->text,
+            ], Error::ERR_OK, Error::msg(Error::ERR_OK));
+        } catch (\exception $e) {
+            return $this->returnException($e);
+        }
+    }
+
     public function actionAdd()
     {
+        $transaction   = Yii::$app->db->beginTransaction();
         try {
             $action_type = "inserted";
             $model = new Action;
@@ -98,9 +118,9 @@ class ActionApiController extends BaseController
             $model->status      = $params['status'];
 
             if ($model->status == Action::STATUS_END) {
-                $model->duration = \DateUtil::daysBetween($model->start_date, $model->end_date);
+                $model->duration = \DateUtil::daysBetween($model->start_date, $model->end_date) + 1;
             } else {
-                $model->duration   = 0;
+                $model->duration   = 1;
             }
             $model->start_date = $params['start_date'];
             $model->end_date   = $params['end_date'];
@@ -111,8 +131,10 @@ class ActionApiController extends BaseController
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type, $model->id);
+            $transaction->commit(); 
             return $this->directJson($ret);
         } catch (\exception $e) {
+            $transaction->rollBack(); 
             $action_type = "error";
             $ret         = $this->prepareResponse($action_type, null, $e->getMessage());
             return $this->directJson($ret);
@@ -121,19 +143,24 @@ class ActionApiController extends BaseController
 
     public function actionUpdate($id)
     {
+        $transaction   = Yii::$app->db->beginTransaction();
         try {
             $action_type = "updated";
             $params_conf = [
-                "text"        => [null, false],
-                "plan_time"   => [null, false],
-                "exec_time"   => [0, false],
-                "status"      => [0, true],
-                "start_date"  => [null, false],
-                "end_date"    => [null, false],
-                "event_pid"   => [null, false],
+                "text"       => [null, true],
+                "task_id"    => [null, true],
+                "plan_time"  => [null, true],
+                "exec_time"  => [0, false],
+                "status"     => [0, true],
+                "start_date" => [null, false],
+                "end_date"   => [null, false],
+                "event_pid"  => [null, false],
             ];
             $params            = $this->getParamsByConf($params_conf, 'post');
             $model             = $this->findModel($id, Action::class);
+            if (!is_null($params['task_id'])) {
+                $model->task_id       = $params['task_id'];
+            }
             if (!is_null($params['text'])) {
                 $model->text       = $params['text'];
             }
@@ -163,8 +190,10 @@ class ActionApiController extends BaseController
             $model->modelValidSave();
 
             $ret = $this->prepareResponse($action_type, $id);
+            $transaction->commit(); 
             return $this->directJson($ret);
         } catch (\exception $e) {
+            $transaction->rollBack(); 
             $action_type = "error";
             $ret         = $this->prepareResponse($action_type, $id, $e->getMessage());
             return $this->directJson($ret);

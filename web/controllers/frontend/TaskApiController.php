@@ -5,6 +5,7 @@ namespace app\controllers\frontend;
 use app\models\Area;
 use app\models\Project;
 use app\models\Action;
+use app\models\Error;
 use app\models\PlanTask;
 use app\models\Task;
 use app\models\Constants;
@@ -68,5 +69,22 @@ class TaskApiController extends BaseController
             ];
         }
         return $this->directJson(json_encode($ret));
+    }
+
+    public function actionFinish()
+    {
+        try {
+            $params_conf = [
+                "id" => [null, true],
+            ];
+            $params      = $this->getParamsByConf($params_conf, 'post');
+            $model       = $this->findModel($params["id"], Task::class);
+            $model->progress = 1;
+            $model->modelValidSave();
+            return $this->packageJson(['id' => $params['id']], Error::ERR_OK, Error::msg(Error::ERR_OK));
+        } catch (\exception $e) {
+            return $this->returnException($e);
+        }
+        
     }
 }

@@ -99,7 +99,7 @@ $(function(){
                         confirmButtonText: "确定",
                     },function(){
                         id = data.data['id'];
-                        window.location.href = "/frontend/knowledge-skill/config-index";
+                        window.location.href = "config-index";
                     });
                 } else {
                     swal("操作失败!", data.message, "error");

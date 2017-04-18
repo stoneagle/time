@@ -41,19 +41,19 @@ class EntitySkillController extends BaseController
                 $skill_position[$one["type_id"]]++;
             }
             $type_skill_nums = $skill_position[$one["type_id"]];
-            $left            = $type_skill_nums * Skill::SKILL_WIDTH;
-            $top             = Skill::SKILL_INIT_HEIGHT 
-                + floor($type_skill_nums/Skill::SKILL_WIDTH_NUM) * Skill::SKILL_HEIGHT
-                + ($one["type_id"] - 1) * Skill::SKILL_TYPE_HEIGHT;
+            $left            = $type_skill_nums * EntitySkill::SKILL_WIDTH;
+            $top             = EntitySkill::SKILL_INIT_HEIGHT 
+                + floor($type_skill_nums/EntitySkill::SKILL_WIDTH_NUM) * EntitySkill::SKILL_HEIGHT
+                + ($one["type_id"] - 1) * EntitySkill::SKILL_TYPE_HEIGHT;
             
             $skill_list[] = [
                 "id"               => (int)$one["id"],
                 "title"            => $one["name"],
                 "description"      => $one["description"],
-                "rankDescriptions" => array_values(Skill::$default_level_desc),
+                "rankDescriptions" => array_values(EntitySkill::$default_level_desc),
                 "links"            => [],
                 "dependsOn"        => is_null($one["depend_ids"]) ? [] : explode(",", $one["depend_ids"]),
-                "maxPoints"        => Skill::DEFAULT_LEVEL_MAX,
+                "maxPoints"        => EntitySkill::DEFAULT_LEVEL_MAX,
                 "points"           => $one["user_level"],
                 "stats"            => [],
                 "margin_left"      => $left."px",
@@ -62,15 +62,15 @@ class EntitySkillController extends BaseController
         }
 
         return $this->render('index', [
-            "skill_list" => json_encode($skill_list),
-            "type_dict_arr"  => Skill::$type_arr,
+            "skill_list"    => json_encode($skill_list),
+            "type_dict_arr" => EntitySkill::$type_arr,
         ]);
     }
 
     public function actionValid()
     {
         try {
-            $model = new Skill();
+            $model = new EntitySkill();
             return $this->validModel($model);
         } catch (\Exception $e) {
             return $this->returnException($e);

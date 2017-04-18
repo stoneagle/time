@@ -58,9 +58,11 @@ class Action extends BaseActiveRecord
     public function rules()
     {
         return [
-            [['text', 'type_id', 'plan_time', 'status', 'task_id'], 'required'],
+            [['text', 'plan_time', 'status', 'task_id'], 'required'],
             [['plan_time'], 'integer', 'min' => 1, 'max' => 5],
-            [['task_id', 'status'], 'integer'],
+            [['start_date', 'end_date', 'ctime', 'utime'], 'safe'],
+            [['task_id', 'status', 'duration', 'user_id', 'status'], 'integer'],
+            [['text'], 'string', 'max' => 255],
         ];
     }
 
@@ -97,5 +99,26 @@ class Action extends BaseActiveRecord
         $query->andFilterWhere(["$action_t.task_id" => $this->task_id]);
         $query->andFilterWhere([">=", "$action_t.start_date" , $this->start_date]);
         return $query;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        // 更新task的start_date
+        $task = Task::find()
+            ->andWhere(["id" => $this->task_id])
+            ->one();
+        if (strtotime($this->start_date) < strtotime($task->start_date)) {
+            $task->start_date = $this->start_date;
+            $task->modelValidSave();
+        }
+        // 更新project的start_date
+        $project = Project::find()
+            ->andWhere(["id" => $task->parent])
+            ->one();
+        if (strtotime($this->start_date) < strtotime($project->start_date)) {
+            $project->start_date = $this->start_date;
+            $project->modelValidSave();
+        }
+        return true;
     }
 }
