@@ -7,8 +7,6 @@ services:
     container_name: mysql-time-${DEV_USER}
     volumes:
       - ../../mysql:/var/lib/mysql
-    expose:
-      - "9000"
     ports:
       - "3306:3306"
     networks:
@@ -16,7 +14,7 @@ services:
   fpm:
     # environment:
     #   - DEBUG=true
-    image: php:7.1.1-fpm
+    image: php:7.1.1-pdo
     container_name: fpm-time-${DEV_USER}
     volumes:
       # 挂载项目代码目录
