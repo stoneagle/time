@@ -28,6 +28,9 @@ class Daily extends BaseActiveRecord
     public function rules()
     {
         return [
+            [['id'], 'integer'],
+            [['ctime', 'utime'], 'safe'],
+            [['name'], 'string', 'max' => 255],
         ];
     }
 
@@ -39,5 +42,14 @@ class Daily extends BaseActiveRecord
         $query->andFilterWhere(["$p_s_t.user_id" => $this->user_id]);
         $query->andFilterWhere(["$p_s_t.name" => $this->name]);
         return $query;
+    }
+
+    public static function getDict()
+    {
+        $country_arr = self::find()
+            ->select("name, id")
+            ->asArray()->all();
+        $country_dict = ArrayHelper::map($country_arr, "id", "name");
+        return $country_dict;
     }
 }

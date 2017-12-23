@@ -17,7 +17,11 @@ class DailySchedulerApiController extends BaseController
         $model          = new DailyScheduler;
         $model->user_id = $this->user_obj->id;
         $model->daily_id = Yii::$app->request->get('daily_id', null);
-        $result         = $model->getQuery()->asArray()->all();
+        if (empty($model->daily_id)) {
+          $result = [];
+        } else {
+          $result = $model->getQuery()->asArray()->all();
+        }
         $ret["data"]    = $result;
         return $this->directJson(json_encode($ret));
     }

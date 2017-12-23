@@ -35,8 +35,6 @@ class Area extends BaseActiveRecord
         self::FIELD_GENERAL   => "general",
     ];
 
-
-
     public static function tableName()
     {
         return self::TABLE_NAME;

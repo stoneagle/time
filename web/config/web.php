@@ -81,10 +81,6 @@ $config = [
                 "PUT frontend/action-api/<id:\d+>"           => "frontend/action-api/update",
                 "DELETE frontend/action-api/<id:\d+>"        => "frontend/action-api/del",
 
-                "POST frontend/plan-api/<id:\d+>"   => "frontend/plan-api/add",
-                "PUT frontend/plan-api/<id:\d+>"    => "frontend/plan-api/update",
-                "DELETE frontend/plan-api/<id:\d+>" => "frontend/plan-api/del",
-
                 "POST frontend/daily-scheduler-api/<id:\d+>"   => "frontend/daily-scheduler-api/add",
                 "PUT frontend/daily-scheduler-api/<id:\d+>"    => "frontend/daily-scheduler-api/update",
                 "DELETE frontend/daily-scheduler-api/<id:\d+>" => "frontend/daily-scheduler-api/del",
@@ -94,8 +90,7 @@ $config = [
                 "POST frontend/assets-sub/one-assets-sub/<id:\d+>" => "frontend/assets-sub/one-assets-sub",
 
                 "GET frontend/task-api/plan/<year:\d+>/<week:\d+>"  => "frontend/task-api/plan",
-                "PUT frontend/plan-api/plan/<task_id:\d+>"          => "frontend/plan-api/task-oper",
-                "GET frontend/plan-api/chart/<year:\d+>/<week:\d+>" => "frontend/plan-api/chart",
+                "PUT frontend/plan-project/<project_id:\d+>"          => "frontend/plan/project-oper",
 
                 "POST frontend/scheduler-api/<sid:\d+>"  => "frontend/scheduler-api/add",
                 "PUT frontend/scheduler-api/<id:\d+>"    => "frontend/scheduler-api/update",

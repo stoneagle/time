@@ -85,6 +85,5 @@ class TaskApiController extends BaseController
         } catch (\exception $e) {
             return $this->returnException($e);
         }
-        
     }
 }

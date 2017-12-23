@@ -16,7 +16,7 @@ class DailyController extends BaseController
     {
         try {
             $model = new Daily();
-            return $this->validModel($model);
+            return $this->validModel($model, Daily::class);
         } catch (\Exception $e) {
             return $this->returnException($e);
         }
@@ -136,7 +136,7 @@ class DailyController extends BaseController
             } else {
                 DailyScheduler::deleteAll(
                     "daily_id = :daily_id",
-                    [":daily_id" => $tmp_id]
+                    [":daily_id" => $ids]
                 );
             }
             $query = Daily::find()->andWhere(['and',['in', 'id', $ids]]);

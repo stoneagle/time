@@ -31,7 +31,6 @@ class ProjectApiController extends BaseController
     public function actionData()
     {
         $result = [];
-
         $model          = new Project;
         $model->user_id = $this->user_obj->id;
         $query          = $model->getTargetQuery();
@@ -333,4 +332,5 @@ class ProjectApiController extends BaseController
             return $this->directJson($ret);
         }
     }
+
 }
