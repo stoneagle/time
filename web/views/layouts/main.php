@@ -63,6 +63,7 @@ AppAsset::register($this);
             'label' => "后台管理",
             'items' => [
                 ['label' => '国家配置', 'url' => ['/frontend/country/index']],
+                ['label' => '日常作息', 'url' => ['/frontend/daily/index']],
             ]
         ]
     ];

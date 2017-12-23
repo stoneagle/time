@@ -85,6 +85,11 @@ $config = [
                 "PUT frontend/plan-api/<id:\d+>"    => "frontend/plan-api/update",
                 "DELETE frontend/plan-api/<id:\d+>" => "frontend/plan-api/del",
 
+                "POST frontend/daily-scheduler-api/<id:\d+>"   => "frontend/daily-scheduler-api/add",
+                "PUT frontend/daily-scheduler-api/<id:\d+>"    => "frontend/daily-scheduler-api/update",
+                "DELETE frontend/daily-scheduler-api/<id:\d+>" => "frontend/daily-scheduler-api/del",
+
+
                 "POST frontend/assets/del/<id:\d+>"                => "frontend/assets/del",
                 "POST frontend/assets-sub/one-assets-sub/<id:\d+>" => "frontend/assets-sub/one-assets-sub",
 
