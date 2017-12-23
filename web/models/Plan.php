@@ -47,4 +47,23 @@ class Plan extends BaseActiveRecord
         $query->andFilterWhere(["$self_t.to_date" => $this->to_date]);
         return $query;
     }
+
+    public function getCheckListQuery()
+    {
+        $action_t  = Action::tableName();
+        $task_t  = Task::tableName();
+        $project_t = Project::tableName();
+        $from_date = $this->from_date . " 00:00:00";
+        $to_date = $this->to_date . " 00:00:00";
+        $query = Action::find() 
+            ->select("$project_t.id, SUM($action_t.exec_time) as sum_time")
+            ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
+            ->leftJoin($project_t, "$project_t.id = $task_t.parent")
+            ->andFilterWhere(["$project_t.user_id"  => $this->user_id])
+            ->andFilterWhere([">=", "$action_t.start_date" , $from_date])
+            ->andFilterWhere(["<=", "$action_t.end_date" , $to_date])
+            ->groupBy("$project_t.id")
+            ->orderBy("$project_t.id desc");
+        return $query;
+    }
 }

@@ -68,7 +68,7 @@ class PlanController extends BaseController
                 $daily_dict = Daily::getDict();
                 $default_daily_key = key($daily_dict);
                 $model->from_date = date("Y-m-01", time());
-                $model->to_date = date("Y-m-d", strtotime(date('Y-m-01', time()) . ' +1 month -1 day'));
+                $model->to_date = date("Y-m-d", strtotime(date('Y-m-01', time()) . ' +1 month'));
                 return $this->render('save', [
                     'model'   => $model,
                     'dailyArr'   => $daily_dict,
@@ -228,10 +228,7 @@ class PlanController extends BaseController
         $model = new PlanProject;
         $model->user_id = $this->user_obj->id;
         $model->plan_id = $plan_id;
-        $query = $model->getProjectQuery();
-        $project_t = Project::tableName();
-        $plan_project_t = PlanProject::tableName();
-        $query = $query->andFilterWhere(["NOT", ["$project_t.progress" => 1]]);
+        $query = $model->getProjectListQuery();
         $result = $query->asArray()->all();
         $ret = [];
         foreach ($result as $one) {
@@ -242,6 +239,43 @@ class PlanController extends BaseController
                     empty($plan_id) ? 0 : $plan_id,
                     $one['text'],
                     is_null($one["hours"]) ? 0 : $one["hours"],
+                ]
+            ];
+        }
+        return $this->directJson(json_encode($ret));
+    }
+
+    // 获取总结查看的Project列表
+    public function actionProjectCheck()
+    {
+        $plan_id = Yii::$app->request->get('plan_id', 0);
+        if (empty($plan_id)) {
+            throw new \Exception (Error::msg(Error::ERR_PARAMS), Error::ERR_PARAMS);
+        }
+        $model  = $this->findModel($plan_id, Plan::class);
+        $model->user_id = $this->user_obj->id;
+        $query = $model->getCheckListQuery();
+        $result = $query->asArray()->all();
+        foreach ($result as $one) {
+            $check_map[$one["id"]] = $one["sum_time"];
+        }
+
+        $model = new PlanProject;
+        $model->user_id = $this->user_obj->id;
+        $model->plan_id = $plan_id;
+        $query = $model->getProjectListQuery(false, true);
+        $project_t = Project::tableName();
+        $query = $query->andWhere(['and',['in', "$project_t.id", array_keys($check_map)]]);
+        $result = $query->asArray()->all();
+        $ret = [];
+
+        foreach ($result as $one) {
+            $ret["rows"][] = [
+                "id" => $one['id'],
+                "data" => [
+                    $one['text'],
+                    is_null($one["hours"]) ? 0 : $one["hours"],
+                    $check_map[$one["id"]] / (60 * 60),
                     ($one["progress"] == 1) ? "已完成" : "进行中"
                 ]
             ];

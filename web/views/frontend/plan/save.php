@@ -235,12 +235,12 @@ if ($model->isNewRecord) {
     // 右侧grid复选框栏
     grid = new dhtmlXGridObject("gridbox_task");
     grid.setImagePath("/css/lib/imgs/dhxgrid_terrace/");
-    grid.setHeader("复选框,所属计划,任务名称,预估时间,状态");
-    grid.setInitWidthsP("12,12,46,30,11");
-    grid.setColAlign("left, left, left, left, left"); 
-    grid.setColTypes("ch,ro,ro,ed,ro"); 
+    grid.setHeader("复选框,所属计划,任务名称,预估时间");
+    grid.setInitWidthsP("12,12,58,30");
+    grid.setColAlign("left, left, left, left"); 
+    grid.setColTypes("ch,ro,ro,ed"); 
     grid.enableAutoHeight(true);
-    grid.setColumnIds("select, plan_id, text, hours, status");
+    grid.setColumnIds("select, plan_id, text, hours");
     grid.setColumnHidden(1,true);  
 
     grid.init();       

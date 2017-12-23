@@ -47,7 +47,7 @@ class PlanProject extends BaseActiveRecord
         return $query;
     }
 
-    public function getProjectQuery()
+    public function getProjectListQuery($progress=True, $field=True)
     {
         $plan_project_t = PlanProject::tableName();
         $target_t  = Target::tableName();
@@ -57,9 +57,14 @@ class PlanProject extends BaseActiveRecord
             ->leftJoin($plan_project_t, "$project_t.id = $plan_project_t.project_id and $plan_project_t.plan_id = $this->plan_id")
             ->leftJoin($target_t, "$target_t.id = $project_t.target_id")
             ->andFilterWhere(["$project_t.del"      => Constants::SOFT_DEL_NO])
-            ->andFilterWhere(["NOT", ["$target_t.field_id" => Area::FIELD_GENERAL]])
             ->andFilterWhere(["$project_t.user_id"  => $this->user_id])
             ->orderBy("$plan_project_t.hours desc");
+        if ($field) {
+            $query = $query->andFilterWhere(["NOT", ["$target_t.field_id" => Area::FIELD_GENERAL]]);
+        }
+        if ($progress) {
+            $query = $query->andFilterWhere(["NOT", ["$project_t.progress" => 1]]);
+        }
         return $query;
     }
 }
