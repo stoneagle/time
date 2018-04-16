@@ -25,6 +25,7 @@ $this->registerJsFile('@web/js/frontend/plan/index.js',['depends'=>['app\assets\
                 "id",
                 "from_date",
                 "to_date",
+                "daily_name",
                 [
                     'attribute' => 'ctime',
                     'contentOptions' => ['width' => '10%'],

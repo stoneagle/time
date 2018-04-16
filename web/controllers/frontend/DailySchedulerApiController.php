@@ -22,6 +22,13 @@ class DailySchedulerApiController extends BaseController
         } else {
           $result = $model->getQuery()->asArray()->all();
         }
+        foreach ($result as $index => $data) {
+            $today = date("Y-m-d", time());
+            $start_time = date("H:i:s", strtotime($data["start_date"]));
+            $end_time = date("H:i:s", strtotime($data["end_date"]));
+            $result[$index]["start_date"] = $today . " " . $start_time;
+            $result[$index]["end_date"] = $today . " " . $end_time;
+        }
         $ret["data"]    = $result;
         return $this->directJson(json_encode($ret));
     }

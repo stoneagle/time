@@ -8,6 +8,7 @@ use yii\helpers\ArrayHelper;
 
 class Plan extends BaseActiveRecord
 {
+    public $daily_name;
     const TABLE_NAME    = "plan";
 
     public static function tableName()
@@ -21,7 +22,8 @@ class Plan extends BaseActiveRecord
             'id'         => 'ID',
             'daily_id'   => '作息模板',
             'user_id'    => '所属用户',
-            'from_date' => '开始日期',
+            'daily_name' => '模板名称',
+            'from_date'  => '开始日期',
             'to_date'    => '完成日期',
             'ctime'      => '创建时间',
             'utime'      => '更新时间',
@@ -40,7 +42,10 @@ class Plan extends BaseActiveRecord
     public function getQuery()
     {
         $self_t = self::tableName();
+        $daily_t = Daily::tableName();
         $query = self::find()
+            ->select("$self_t.*, $daily_t.name as daily_name")
+            ->leftJoin($daily_t, "$daily_t.id = $self_t.daily_id")
             ->orderBy("$self_t.ctime");
         $query->andFilterWhere(["$self_t.user_id" => $this->user_id]);
         $query->andFilterWhere(["$self_t.from_date" => $this->from_date]);

@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\bootstrap\Modal;
 use app\assets\AppAsset;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -88,13 +89,16 @@ $this->title = '查看计划';
                     plan_hours_sum = 0;
                     exec_hours_sum = 0;
                     charts_data = new Array();
+                    project_map = {};
                     for (x in result) {
                         project_title = result[x]["data"][0];
                         plan_hours = result[x]["data"][1];
                         exec_hours = result[x]["data"][2];
+                        project_id = result[x]["data"][4];
                         plan_hours_sum += parseInt(exec_hours);
                         exec_hours_sum += parseInt(exec_hours);
                         charts_data.push([project_title, plan_hours, exec_hours, 0]);
+                        project_map[project_title] = project_id;
                     }
                     charts_data.push(["总和", plan_hours_sum, exec_hours_sum, daily_hours_sum]);
                     function sortNumber(a,b){return a[1]-b[1]}
@@ -110,6 +114,15 @@ $this->title = '查看计划';
                         daily_data.push(charts_data[x][3]);
                     }
                     sum_chart = echarts.init(document.getElementById('time_sum'));
+                    sum_chart.on('click', function (params) {
+                        // 控制台打印数据的名称
+                        project_id = project_map[params.name]
+                        if (project_id) {
+                            // TODO 更改成modal展示
+                            url = "/frontend/action/index?project_id=" + project_id + "&Action%5Bstart_date%5D=" + from_date + "&Action%5Bend_date%5D=" + to_date;
+                            window.open(url, '_blank');
+                        }
+                    });
                     option = {
                         title: {
                             text: '时间统计',
@@ -193,3 +206,12 @@ $this->title = '查看计划';
     grid.init();       
     grid.load("/frontend/plan/project-check?plan_id=" + plan_id, "json"); 
 </script>
+
+<?php 
+Modal::begin([
+    'id' => 'common-modal',
+    'header' => '<h4 class="modal-title"></h4>',
+    'footer' =>  '<a href="#" class="btn btn-primary" data-dismiss="modal">关闭</a>',
+]);
+Modal::end(); 
+?>

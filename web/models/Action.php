@@ -19,6 +19,10 @@ use yii\base\Exception;
  */
 class Action extends BaseActiveRecord
 {
+    public $join_project_id;
+    public $task_name;
+    public $entity_name;
+
     CONST STATUS_INIT = 0;
     CONST STATUS_WAIT = 1;
     CONST STATUS_EXEC = 2;
@@ -72,6 +76,15 @@ class Action extends BaseActiveRecord
     public function attributeLabels()
     {
         return [
+            'id'              => 'ID',
+            'text'            => '内容',
+            'plan_time'       => '计划番茄',
+            'status'          => '状态',
+            'task_id'         => '所属任务',
+            'start_date'      => '开始时间',
+            'end_date'        => '结束时间',
+            'ctime'           => '创建时间',
+            'utime'           => '更新时间',
         ];
     }
 
@@ -81,22 +94,60 @@ class Action extends BaseActiveRecord
     /* } */
 
 
-    public function getQuery()
+    public function getQuery($entity_detail=False)
     {
         $action_t  = self::tableName();
         $task_t    = Task::tableName();
         $project_t = Project::tableName();
         $target_t  = Target::tableName();
         $query     = self::find()
-            ->select("$action_t.*, $target_t.field_id, $target_t.priority_id, $task_t.text task_name")
             ->leftJoin($task_t, "$task_t.id = $action_t.task_id")
             ->leftJoin($project_t, "$project_t.id = $task_t.parent")
             ->leftJoin($target_t, "$target_t.id = $project_t.target_id")
             ;
 
+        // 获取entity详情
+        if ($entity_detail) {
+            $project = Project::find()
+                ->select("$target_t.field_id as join_field_id")
+                ->leftJoin($target_t, "$target_t.id = $project_t.target_id")
+                ->andFilterWhere(["$project_t.id" => $this->join_project_id])
+                ->one();
+            if (!is_null($project)) {
+                switch($project->join_field_id) {
+                    case Area::FIELD_CULTURE :
+                        $entity_t = EntityWork::tableName();
+                        break;
+                    case Area::FIELD_KNOWLEDGE :
+                        $entity_t     = EntitySkill::tableName();
+                        break;
+                    case Area::FIELD_CHANLLEGE :
+                        $entity_t = EntityQuest::tableName();
+                        break;
+                    case Area::FIELD_SOCIAL :
+                        $entity_t = EntityCircle::tableName();
+                        break;
+                    case Area::FIELD_WEALTH :
+                        $entity_t = EntityAsset::tableName();
+                        break;
+                    case Area::FIELD_GENERAL :
+                        $entity_t = EntityLife::tableName();
+                        break;
+                }
+                $query = $query
+                    ->leftJoin($entity_t, "$task_t.entity_id = $entity_t.id")
+                    ->select("$action_t.*, $target_t.field_id, $target_t.priority_id, $task_t.text as task_name, $entity_t.name as entity_name");
+            } else {
+                $query = $query->select("$action_t.*, $target_t.field_id, $target_t.priority_id, $task_t.text as task_name");
+            }
+        } else {
+            $query = $query->select("$action_t.*, $target_t.field_id, $target_t.priority_id, $task_t.text as task_name");
+        }
+
         $query->andFilterWhere(["$action_t.status"     => $this->status]);
         $query->andFilterWhere(["$action_t.user_id" => $this->user_id]);
         $query->andFilterWhere(["$action_t.task_id" => $this->task_id]);
+        $query->andFilterWhere(["$project_t.id" => $this->join_project_id]);
         $query->andFilterWhere([">=", "$action_t.start_date" , $this->start_date]);
         return $query;
     }

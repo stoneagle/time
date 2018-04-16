@@ -276,7 +276,8 @@ class PlanController extends BaseController
                     $one['text'],
                     is_null($one["hours"]) ? 0 : $one["hours"],
                     $check_map[$one["id"]] / (60 * 60),
-                    ($one["progress"] == 1) ? "已完成" : "进行中"
+                    ($one["progress"] == 1) ? "已完成" : "进行中",
+                    $one['id'],
                 ]
             ];
         }

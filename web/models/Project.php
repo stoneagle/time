@@ -10,6 +10,8 @@ use yii\helpers\ArrayHelper;
 
 class Project extends BaseActiveRecord
 {
+    public $join_field_id;
+
     const PROGRESS_START = 0;
     const PROGRESS_END   = 1;
     const LEVEL_PROJECT  = 0;

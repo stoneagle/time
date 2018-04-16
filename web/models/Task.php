@@ -32,6 +32,16 @@ class Task extends BaseActiveRecord
     public function attributeLabels()
     {
         return [
+            'id'         => 'ID',
+            'text'       => '任务名称',
+            'parent'     => '所属项目',
+            'entity_id'  => '相关实体',
+            'user_id'    => '所属用户',
+            'progress'   => '进度',
+            'start_date' => '开始日期',
+            'ctime'      => '创建时间',
+            'ctime'      => '创建时间',
+            'utime'      => '更新时间',
         ];
     }
 
